@@ -1,0 +1,67 @@
+STCM System Validation Report
+==================================================
+Embedding model       : pranaydeeps/Ancient-Greek-BERT
+Double-tradition n    : 36
+Q-score mean          : 0.6120
+Q-score std           : 0.0565
+Q-score range         : [0.4694, 0.7097]
+Calibration Sig-A mean: 0.9350
+Calibration Sig-B mean: 0.3697
+Reconstruction conv % : 100.0%
+Reconstruction var    : 0.000002
+
+Top 5 Q pericopes:
+  1. Serving two masters                      Q=0.7097
+  2. Lament over Jerusalem                    Q=0.6886
+  3. Return of unclean spirit                 Q=0.6878
+  4. Jesus on John                            Q=0.6789
+  5. Thief in the night                       Q=0.6771
+
+Evaluation Suite Results:
+--------------------------------------------------
+Random perm. p-value  : 0.0000 (z=77.821)
+Thematic-null p-value : 0.0000 (z=83.814)
+Weight sensitivity    : top-5 Jaccard = 0.815
+Bootstrap mean std    : 0.0442
+Word-overlap Pearson r: 0.823
+Goulder test p-value  : 0.1916 (d=-0.571)
+BERT validation gap   : 0.205
+
+All 36 pericopes (ranked by Q-score):
+--------------------------------------------------
+   1. Serving two masters                      Q=0.7097  cos=0.992  resid=0.982
+   2. Lament over Jerusalem                    Q=0.6886  cos=0.982  resid=0.918
+   3. Return of unclean spirit                 Q=0.6878  cos=0.982  resid=0.915
+   4. Jesus on John                            Q=0.6789  cos=0.984  resid=0.861
+   5. Thief in the night                       Q=0.6771  cos=0.972  resid=0.900
+   6. Anxieties about life                     Q=0.6749  cos=0.976  resid=0.872
+   7. Hidden from wise revealed                Q=0.6630  cos=0.968  resid=0.845
+   8. Woes on Galilean cities                  Q=0.6616  cos=0.964  resid=0.855
+   9. Lamp of the body                         Q=0.6562  cos=0.952  resid=0.877
+  10. Sign of Jonah                            Q=0.6556  cos=0.966  resid=0.817
+  11. Faithful servant                         Q=0.6479  cos=0.963  resid=0.790
+  12. Mission discourse                        Q=0.6454  cos=0.960  resid=0.790
+  13. Temptation narrative (full)              Q=0.6448  cos=0.972  resid=0.740
+  14. John's preaching                         Q=0.6354  cos=0.959  resid=0.746
+  15. Fear of God not men                      Q=0.6344  cos=0.955  resid=0.755
+  16. Lord's Prayer                            Q=0.6333  cos=0.946  resid=0.787
+  17. John's question from prison              Q=0.6235  cos=0.956  resid=0.696
+  18. Love of enemies                          Q=0.6210  cos=0.942  resid=0.741
+  19. Harvest plentiful                        Q=0.6180  cos=0.934  resid=0.756
+  20. Talents / Minas                          Q=0.6133  cos=0.950  resid=0.669
+  21. Settling with opponent                   Q=0.6078  cos=0.927  resid=0.723
+  22. Many come from east west                 Q=0.6057  cos=0.918  resid=0.733
+  23. Mustard seed and leaven                  Q=0.6056  cos=0.934  resid=0.692
+  24. Centurion's servant                      Q=0.6003  cos=0.959  resid=0.569
+  25. Beatitudes                               Q=0.5934  cos=0.913  resid=0.685
+  26. Parable of Great Banquet                 Q=0.5801  cos=0.945  resid=0.522
+  27. Reading the signs                        Q=0.5745  cos=0.909  resid=0.599
+  28. Lost sheep                               Q=0.5716  cos=0.915  resid=0.571
+  29. Conditions of discipleship               Q=0.5559  cos=0.864  resid=0.619
+  30. Judging twelve tribes                    Q=0.5468  cos=0.881  resid=0.532
+  31. Salt of the earth                        Q=0.5460  cos=0.861  resid=0.578
+  32. Blasphemy Holy Spirit                    Q=0.5416  cos=0.868  resid=0.537
+  33. Day of the Son of Man                    Q=0.5406  cos=0.874  resid=0.519
+  34. Leaven of Pharisees                      Q=0.5181  cos=0.886  resid=0.375
+  35. Not peace but sword                      Q=0.5052  cos=0.834  resid=0.440
+  36. Narrow gate                              Q=0.4694  cos=0.787  resid=0.379

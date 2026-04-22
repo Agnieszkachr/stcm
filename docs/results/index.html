@@ -1,0 +1,896 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Synoptic Transform Calibration Model — computational approach to the Synoptic Problem">
+      
+      
+      
+      
+        <link rel="prev" href="../usage/">
+      
+      
+        <link rel="next" href="../faq/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Results - STCM Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="light-green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#results" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="STCM Documentation" class="md-header__button md-logo" aria-label="STCM Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            STCM Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Results
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="STCM Documentation" class="md-nav__button md-logo" aria-label="STCM Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    STCM Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theoretical-framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Theoretical Framework
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Results
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-triple-tradition-baseline-signature-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Triple Tradition Baseline (Signature A)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-double-tradition-q-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Double Tradition Q-Scoring
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-statistical-significance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Statistical Significance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Statistical Significance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#random-null" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Random Null
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#thematic-null" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Thematic Null
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-robustness-analyses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Robustness Analyses
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Robustness Analyses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#weight-sensitivity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weight Sensitivity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sentence-level-bootstrap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sentence-Level Bootstrap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#word-overlap-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Word-Overlap Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-goulder-redaction-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Goulder Redaction Test
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-bert-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. BERT Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactive-distribution-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Distribution Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-triple-tradition-baseline-signature-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Triple Tradition Baseline (Signature A)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-double-tradition-q-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Double Tradition Q-Scoring
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-statistical-significance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Statistical Significance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Statistical Significance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#random-null" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Random Null
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#thematic-null" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Thematic Null
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-robustness-analyses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Robustness Analyses
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Robustness Analyses">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#weight-sensitivity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Weight Sensitivity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sentence-level-bootstrap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sentence-Level Bootstrap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#word-overlap-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Word-Overlap Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-goulder-redaction-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Goulder Redaction Test
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-bert-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. BERT Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactive-distribution-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Distribution Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="results">Results</h1>
+<p>The outputs from STCM provide robust computational support for the linguistic alignment proposed by the Two-Source Hypothesis.</p>
+<h2 id="1-triple-tradition-baseline-signature-a">1. Triple Tradition Baseline (Signature A)</h2>
+<p>When analysing the 49 Triple Tradition pericopes where Matthew, Mark, and Luke all overlap, the mean cosine similarity between Matthew and Luke is <strong>0.935</strong> (σ = 0.038, 95% CI [0.924, 0.945]). Because we know under Markan priority that both authors drew from Mark, this gives us a quantitative measure of what a "shared source derivation" looks like in the <code>Ancient-Greek-BERT</code> space.</p>
+<h2 id="2-double-tradition-q-scoring">2. Double Tradition Q-Scoring</h2>
+<p>We scored 36 Double Tradition pericopes against this baseline. The mean Q-Score is <strong>0.612 ± 0.057</strong>.
+The top-scoring pericopes represent passages where Matthew and Luke are exceptionally similar — often exceeding the similarity found in the Triple Tradition baseline.</p>
+<p><strong>Top 5 most Q-like pericopes:</strong></p>
+<ol>
+<li><em>Serving Two Masters</em> (Q = 0.710)</li>
+<li><em>Lament over Jerusalem</em> (Q = 0.689)</li>
+<li><em>Return of Unclean Spirit</em> (Q = 0.688)</li>
+<li><em>Jesus on John</em> (Q = 0.679)</li>
+<li><em>Thief in the Night</em> (Q = 0.677)</li>
+</ol>
+<p>Full data for all 36 pericopes is provided in the article (Appendix A, Table A1) and in the CSV output (<code>outputs/reports/q_score_distribution.csv</code>).</p>
+<h2 id="3-statistical-significance">3. Statistical Significance</h2>
+<h3 id="random-null">Random Null</h3>
+<p>To verify these results are not due to general vocabulary overlap in Koine Greek, we ran 1000 permutations where Matthew and Luke pericopes were randomly paired.
+The observed mean Q-score (0.612) vastly outperformed the null distribution (mean = 0.411, σ = 0.003).</p>
+<ul>
+<li><strong>Empirical p-value:</strong> 0.001 (0 of 1,000 permutations ≥ observed; reported as (<em>b</em>+1)/(<em>N</em>+1))</li>
+</ul>
+<p>(The corresponding z-score of 77.8 reflects the tiny standard deviation of the null mean distribution, not a per-pericope effect size.)</p>
+<h3 id="thematic-null">Thematic Null</h3>
+<p>A more demanding test pairs each Matthean pericope with a <em>thematically similar</em> Lukan pericope (e.g., wisdom with wisdom, apocalyptic with apocalyptic). This controls for the possibility that topical overlap alone inflates similarity.</p>
+<ul>
+<li><strong>Empirical p-value:</strong> 0.001 (0 of 1,000 permutations ≥ observed)</li>
+<li>The correctly paired pericopes still significantly exceed the thematic baseline.</li>
+</ul>
+<h2 id="4-robustness-analyses">4. Robustness Analyses</h2>
+<h3 id="weight-sensitivity">Weight Sensitivity</h3>
+<p>The composite Q-score weights (0.5, 0.3, 0.2) were tested against eight alternative configurations (including equal weights and single-component models). <em>Serving Two Masters</em> ranked first under all nine schemes, and the top-5 set remained highly stable (high Jaccard similarity).</p>
+<h3 id="sentence-level-bootstrap">Sentence-Level Bootstrap</h3>
+<p>Resampling sentences within each pericope (200 resamples) yields a mean perturbation standard deviation below 0.05, confirming that Q-scores are robust to variation in sentence composition.</p>
+<h3 id="word-overlap-comparison">Word-Overlap Comparison</h3>
+<p>The Pearson correlation between embedding-based Q-scores and word-level Jaccard coefficients is high (<em>r</em> = 0.823) but meaningfully below 1.0, demonstrating that the embedding analysis captures semantic and syntactic structure beyond what traditional verbal-agreement statistics measure.</p>
+<h2 id="5-goulder-redaction-test">5. Goulder Redaction Test</h2>
+<p>The ten pericopes Goulder (1989) identifies as exhibiting Lukan redaction of Matthew show a lower mean Q-score than the remaining 26 pericopes, but the difference is not statistically significant (Welch's <em>t</em>-test, <em>p</em> = 0.192). However, with group sizes of <em>n</em> = 10 vs. <em>n</em> = 26, the test is severely underpowered, and the medium effect size (Cohen's <em>d</em> = −0.571) indicates a potentially meaningful difference that the current sample cannot confirm or rule out. The result is genuinely <strong>inconclusive</strong> — it neither supports nor refutes the Farrer Hypothesis. Future work with larger datasets or directional-dependence metrics is needed to resolve this question.</p>
+<h2 id="6-bert-validation">6. BERT Validation</h2>
+<p>Known synoptic parallels produce high cosine similarities; unrelated passage pairs produce substantially lower similarities. The separation confirms that the model is adequately calibrated for NT Greek.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>The geometry of the Double Tradition in semantic space is highly non-random. Its relationship patterns closely mimic, and in some cases exceed, the mathematical signatures of the known shared-source relationship observed in the Triple Tradition. The signal survives both random and thematic null tests, is insensitive to weight choice, and captures information beyond simple lexical overlap. The Goulder redaction test remains inconclusive due to limited sample size, and readers should note that the Mark centroid baseline, being derived from narrative material, may introduce a degree of structural distortion when applied to predominantly discourse-oriented double-tradition pericopes. Whilst this does not definitively <em>prove</em> a written document called Q, the embedding evidence is strongly inconsistent with random or thematically matched pairing under our null models, and consistent with some form of non-independent literary relationship (shared source and/or direct dependence).</p>
+<h2 id="interactive-distribution-map">Interactive Distribution Map</h2>
+<p>Below is an interactive map of all 36 Double-Tradition pericopes. <strong>Hover over the bubbles</strong> to see the specific pericope labels and their raw similarity metrics. The chart uses a green gradient, with larger, darker green bubbles representing higher Q-Scores.</p>
+<div>
+<div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="e50056cb-3b9d-42d0-9bd2-029ae82d6a3e" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("e50056cb-3b9d-42d0-9bd2-029ae82d6a3e")) {                    Plotly.newPlot(                        "e50056cb-3b9d-42d0-9bd2-029ae82d6a3e",                        [{"customdata":{"dtype":"f8","bdata":"3gIJih9j7D8OT6+UZYjlP8rDQq1p3u0/ObTIdr6f5D//snvysFDpP+/Jw0Ktad4/v30dOGdE6z+neccpOpLhP+xRuB6F6+k/Z0Rpb/CF4z/ZzvdT46XtP1RSJ6CJsOc/KcsQx7q44z/V52or9pfRPxE2PL1Slus/eVioNc070j/jpZvEILDsPynLEMe6uOU/qMZLN4lB7j/HSzeJQWDnP1mGONbFbew/f/s6cM6I6D9fB84ZUdrtPxHHuriNBuo/UWuad5yi6z8Q6bevA+fcP8/3U+Olm+o/h6dXyjLE5z+1FfvL7sntP451cRsN4Ok/HHxhMlUw7j+P5PIf0m/rP2aIY13cRus/tMh2vp8a6T+BBMWPMXflP/mgZ7Pqc80/S1mGONbF6z+yne+nxkvjP4NRSZ2AJuQ/wcqhRbbz0T/qlbIMcazrP6H4MeauJeg/RiV1ApoI7T9fB84ZUdrlP7UV+8vuyeM/WDm0yHa+xz8ukKD4MebiPyV1ApoIG8Y/at5xio7k5j8wKqkT0ETYP2Dl0CLb+eg/fa62Yn/Z3T+oV8oyxLHqPwWjkjoBTeQ/VFInoImw7T//If32deDqP71SliGOdes/bVZ9rrZi0z+rPldbsb/gP8pUwaikTsg/vJaQD3o24z+sHFpkO9/XP9V46SYxCOo/XW3F/rJ73j/BOSNKe4PvP3xhMlUwKu8/uB6F61G45D+6awn5oGfXP0jhehSuR+s/0gDeAgmKzz/4wmSqYFTkPyntDb4wmdI/","shape":"36, 2"},"hovertemplate":"<b>%{hovertext}</b><br><br>Deviation from Baseline (Signature A)=%{x:.3f}<br>Composite Q-Score=%{marker.color:.3f}<br>Raw Cosine Similarity=%{customdata[0]:.3f}<br>Residual Vector Correlation=%{customdata[1]:.3f}<extra></extra>","hovertext":["John's preaching","Temptation narrative (full)","Beatitudes","Love of enemies","Lord's Prayer","Anxieties about life","Narrow gate","Centurion's servant","John's question from prison","Jesus on John","Woes on Galilean cities","Hidden from wise revealed","Mission discourse","Harvest plentiful","Sign of Jonah","Return of unclean spirit","Lamp of the body","Leaven of Pharisees","Fear of God not men","Blasphemy Holy Spirit","Thief in the night","Faithful servant","Not peace but sword","Reading the signs","Settling with opponent","Mustard seed and leaven","Many come from east west","Lament over Jerusalem","Parable of Great Banquet","Conditions of discipleship","Salt of the earth","Lost sheep","Serving two masters","Day of the Son of Man","Talents / Minas","Judging twelve tribes"],"legendgroup":"","marker":{"color":{"dtype":"f8","bdata":"hlrTvOMU4z/ZX3ZPHhbkP/W52or9Zd8/E2HD0ytl4T93vp8aL93gP9jw9EpZhuQ/zF1LyAc91z/Oqs/VVuzfP1yPwvUoXOM/bcX+snvy5D9lGeJYF7fjP9ZW7C+7J+U/G55eKcsQ4T8ldQKaCBviP99PjZduEuU/vw6cM6K05T/UmuYdp+jiPw1xrIvbaNg/vp8aL90k4j9YObTIdr7XP0YldQKaCOM/RIts5/up4z8LtaZ5xynWP1vTvOMUHdU/WDm0yHa+2z+LbOf7qfHeP84ZUdobfOE/b4EExY8x5T8awFsgQfHfP+cdp+hILtM/eJyiI7n81z+q8dJNYhDgP9/gC5Opguc/1xLyQc9m2T/HuriNBvDePyKOdXEbDdg/"},"coloraxis":"coloraxis","size":{"dtype":"f8","bdata":"hlrTvOMU4z/ZX3ZPHhbkP/W52or9Zd8/E2HD0ytl4T93vp8aL93gP9jw9EpZhuQ/zF1LyAc91z/Oqs/VVuzfP1yPwvUoXOM/bcX+snvy5D9lGeJYF7fjP9ZW7C+7J+U/G55eKcsQ4T8ldQKaCBviP99PjZduEuU/vw6cM6K05T/UmuYdp+jiPw1xrIvbaNg/vp8aL90k4j9YObTIdr7XP0YldQKaCOM/RIts5/up4z8LtaZ5xynWP1vTvOMUHdU/WDm0yHa+2z+LbOf7qfHeP84ZUdobfOE/b4EExY8x5T8awFsgQfHfP+cdp+hILtM/eJyiI7n81z+q8dJNYhDgP9/gC5Opguc/1xLyQc9m2T/HuriNBvDePyKOdXEbDdg/"},"sizemode":"area","sizeref":0.00183675,"symbol":"circle"},"mode":"markers","name":"","orientation":"v","showlegend":false,"x":{"dtype":"f8","bdata":"owG8BRIUrz8xCKwcWmS7Py9uowG8BaK/cF8HzhlRmj8JG55eKcuQv7snDwu1prk/at5xio7kyr/4wmSqYFSiP/wYc9cS8rE/IR/0bFZ9vj9YObTIdr6vP90kBoGVQ7s/8BZIUPwYoz+IhVrTvON0P42XbhKDwLo/0ZFc/kP6vT990LNZ9bmaPwn5oGez6sO/c2iR7Xw/pT98YTJVMCrJv2EyVTAqqaM/EhQ/xty1tD85tMh2vp/Kv89m1edqK86/wFsgQfFjvL8XSFD8GHOnv3ZxGw3gLYA/hXzQs1n1uT+X/5B++zqgPzEIrBxaZNO/mEwVjErqzL+ze/KwUGuKv30/NV66ScQ/LpCg+DHmxr990LNZ9bmaP6abxCCwcsi/"},"xaxis":"x","y":{"dtype":"f8","bdata":"hlrTvOMU4z/ZX3ZPHhbkP/W52or9Zd8/E2HD0ytl4T93vp8aL93gP9jw9EpZhuQ/zF1LyAc91z/Oqs/VVuzfP1yPwvUoXOM/bcX+snvy5D9lGeJYF7fjP9ZW7C+7J+U/G55eKcsQ4T8ldQKaCBviP99PjZduEuU/vw6cM6K05T/UmuYdp+jiPw1xrIvbaNg/vp8aL90k4j9YObTIdr7XP0YldQKaCOM/RIts5/up4z8LtaZ5xynWP1vTvOMUHdU/WDm0yHa+2z+LbOf7qfHeP84ZUdobfOE/b4EExY8x5T8awFsgQfHfP+cdp+hILtM/eJyiI7n81z+q8dJNYhDgP9/gC5Opguc/1xLyQc9m2T/HuriNBvDePyKOdXEbDdg/"},"yaxis":"y","type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Deviation from Baseline (Signature A)"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Composite Q-Score"}},"coloraxis":{"colorbar":{"title":{"text":"Composite Q-Score"}},"colorscale":[[0.0,"rgb(255,255,229)"],[0.125,"rgb(247,252,185)"],[0.25,"rgb(217,240,163)"],[0.375,"rgb(173,221,142)"],[0.5,"rgb(120,198,121)"],[0.625,"rgb(65,171,93)"],[0.75,"rgb(35,132,67)"],[0.875,"rgb(0,104,55)"],[1.0,"rgb(0,69,41)"]]},"legend":{"tracegroupgap":0,"itemsizing":"constant"},"title":{"text":"Interactive Pericope Map (Double Tradition)"},"hoverlabel":{"font":{"size":14,"family":"sans-serif"},"bgcolor":"white"},"font":{"family":"sans-serif"},"margin":{"l":20,"r":20,"t":50,"b":20},"shapes":[{"line":{"color":"red","dash":"dash"},"type":"line","x0":0,"x1":0,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"showarrow":false,"text":"Triple-Tradition Baseline","x":0,"xanchor":"left","xref":"x","y":1,"yanchor":"top","yref":"y domain"}]},                        {"responsive": true}                    )                };            </script>        </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

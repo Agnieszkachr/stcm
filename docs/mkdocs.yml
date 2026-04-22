@@ -1,0 +1,12 @@
+site_name: STCM Documentation
+site_description: "Synoptic Transform Calibration Model — computational approach to the Synoptic Problem"
+theme:
+  name: readthedocs
+nav:
+  - Home: index.md
+  - Theoretical Framework: theoretical-framework.md
+  - Methodology: methodology.md
+  - Installation: installation.md
+  - Usage: usage.md
+  - Results: results.md
+  - FAQ: faq.md
