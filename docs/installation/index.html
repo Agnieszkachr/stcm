@@ -527,6 +527,7 @@
 <ul>
 <li>Python 3.11, 3.12, or 3.13</li>
 <li>Git</li>
+<li><a href="https://docs.astral.sh/uv/">uv</a> (recommended) — or pip</li>
 </ul>
 <h2 id="step-by-step">Step-by-Step</h2>
 <ol>
@@ -537,21 +538,16 @@
    cd stcm</code></p>
 </li>
 <li>
-<p><strong>Create a virtual environment (optional but recommended):</strong>
+<p><strong>Create a virtual environment and install dependencies:</strong>
+   <code>bash
+   uv venv
+   uv pip install -r requirements.txt</code>
+   Or with pip:
    <code>bash
    python -m venv .venv
-   # Windows:
-   .venv\Scripts\activate
-   # macOS/Linux:
-   source .venv/bin/activate</code></p>
-</li>
-<li>
-<p><strong>Install dependencies:</strong>
-   <code>bash
-   pip install -r requirements.txt</code>
-   If you want to run the tests and build the docs, install the dev dependencies:
-   <code>bash
-   pip install ".[dev]"</code></p>
+   # Windows:  .venv\Scripts\activate
+   # macOS/Linux:  source .venv/bin/activate
+   pip install -r requirements.txt</code></p>
 </li>
 <li>
 <p><strong>Download the SBLGNT Text:</strong>
