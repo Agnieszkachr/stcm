@@ -366,6 +366,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Step-by-Step">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-clone-the-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Clone the repository
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-create-a-virtual-environment-and-install-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Create a virtual environment and install dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-download-the-sblgnt-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Download the SBLGNT text
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -503,6 +542,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Step-by-Step">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-clone-the-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Clone the repository
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-create-a-virtual-environment-and-install-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Create a virtual environment and install dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-download-the-sblgnt-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Download the SBLGNT text
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -530,33 +608,28 @@
 <li><a href="https://docs.astral.sh/uv/">uv</a> (recommended) — or pip</li>
 </ul>
 <h2 id="step-by-step">Step-by-Step</h2>
-<ol>
-<li>
-<p><strong>Clone the repository:</strong>
-   <code>bash
-   git clone https://github.com/stcm-research/stcm.git
-   cd stcm</code></p>
-</li>
-<li>
-<p><strong>Create a virtual environment and install dependencies:</strong>
-   <code>bash
-   uv venv
-   uv pip install -r requirements.txt</code>
-   Or with pip:
-   <code>bash
-   python -m venv .venv
-   # Windows:  .venv\Scripts\activate
-   # macOS/Linux:  source .venv/bin/activate
-   pip install -r requirements.txt</code></p>
-</li>
-<li>
-<p><strong>Download the SBLGNT Text:</strong>
-   The SBL Greek New Testament text is required. It will be downloaded from the Logos Bible Software GitHub repository.
-   <code>bash
-   python download_sblgnt.py</code>
-   This places <code>matthew.txt</code>, <code>mark.txt</code>, and <code>luke.txt</code> in <code>data/raw/</code>.</p>
-</li>
-</ol>
+<h3 id="1-clone-the-repository">1. Clone the repository</h3>
+<pre><code class="language-bash">git clone https://github.com/stcm-research/stcm.git
+cd stcm
+</code></pre>
+<h3 id="2-create-a-virtual-environment-and-install-dependencies">2. Create a virtual environment and install dependencies</h3>
+<p><strong>With uv (recommended):</strong></p>
+<pre><code class="language-bash">uv venv
+uv pip install -r requirements.txt
+</code></pre>
+<p><strong>Or with pip:</strong></p>
+<pre><code class="language-bash">python -m venv .venv
+# Windows:
+.venv\Scripts\activate
+# macOS/Linux:
+source .venv/bin/activate
+pip install -r requirements.txt
+</code></pre>
+<h3 id="3-download-the-sblgnt-text">3. Download the SBLGNT text</h3>
+<p>The SBL Greek New Testament text is required. It will be downloaded from the Logos Bible Software GitHub repository.</p>
+<pre><code class="language-bash">python download_sblgnt.py
+</code></pre>
+<p>This places <code>matthew.txt</code>, <code>mark.txt</code>, and <code>luke.txt</code> in <code>data/raw/</code>.</p>
 <p>You are now ready to run the STCM pipeline.</p>
 
 
