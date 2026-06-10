@@ -652,7 +652,7 @@ class EvaluationEngine:
         corpus: SynopticCorpus,
     ) -> BERTValidationResult:
         """
-        Check whether Ancient-Greek-BERT produces sensible similarity
+        Check whether Koine-Greek-BERT produces sensible similarity
         judgements on known NT paraphrases and cross-gospel quotations.
 
         Known parallels should show high similarity; unrelated passages

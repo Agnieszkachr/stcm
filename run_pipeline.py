@@ -14,7 +14,7 @@ Steps executed:
 
 Usage
 -----
-    python run_pipeline.py [--skip-eval] [--model pranaydeeps/Ancient-Greek-BERT]
+    python run_pipeline.py [--skip-eval] [--model ABeZet/Koine-Greek-BERT]
 
 The pipeline is resumable: if outputs/models/calibration_signatures.pkl exists,
 calibration is skipped and loaded from disk.
@@ -91,7 +91,7 @@ def main() -> None:
     parser.add_argument("--skip-eval", action="store_true",
                         help="Skip the evaluation step (faster)")
     parser.add_argument("--model", default=None,
-                        help="Override embedding model (e.g. pranaydeeps/Ancient-Greek-BERT)")
+                        help="Override embedding model (e.g. ABeZet/Koine-Greek-BERT)")
     parser.add_argument("--resume", action="store_true",
                         help="Skip already-completed steps (detect from STEP_LOG.md)")
     args = parser.parse_args()

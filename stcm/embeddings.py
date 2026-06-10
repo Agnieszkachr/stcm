@@ -3,7 +3,7 @@ stcm/embeddings.py
 ==================
 Embedding pipeline for Ancient Greek text.
 
-Primary model : pranaydeeps/Ancient-Greek-BERT (HuggingFace)
+Primary model : ABeZet/Koine-Greek-BERT (HuggingFace)
 Fallback       : character n-gram hash embedder (offline, deterministic)
 
 The fallback activates automatically when the transformers model cannot be
@@ -56,7 +56,7 @@ class _NgramHashEmbedder:
 
 
 # ---------------------------------------------------------------------------
-# Primary: Ancient-Greek-BERT wrapper
+# Primary: Koine-Greek-BERT wrapper
 # ---------------------------------------------------------------------------
 
 class _TransformerEmbedder:
@@ -153,7 +153,7 @@ class EmbeddingPipeline:
 
         try:
             embedder = _TransformerEmbedder(self._cfg, device)
-            log.info("Using Ancient-Greek-BERT transformer embedder.")
+            log.info("Using Koine-Greek-BERT transformer embedder.")
             return embedder
         except Exception as exc:
             log.warning(

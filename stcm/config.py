@@ -50,10 +50,10 @@ class Paths:
 # ---------------------------------------------------------------------------
 @dataclass
 class EmbeddingConfig:
-    # Primary model — Ancient-Greek-BERT from HuggingFace
+    # Primary model — Koine-Greek-BERT from HuggingFace
     model_name: str = field(
         default_factory=lambda: _env(
-            "EMBEDDING_MODEL", "pranaydeeps/Ancient-Greek-BERT"
+            "EMBEDDING_MODEL", "ABeZet/Koine-Greek-BERT"
         )
     )
     # Layer to extract CLS token / mean pool from (-1 = last hidden state)

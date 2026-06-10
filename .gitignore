@@ -1,5 +1,4 @@
 # STCM
-article.md
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -35,3 +34,6 @@ venv/
 
 # MkDocs build
 site/
+
+# PDFs / Books
+*.pdf

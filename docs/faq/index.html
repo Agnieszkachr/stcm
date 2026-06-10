@@ -437,10 +437,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-use-ancient-greek-bert" class="md-nav__link">
+  <a href="#why-use-koine-greek-bert" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why use Ancient-Greek-BERT?
+        Why use Koine-Greek-BERT?
       
     </span>
   </a>
@@ -570,10 +570,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-use-ancient-greek-bert" class="md-nav__link">
+  <a href="#why-use-koine-greek-bert" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why use Ancient-Greek-BERT?
+        Why use Koine-Greek-BERT?
       
     </span>
   </a>
@@ -677,8 +677,8 @@
 <h1 id="frequently-asked-questions">Frequently Asked Questions</h1>
 <h3 id="does-stcm-prove-that-q-existed">Does STCM prove that Q existed?</h3>
 <p>No. Computational linguistics cannot "prove" the historical existence of a lost document. What STCM demonstrates is that the geometry of the texts in high-dimensional semantic space is highly consistent with the mathematical signature of a shared written source, and strongly inconsistent with random or thematically matched pairing under our null models — even when tested against a thematically matched null model that controls for topical similarity. The results are consistent with some form of non-independent literary relationship (shared source and/or direct dependence). It provides strong statistical evidence <em>in favour</em> of the Q hypothesis, but it remains a model that tests <em>consistency</em>, not <em>truth</em>.</p>
-<h3 id="why-use-ancient-greek-bert">Why use Ancient-Greek-BERT?</h3>
-<p>BERT models represent context-aware semantics, not just exact word overlap. Traditional stylometry often counts word frequencies, which fails to capture synonyms, morphological variations, or semantic themes. Ancient-Greek-BERT has been pre-trained to understand the structure of Ancient Greek, allowing STCM to recognise when Matthew and Luke are saying the same thing in slightly different ways. An internal validation on known NT paraphrases confirms that the model produces sensible similarity judgements for the specific register and vocabulary of synoptic Greek.</p>
+<h3 id="why-use-koine-greek-bert">Why use Koine-Greek-BERT?</h3>
+<p>BERT models represent context-aware semantics, not just exact word overlap. Traditional stylometry often counts word frequencies, which fails to capture synonyms, morphological variations, or semantic themes. Koine-Greek-BERT has been pre-trained to understand the structure of Ancient Greek, allowing STCM to recognise when Matthew and Luke are saying the same thing in slightly different ways. An internal validation on known NT paraphrases confirms that the model produces sensible similarity judgements for the specific register and vocabulary of synoptic Greek.</p>
 <h3 id="doesnt-the-q-score-just-measure-word-overlap">Doesn't the Q-score just measure word overlap?</h3>
 <p>No. A systematic comparison shows that the Pearson correlation between embedding-based Q-scores and traditional word-level Jaccard coefficients is high (<em>r</em> = 0.823) but meaningfully below 1.0. The residual variance — the proportion of the Q-score not explained by word overlap — is approximately one-third, indicating that the embedding analysis captures compositional, syntactic, and semantic structure that word counting cannot access.</p>
 <h3 id="what-about-the-circularity-problem-arent-similar-topics-naturally-similar">What about the circularity problem — aren't similar topics naturally similar?</h3>
@@ -686,7 +686,7 @@
 <h3 id="are-the-results-sensitive-to-the-q-score-weighting">Are the results sensitive to the Q-score weighting?</h3>
 <p>No. A <strong>sensitivity analysis</strong> across nine alternative weighting schemes — from equal weights (0.33, 0.33, 0.34) to single-component models (1.0, 0.0, 0.0) — confirms that <em>Serving Two Masters</em> ranks first under every configuration and the top-5 set remains highly stable (high pairwise Jaccard similarity).</p>
 <h3 id="what-if-i-dont-have-internet-access-to-download-the-model">What if I don't have internet access to download the model?</h3>
-<p>STCM includes an automatic fallback. If <code>pranaydeeps/Ancient-Greek-BERT</code> cannot be loaded via the <code>transformers</code> library, the pipeline automatically switches to a deterministic, offline character-trigram hashing embedder. It maps the Greek text into a 256-dimensional vector space. Whilst less linguistically sophisticated, it is sufficient to demonstrate the pipeline runs end-to-end.</p>
+<p>STCM includes an automatic fallback. If <code>ABeZet/Koine-Greek-BERT</code> cannot be loaded via the <code>transformers</code> library, the pipeline automatically switches to a deterministic, offline character-trigram hashing embedder. It maps the Greek text into a 256-dimensional vector space. Whilst less linguistically sophisticated, it is sufficient to demonstrate the pipeline runs end-to-end.</p>
 <h3 id="what-is-the-farrer-hypothesis-and-does-stcm-disprove-it">What is the Farrer Hypothesis and does STCM disprove it?</h3>
 <p>The Farrer Hypothesis argues that Luke used Matthew as a source, meaning there is no "Q". STCM does not directly falsify this model. However, a <strong>Goulder redaction test</strong> compares pericopes that Goulder (1989) identifies as demonstrating Lukan redaction of Matthew against the rest. These pericopes show no statistically significant difference in Q-score distribution, but the test is severely underpowered (<em>n</em> = 10 vs. <em>n</em> = 26) and the medium effect size (Cohen's <em>d</em> = −0.571) indicates a potentially meaningful difference that the current sample cannot confirm or rule out. The result is therefore genuinely <strong>inconclusive</strong> — it neither supports nor refutes either hypothesis. Future extensions of STCM could develop explicit directional-dependence metrics and employ larger datasets to distinguish Q-mediated from Matthew-mediated transmission.</p>
 <h3 id="what-about-the-possibility-that-q-was-in-aramaic">What about the possibility that Q was in Aramaic?</h3>

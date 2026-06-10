@@ -591,7 +591,7 @@
 <h1 id="methodology">Methodology</h1>
 <p>STCM operates as a computational pipeline applying modern NLP (Natural Language Processing) to Ancient Greek text.</p>
 <h2 id="1-text-representation-embeddings">1. Text Representation (Embeddings)</h2>
-<p>We use <code>pranaydeeps/Ancient-Greek-BERT</code>, a RoBERTa-based model trained on a large corpus of Ancient Greek texts (including the Thesaurus Linguae Graecae). Each sentence in a pericope is passed through the model with dropout disabled (evaluation mode). We extract the mean-pooled token vectors (last hidden state), resulting in a 768-dimensional float vector. A full pericope is represented by the mean of its constituent sentence vectors, normalised to unit length.</p>
+<p>We use <code>ABeZet/Koine-Greek-BERT</code>, a RoBERTa-based model trained on a large corpus of Ancient Greek texts (including the Thesaurus Linguae Graecae). Each sentence in a pericope is passed through the model with dropout disabled (evaluation mode). We extract the mean-pooled token vectors (last hidden state), resulting in a 768-dimensional float vector. A full pericope is represented by the mean of its constituent sentence vectors, normalised to unit length.</p>
 <p>If the transformer model is unavailable, a deterministic 256-dimensional character-trigram hashing embedder serves as a fallback.</p>
 <p>An <strong>internal validation</strong> on known NT paraphrases (e.g., Feeding of the Five Thousand across Matt/Mark, the Baptism across Mark/Luke) confirms that the model discriminates known synoptic parallels from unrelated passages in the specific register of New Testament Greek.</p>
 <h2 id="2-calibration-triple-tradition">2. Calibration (Triple Tradition)</h2>

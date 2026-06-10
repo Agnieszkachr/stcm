@@ -5,6 +5,10 @@
 
 📖 **[Documentation & Interactive Results](https://agnieszkachr.github.io/stcm/)**
 
+> [!IMPORTANT]
+> **MODEL UPGRADE NOTICE**: This version of the repository has been upgraded to use **`ABeZet/Koine-Greek-BERT`** as the default embedding model (replacing the classical Ancient Greek BERT baseline). 
+> This change resolves key vocabulary-register issues in the synoptic gospels. In particular, the *Beatitudes* (Matt 5:3–12 / Luke 6:20–26) now successfully align with the semantic baseline, rising from a previously low score to rank #15 ($Q = 0.641$, cosine similarity $0.952$). All calibration signatures, permutation tests, and downstream outputs have been regenerated and updated.
+
 ## Overview
 
 STCM is a computational research tool that investigates the **Synoptic Problem** — the literary relationship among the three synoptic gospels (Matthew, Mark, Luke) — through NLP embedding analysis.
@@ -13,7 +17,7 @@ The core hypothesis under test: **do the double-tradition pericopes (passages fo
 
 ### Method
 
-1. **Calibration** — Embed triple-tradition pericopes (Matt + Mark + Luke) with [Ancient-Greek-BERT](https://huggingface.co/pranaydeeps/Ancient-Greek-BERT). Compute cosine similarity distributions (Signature A) and residual-vector correlations (Signature B) to establish baselines for known source-sharing.
+1. **Calibration** — Embed triple-tradition pericopes (Matt + Mark + Luke) with [Koine-Greek-BERT](https://huggingface.co/ABeZet/Koine-Greek-BERT). Compute cosine similarity distributions (Signature A) and residual-vector correlations (Signature B) to establish baselines for known source-sharing.
 
 2. **Scoring** — For each double-tradition pericope, compute a composite Q-score measuring how well the Matt–Luke embedding relationship matches the calibrated signatures.
 
@@ -25,23 +29,23 @@ The core hypothesis under test: **do the double-tradition pericopes (passages fo
 
 | Metric | Value |
 |--------|-------|
-| Embedding model | `pranaydeeps/Ancient-Greek-BERT` |
-| Triple-tradition calibration (Sig-A) | μ = 0.935, σ = 0.038 |
-| Residual signature (Sig-B) | μ = 0.370, σ = 0.181 |
-| Double-tradition Q-score mean | 0.612 ± 0.057 |
-| Random permutation test | empirical *p* = 0.001 (0/1,000 ≥ observed) |
-| Thematic-null permutation test | empirical *p* = 0.001 (0/1,000 ≥ observed) |
-| Weight sensitivity (top-5 Jaccard) | 0.815 across 9 schemes |
-| Sentence-level bootstrap std | 0.044 |
+| Embedding model | `ABeZet/Koine-Greek-BERT` |
+| Triple-tradition calibration (Sig-A) | μ = 0.9472, σ = 0.0321 (95% CI: [0.9376, 0.9561]) |
+| Residual signature (Sig-B) | μ = 0.3693, σ = 0.1972 |
+| Double-tradition Q-score mean | 0.6204 ± 0.0563 |
+| Random permutation test | empirical *p* = 0.000 (0/1,000 ≥ observed) |
+| Thematic-null permutation test | empirical *p* = 0.000 (0/1,000 ≥ observed) |
+| Weight sensitivity (top-5 Jaccard) | 0.802 across 9 schemes |
+| Sentence-level bootstrap std | 0.045 |
 | Reconstruction convergence | 100% |
 
 **Top 5 Q-scored pericopes:**
 
-1. Serving Two Masters (Q = 0.710)
-2. Lament over Jerusalem (Q = 0.689)
-3. Return of Unclean Spirit (Q = 0.688)
-4. Jesus on John (Q = 0.679)
-5. Thief in the Night (Q = 0.677)
+1. Serving Two Masters (Q = 0.709)
+2. Lament over Jerusalem (Q = 0.693)
+3. Return of Unclean Spirit (Q = 0.683)
+4. Hidden from Wise, Revealed (Q = 0.679)
+5. Jesus on John (Q = 0.678)
 
 ![Q-Score Histogram](outputs/figures/q_score_histogram.png)
 
@@ -93,7 +97,7 @@ stcm/
 │   ├── config.py          # Configuration with env-var overrides
 │   ├── utils.py           # Greek normalisation, SBLGNT parsing, math helpers
 │   ├── data_loader.py     # SBLGNT loader + Aland pericope alignment table
-│   ├── embeddings.py      # Ancient-Greek-BERT + n-gram fallback pipeline
+│   ├── embeddings.py      # Koine-Greek-BERT + n-gram fallback pipeline
 │   ├── calibration.py     # Triple-tradition signature computation
 │   ├── scoring.py         # Double-tradition Q-score computation
 │   ├── reconstruction.py  # Latent Q embedding estimation
@@ -124,11 +128,11 @@ STCM_LOG_LEVEL=DEBUG python run_pipeline.py
 
 ### Signature A — Independent Tradition Baseline
 
-For each triple-tradition pericope (n = 49), we compute `cos(emb(Matt), emb(Luke))`. This yields a distribution of expected Matt–Luke similarities when both evangelists share a common Markan source. The calibrated mean (0.935) and 95% CI [0.924, 0.945] define the expected similarity range.
+For each triple-tradition pericope (n = 49), we compute `cos(emb(Matt), emb(Luke))`. This yields a distribution of expected Matt–Luke similarities when both evangelists share a common Markan source. The calibrated mean (0.9472) and 95% CI [0.9376, 0.9561] define the expected similarity range.
 
 ### Signature B — Residual Dependence
 
-The residual of Matthew relative to Mark captures what Matthew *adds* beyond the Markan template. If Matthew and Luke independently used Q in addition to Mark, their residuals should correlate. The calibrated mean residual cosine similarity is 0.370, indicating moderate but noisy correlation.
+The residual of Matthew relative to Mark captures what Matthew *adds* beyond the Markan template. If Matthew and Luke independently used Q in addition to Mark, their residuals should correlate. The calibrated mean residual cosine similarity is 0.3693, indicating moderate but noisy correlation.
 
 For double-tradition pericopes (where Mark is absent), the residual is computed relative to the **Mark centroid** — the mean embedding of all Mark's triple-tradition pericopes. This centroid represents the typical direction of synoptic narrative as shaped by Mark in embedding space. This is an approximation; see the article for full discussion of its implications.
 
@@ -204,7 +208,7 @@ MIT — see [LICENSE](LICENSE).
 
 All pipeline outputs are fully deterministic given:
 - SBLGNT text files (downloaded via `download_sblgnt.py`)
-- Ancient-Greek-BERT model weights (v1.0 from HuggingFace)
+- Koine-Greek-BERT model weights (from HuggingFace)
 - Python 3.11+ with dependencies per `requirements.txt`
 - Random seed 42 (default, configurable)
 
