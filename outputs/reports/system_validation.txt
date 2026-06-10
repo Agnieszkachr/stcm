@@ -19,8 +19,8 @@ Top 5 Q pericopes:
 
 Evaluation Suite Results:
 --------------------------------------------------
-Random perm. p-value  : 0.0000 (z=83.646)
-Thematic-null p-value : 0.0000 (z=79.062)
+Random perm. p-value  : 0.0000 (z=22.105)
+Thematic-null p-value : 0.0000 (z=23.247)
 Weight sensitivity    : top-5 Jaccard = 0.802
 Bootstrap mean std    : 0.0449
 Word-overlap Pearson r: 0.764

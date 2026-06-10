@@ -40,7 +40,7 @@ from stcm.config import EvaluationConfig, default_config
 from stcm.data_loader import Pericope, SynopticCorpus
 from stcm.embeddings import EmbeddingPipeline
 from stcm.scoring import QScorer, ScoringReport
-from stcm.utils import cosine_similarity, normalise_greek, strip_accents
+from stcm.utils import cosine_similarity, normalise_greek, strip_accents, residual_vector
 
 log = logging.getLogger(__name__)
 
@@ -276,7 +276,10 @@ class EvaluationEngine:
                 e_l = self._pipe.embed_text(l_txt)
                 cos = cosine_similarity(e_m, e_l)
                 dev_a = cos - self._cal.sig_a.mean
-                q = 0.5 * cos + 0.3 * max(0.0, dev_a)
+                r_m = residual_vector(e_m, self._cal.centroid_mark)
+                r_l = residual_vector(e_l, self._cal.centroid_mark)
+                resid_sim = cosine_similarity(r_m, r_l)
+                q = 0.5 * cos + 0.3 * max(0.0, dev_a) + 0.2 * max(0.0, resid_sim)
                 perm_qs.append(q)
             null_stats.append(stat_fn(np.array(perm_qs)))
             if (i + 1) % 100 == 0:
@@ -349,7 +352,10 @@ class EvaluationEngine:
                 e_l = self._pipe.embed_text(l_txt)
                 cos = cosine_similarity(e_m, e_l)
                 dev_a = cos - self._cal.sig_a.mean
-                q = 0.5 * cos + 0.3 * max(0.0, dev_a)
+                r_m = residual_vector(e_m, self._cal.centroid_mark)
+                r_l = residual_vector(e_l, self._cal.centroid_mark)
+                resid_sim = cosine_similarity(r_m, r_l)
+                q = 0.5 * cos + 0.3 * max(0.0, dev_a) + 0.2 * max(0.0, resid_sim)
                 perm_qs.append(q)
             null_stats.append(float(np.mean(perm_qs)))
             if (i + 1) % 100 == 0:

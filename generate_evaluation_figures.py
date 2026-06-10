@@ -214,10 +214,10 @@ q_scores = [d['q_score'] for d in data]
 # Histogram
 ax.hist(q_scores, bins=12, color='#2E86AB', alpha=0.75, edgecolor='white', linewidth=0.5, label='Observed Q-scores (n=36)')
 
-# Null distribution (mean=0.411, sd=0.003 from evaluation_summary.md)
-null_mean = 0.4268
-null_sd = 0.0023
-x_null = np.linspace(0.41, 0.44, 200)
+# Null distribution from corrected evaluation_summary.md
+null_mean = 0.4759
+null_sd = 0.0065
+x_null = np.linspace(0.45, 0.50, 200)
 null_pdf = (1 / (null_sd * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x_null - null_mean) / null_sd)**2)
 # Scale to histogram height
 null_pdf_scaled = null_pdf * (len(q_scores) * (q_scores[0] - q_scores[-1]) / 12) * 0.3
@@ -273,9 +273,9 @@ ax.plot(xline, np.polyval(z, xline), '--', color='#E84855', alpha=0.6, linewidth
 ax.set_xlabel('Mean pericope length (verses)')
 ax.set_ylabel('Q-score')
 ax.set_title(f'Q-score vs. pericope length (r = {r:.3f}, p = {p:.3f}; ρ = {sr:.3f})')
-plt.savefig(os.path.join(OUT_DIR, 'fig2_qscore_vs_length.png'))
+plt.savefig(os.path.join(OUT_DIR, 'fig4_qscore_vs_length.png'))
 plt.close()
-print(f"Saved fig2_qscore_vs_length.png | Pearson r={r:.3f}, p={p:.4f} | Spearman rho={sr:.3f}, p={sp:.4f}")
+print(f"Saved fig4_qscore_vs_length.png | Pearson r={r:.3f}, p={p:.4f} | Spearman rho={sr:.3f}, p={sp:.4f}")
 
 # ---------- FIGURE 3: Residual symmetry comparison ----------
 fig, ax = plt.subplots(figsize=(7, 5))
@@ -312,9 +312,9 @@ ax.set_ylabel('Residual cosine similarity')
 ax.set_title('Residual symmetry: top-5 double-tradition pericopes\nvs. triple-tradition baseline')
 ax.set_ylim(0, 1.1)
 ax.legend(loc='lower right', fontsize=9)
-plt.savefig(os.path.join(OUT_DIR, 'fig3_residual_symmetry.png'))
+plt.savefig(os.path.join(OUT_DIR, 'fig2_residual_symmetry.png'))
 plt.close()
-print("Saved fig3_residual_symmetry.png")
+print("Saved fig2_residual_symmetry.png")
 
 # ---------- FIGURE 4: Q-score by Kloppenborg stratum ----------
 fig, ax = plt.subplots(figsize=(7, 5))
@@ -366,9 +366,9 @@ if q1_scores and q2_scores:
     print(f"Mann-Whitney U: stat={mwu_stat:.1f}, p={mwu_p:.4f}")
     print(f"Kruskal-Wallis: stat={kw_stat:.3f}, p={kw_p:.4f}")
 
-plt.savefig(os.path.join(OUT_DIR, 'fig4_qscore_by_stratum.png'))
+plt.savefig(os.path.join(OUT_DIR, 'fig6_qscore_by_stratum.png'))
 plt.close()
-print("Saved fig4_qscore_by_stratum.png")
+print("Saved fig6_qscore_by_stratum.png")
 
 # ---------- FIGURE 5: Full ranked pericope plot ----------
 fig, ax = plt.subplots(figsize=(10, 7))
@@ -400,9 +400,9 @@ legend_elements = [
 ]
 ax.legend(handles=legend_elements, loc='lower right', fontsize=8)
 
-plt.savefig(os.path.join(OUT_DIR, 'fig5_full_ranking.png'))
+plt.savefig(os.path.join(OUT_DIR, 'fig3_full_ranking.png'))
 plt.close()
-print("Saved fig5_full_ranking.png")
+print("Saved fig3_full_ranking.png")
 
 # ---------- FIGURE 6: Q-score by form type ----------
 fig, ax = plt.subplots(figsize=(7, 5))
@@ -449,9 +449,9 @@ for f in form_order:
         vals = form_groups[f]
         print(f"Form '{f}': n={len(vals)}, mean={statistics.mean(vals):.4f}, sd={statistics.stdev(vals) if len(vals)>1 else 0:.4f}")
 
-plt.savefig(os.path.join(OUT_DIR, 'fig6_qscore_by_form.png'))
+plt.savefig(os.path.join(OUT_DIR, 'fig5_qscore_by_form.png'))
 plt.close()
-print("Saved fig6_qscore_by_form.png")
+print("Saved fig5_qscore_by_form.png")
 
 # ---------- SUMMARY STATISTICS ----------
 print("\n=== SUMMARY FOR ARTICLE ===")

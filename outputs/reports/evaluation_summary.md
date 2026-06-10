@@ -3,17 +3,17 @@
 ## 1. Permutation Test: Mean Q-Score (Random Null)
 
 - Observed mean Q-score : 0.6204
-- Null mean             : 0.4268
-- Null std              : 0.0023
+- Null mean             : 0.4759
+- Null std              : 0.0065
 - p-value               : 0.0000
-- z-score               : 83.646
+- z-score               : 22.105
 - Interpretation        : SIGNIFICANT (p < 0.05)
 
 ## 2. Permutation Test: Top-10 Mean Q-Score
 
 - Observed top-10 mean  : 0.6777
 - p-value               : 0.0000
-- z-score               : 44.983
+- z-score               : 9.733
 - Interpretation        : SIGNIFICANT (p < 0.05)
 
 ## 3. Thematic-Null Permutation Test (Circularity Check)
@@ -24,10 +24,10 @@ random one.  This is a more demanding null that controls for topical
 similarity in Koine Greek.
 
 - Observed mean Q-score : 0.6204
-- Thematic null mean    : 0.4295
-- Thematic null std     : 0.0024
+- Thematic null mean    : 0.4840
+- Thematic null std     : 0.0059
 - p-value               : 0.0000
-- z-score               : 79.062
+- z-score               : 23.247
 - Interpretation        : SIGNIFICANT — signal exceeds thematic baseline
 
 ## 4. Weight Sensitivity Analysis
