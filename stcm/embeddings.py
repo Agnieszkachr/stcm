@@ -4,12 +4,12 @@ stcm/embeddings.py
 Embedding pipeline for Ancient Greek text.
 
 Primary model : ABeZet/Koine-Greek-BERT (HuggingFace)
-Fallback       : character n-gram hash embedder (offline, deterministic)
+Fallback       : character n-gram hash embedder (offline, deterministic,
+                 opt-in via STCM_ALLOW_FALLBACK=1)
 
-The fallback activates automatically when the transformers model cannot be
-loaded (e.g. no network, no weights).  All downstream modules work identically
-with either embedder — the vector dimensionality differs (768 vs 256) but the
-interface is identical.
+The embedder is loaded lazily, on the first cache miss: a fully cached
+corpus can be analysed without the model weights (or torch/transformers)
+being installed at all.
 """
 from __future__ import annotations
 
@@ -134,14 +134,27 @@ class EmbeddingPipeline:
         self._cache_dir = cache_dir or default_config.paths.data_processed
         self._cache_dir.mkdir(parents=True, exist_ok=True)
         self._cache: dict = {}
-        self._embedder = self._load_embedder()
+        # The embedder is loaded lazily, on the first cache miss.  A fully
+        # cached corpus can therefore be analysed without the model weights
+        # (or torch/transformers) being available at all.
+        self._embedder = None
 
     # ------------------------------------------------------------------
     # Internal
     # ------------------------------------------------------------------
 
     def _load_embedder(self):
-        """Try transformer model; fall back to n-gram hash embedder."""
+        """
+        Load the transformer model.
+
+        The offline n-gram fallback is only used when explicitly enabled via
+        the STCM_ALLOW_FALLBACK=1 environment variable.  A silent fallback
+        would risk producing results with a different embedder from the one
+        named in the reports, so by default a failure to load the model is
+        a hard error.
+        """
+        import os
+
         if self._cfg.use_gpu:
             try:
                 import torch  # type: ignore
@@ -153,23 +166,43 @@ class EmbeddingPipeline:
 
         try:
             embedder = _TransformerEmbedder(self._cfg, device)
-            log.info("Using Koine-Greek-BERT transformer embedder.")
+            log.info("Using transformer embedder: %s", self._cfg.model_name)
             return embedder
         except Exception as exc:
-            log.warning(
-                "Cannot load transformer model (%s). "
-                "Falling back to n-gram hash embedder.",
-                exc,
-            )
-            return _NgramHashEmbedder()
+            if os.environ.get("STCM_ALLOW_FALLBACK") == "1":
+                log.warning(
+                    "Cannot load transformer model (%s). "
+                    "STCM_ALLOW_FALLBACK=1 set — using n-gram hash embedder. "
+                    "Results will NOT be comparable to published outputs.",
+                    exc,
+                )
+                return _NgramHashEmbedder()
+            raise RuntimeError(
+                f"Cannot load transformer model '{self._cfg.model_name}' ({exc}). "
+                "Set STCM_ALLOW_FALLBACK=1 to use the offline n-gram embedder "
+                "for smoke-testing only."
+            ) from exc
+
+    def _ensure_embedder(self):
+        """Load the embedder on first use (lazy)."""
+        if self._embedder is None:
+            self._embedder = self._load_embedder()
+        return self._embedder
+
+    @property
+    def embedder_id(self) -> str:
+        """Identifier of the embedder actually in use (for reports and cache keys)."""
+        if isinstance(self._embedder, _NgramHashEmbedder):
+            return "ngram-fallback-256"
+        return self._cfg.model_name
 
     @property
     def dim(self) -> int:
         """Embedding dimensionality."""
         if isinstance(self._embedder, _NgramHashEmbedder):
             return _NgramHashEmbedder.DIM
-        # Peek at a dummy embedding
-        dummy = self._embedder.embed("τεστ")
+        # Peek at a dummy embedding (loads the embedder only if uncached)
+        dummy = self.embed_text("τεστ")
         return dummy.shape[0]
 
     def _cache_path(self, key: str) -> pathlib.Path:
@@ -189,8 +222,12 @@ class EmbeddingPipeline:
     def _save_cache(self, key: str, vec: np.ndarray) -> None:
         self._cache[key] = vec
         p = self._cache_path(key)
-        with open(p, "wb") as fh:
+        # Atomic write (tmp + rename) so an interrupted run can never
+        # leave a truncated cache entry behind.
+        tmp = p.with_suffix(".tmp")
+        with open(tmp, "wb") as fh:
             pickle.dump(vec, fh, protocol=pickle.HIGHEST_PROTOCOL)
+        tmp.replace(p)
 
     # ------------------------------------------------------------------
     # Public API
@@ -208,11 +245,22 @@ class EmbeddingPipeline:
         -------
         np.ndarray, shape (D,), float32, L2-normalised
         """
-        key = text_hash(text)
+        # The cache key includes the model identity so that switching
+        # models (e.g. Ancient-Greek-BERT -> Koine-Greek-BERT) can never
+        # silently reuse vectors produced by a different model.
+        key = text_hash(f"{self._cfg.model_name}::{text}")
         cached = self._load_cache(key)
         if cached is not None:
             return cached
-        vec = self._embedder.embed(text)
+        # Backward compatibility: caches written before v0.2 were keyed by
+        # the text hash alone.  Accept them only for the default published
+        # model, and migrate the entry to the new key on first access.
+        if self._cfg.model_name == "ABeZet/Koine-Greek-BERT":
+            legacy = self._load_cache(text_hash(text))
+            if legacy is not None:
+                self._save_cache(key, legacy)
+                return legacy
+        vec = self._ensure_embedder().embed(text)
         self._save_cache(key, vec)
         return vec
 
@@ -252,7 +300,7 @@ class EmbeddingPipeline:
         """
         results: List[np.ndarray] = []
         n = len(texts)
-        log.info("Batch-embedding %d texts …", n)
+        log.info("Batch-embedding %d texts ...", n)
         for i, t in enumerate(texts):
             results.append(self.embed_text(t))
             if show_progress and n >= 10 and (i + 1) % max(1, n // 10) == 0:

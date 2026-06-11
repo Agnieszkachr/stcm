@@ -251,6 +251,7 @@ def main() -> None:
     _write_validation_report(
         report, reconstruction, cfg,
         eval_result=eval_result if not args.skip_eval else None,
+        embedder_id=getattr(pipeline, "embedder_id", cfg.embedding.model_name),
     )
     append_step_log(7, "System validation report generated", [
         "outputs/reports/system_validation.txt",
@@ -263,11 +264,12 @@ def main() -> None:
 
 
 def _write_validation_report(report, reconstruction, cfg: STCMConfig,
-                              eval_result=None) -> None:
+                              eval_result=None, embedder_id=None) -> None:
     lines = [
         "STCM System Validation Report",
         "=" * 50,
         f"Embedding model       : {cfg.embedding.model_name}",
+        f"Embedder in use       : {embedder_id or cfg.embedding.model_name}",
         f"Double-tradition n    : {len(report.scores)}",
         f"Q-score mean          : {report.q_scores.mean():.4f}",
         f"Q-score std           : {report.q_scores.std():.4f}",
@@ -304,6 +306,18 @@ def _write_validation_report(report, reconstruction, cfg: STCMConfig,
         if eval_result.bert_validation is not None:
             bv = eval_result.bert_validation
             lines.append(f"BERT validation gap   : {bv.separation:.3f}")
+        pc = getattr(eval_result, "permutation_mean_cos", None)
+        if pc is not None:
+            lines.append(
+                f"Raw-cosine perm. test : p={pc.p_value:.4f} (z={pc.z_score:.3f}, "
+                f"null mean={pc.null_distribution.mean():.4f})"
+            )
+        pct = getattr(eval_result, "thematic_null_cos", None)
+        if pct is not None:
+            lines.append(
+                f"Raw-cosine thematic   : p={pct.p_value:.4f} (z={pct.z_score:.3f}, "
+                f"null mean={pct.null_distribution.mean():.4f})"
+            )
 
     # Full pericope table
     lines.append("")

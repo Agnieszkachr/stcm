@@ -87,7 +87,7 @@ class CalibrationResult:
     matt_luke_sims: np.ndarray   # cosine(Matt, Luke)
     residual_sims: np.ndarray    # cosine(resid_Matt_vs_Mark, resid_Luke_vs_Mark)
     # Mean embedding vectors per gospel (centroid of triple-tradition pericopes).
-    # NOTE (§III.2): centroid_mark is used in scoring.py for double-tradition
+    # NOTE: centroid_mark is used in scoring.py for double-tradition
     # pericopes where no Markan parallel exists.  It represents the mean
     # direction of all Mark embeddings in the triple tradition — a proxy for
     # "the Markan direction in embedding space."  Residuals computed relative

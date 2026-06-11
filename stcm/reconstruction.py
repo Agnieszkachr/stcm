@@ -15,7 +15,7 @@ the actual Q text.  Instead, we estimate where in embedding space a shared
 source would need to be positioned such that both the Matthew and Luke
 versions are plausibly derived from it via the calibrated transforms.
 
-Algorithm (§3.5 — iterative, ridge-regularised centroid-shrinkage)
+Algorithm (iterative, ridge-regularised centroid-shrinkage)
 ------------------------------------------------------------------
 The algorithm proceeds as follows for each double-tradition pericope:
 
@@ -48,7 +48,7 @@ The algorithm proceeds as follows for each double-tradition pericope:
         q̂ — estimated latent Q embedding
         n_iters, converged flag, final_delta, variance of interim estimates
 
-Convergence note (§III.4):
+Convergence note:
     The inclusion of q̂_k in the centroid at each step acts as a damping
     (shrinkage) term that prevents oscillation and guarantees convergence
     under the mild assumption that the stripped vectors lie in a convex

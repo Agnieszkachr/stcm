@@ -1,0 +1,28 @@
+# Frequently Asked Questions
+
+### Does STCM prove that Q existed?
+No. Computational linguistics cannot "prove" the historical existence of a lost document. What STCM demonstrates is that the geometry of the texts in high-dimensional semantic space is highly consistent with the mathematical signature of a shared written source, and strongly inconsistent with random or thematically matched pairing under our null models — even when tested against a thematically matched null model that controls for topical similarity. The results are consistent with some form of non-independent literary relationship (shared source and/or direct dependence). It provides strong statistical evidence *in favour* of the Q hypothesis, but it remains a model that tests *consistency*, not *truth*.
+
+### Why use Koine-Greek-BERT?
+BERT models represent context-aware semantics, not just exact word overlap. Traditional stylometry often counts word frequencies, which fails to capture synonyms, morphological variations, or semantic themes. Koine-Greek-BERT has been pre-trained to understand the structure of Ancient Greek, allowing STCM to recognise when Matthew and Luke are saying the same thing in slightly different ways. An internal validation on known NT paraphrases confirms that the model produces sensible similarity judgements for the specific register and vocabulary of synoptic Greek.
+
+### Doesn't the Q-score just measure word overlap?
+No. A systematic comparison shows that the Pearson correlation between embedding-based Q-scores and traditional word-level Jaccard coefficients is substantial (*r* = 0.733) but meaningfully below 1.0. Approximately 46% of the Q-score variance is not explained by word overlap, indicating that the embedding analysis captures compositional, syntactic, and semantic structure that word counting cannot access.
+
+### What about the circularity problem — aren't similar topics naturally similar?
+This was addressed with the **thematic-null permutation test**. Instead of pairing Matt–Luke pericopes randomly, this test pairs each Matthean pericope with a *thematically similar* Lukan pericope (wisdom with wisdom, apocalyptic with apocalyptic, etc.). The correctly paired pericopes still significantly exceed this thematic baseline (empirical *p* = 0.001, 1,000 permutations), demonstrating that the signal reflects genuine textual correspondence beyond mere topical similarity.
+
+### Are the results sensitive to the Q-score weighting?
+No. A **sensitivity analysis** across four weighting schemes — (0.8, 0.2), (0.7, 0.3), (0.9, 0.1), and the raw-cosine-only model (1.0, 0.0) — confirms that *Serving Two Masters* ranks first under every configuration and the top-5 set remains highly stable (pairwise Jaccard = 0.833). The raw-cosine-only model matters most: it excludes the potentially genre-confounded residual component, and its agreement with the composite ranking shows the findings do not depend on that component.
+
+### What if I don't have internet access to download the model?
+STCM includes an offline fallback, but it must be enabled explicitly. If `ABeZet/Koine-Greek-BERT` cannot be loaded via the `transformers` library, the pipeline stops with an error unless `STCM_ALLOW_FALLBACK=1` is set, in which case a deterministic character-trigram hashing embedder (256-dimensional) is used. The fallback is sufficient to demonstrate that the pipeline runs end-to-end, but its results are not comparable to the published outputs; the embedder actually used is recorded in `system_validation.txt`.
+
+### What is the Farrer Hypothesis and does STCM disprove it?
+The Farrer Hypothesis argues that Luke used Matthew as a source, meaning there is no "Q". STCM does not directly falsify this model. However, a **Goulder redaction test** compares pericopes that Goulder (1989) identifies as demonstrating Lukan redaction of Matthew against the rest. These pericopes show no statistically significant difference in Q-score distribution, but the test is severely underpowered (*n* = 10 vs. *n* = 26) and the medium effect size (Cohen's *d* = −0.690) indicates a potentially meaningful difference that the current sample cannot confirm or rule out. The result is therefore genuinely **inconclusive** — it neither supports nor refutes either hypothesis. Future extensions of STCM could develop explicit directional-dependence metrics and employ larger datasets to distinguish Q-mediated from Matthew-mediated transmission.
+
+### What about the possibility that Q was in Aramaic?
+Casey (2002) argues that Q may have been composed in Aramaic and translated independently into Greek. If so, the Greek-language embeddings would capture two independent translation events rather than the original source. This would *attenuate* the Q-score signal (making significant results more noteworthy, not less) and could explain why some pericopes score lower than expected despite being considered core Q material. It is also worth noting that a Koine Greek BERT model may be sensitive to the distinctive syntax of "translation Greek" — Semitisms and Aramaisms that arise when Greek renders Semitic source constructions. If Matthew and Luke translated an Aramaic Q independently, the resulting variance in Greek syntax would naturally lower cosine similarity, which is consistent with the spectrum of Q-scores observed across the double tradition.
+
+### Can I run this on John or the non-canonical gospels?
+Yes, the pipeline can be adapted to any Greek text, but you will need to map the pericopes in `data_loader.py`. Currently, it uses a hardcoded table based on the Aland Synopsis for the synoptic gospels.
