@@ -2,18 +2,18 @@
 
 ## 1. Permutation Test: Mean Q-Score (Random Null)
 
-- Observed mean Q-score : 0.6204
-- Null mean             : 0.4759
-- Null std              : 0.0065
+- Observed mean Q-score : 0.8994
+- Null mean             : 0.7318
+- Null std              : 0.0077
 - p-value               : 0.0000
-- z-score               : 22.105
+- z-score               : 21.692
 - Interpretation        : SIGNIFICANT (p < 0.05)
 
 ## 2. Permutation Test: Top-10 Mean Q-Score
 
-- Observed top-10 mean  : 0.6777
+- Observed top-10 mean  : 0.9618
 - p-value               : 0.0000
-- z-score               : 9.733
+- z-score               : 9.180
 - Interpretation        : SIGNIFICANT (p < 0.05)
 
 ## 3. Thematic-Null Permutation Test (Circularity Check)
@@ -23,36 +23,44 @@ Pairs each Matthean pericope with a *thematically similar* Lukan pericope
 random one.  This is a more demanding null that controls for topical
 similarity in Koine Greek.
 
-- Observed mean Q-score : 0.6204
-- Thematic null mean    : 0.4840
-- Thematic null std     : 0.0059
+- Observed mean Q-score : 0.8994
+- Thematic null mean    : 0.7413
+- Thematic null std     : 0.0072
 - p-value               : 0.0000
-- z-score               : 23.247
+- z-score               : 22.062
 - Interpretation        : SIGNIFICANT — signal exceeds thematic baseline
+
+## 3b. Raw-Cosine (w2 = 0) Permutation Tests (Confound-Free)
+
+Repeats both permutation tests on the mean raw cosine similarity alone,
+excluding the potentially genre-confounded residual component.
+
+- Observed mean cosine  : 0.9452
+- Random null mean      : 0.8533
+- Random null std       : 0.0044
+- Random p-value        : 0.0000  (z=20.660)
+- Thematic null mean    : 0.8585
+- Thematic null std     : 0.0048
+- Thematic p-value      : 0.0000  (z=18.008)
 
 ## 4. Weight Sensitivity Analysis
 
-Tests Q-score stability across nine alternative weighting schemes
-(w_cosine, w_deviation, w_residual).  Top-5 Jaccard stability = 0.802
+Tests Q-score stability across four alternative weighting schemes
+(w_cosine, w_residual).  Top-5 Jaccard stability = 0.833
 (1.0 = identical top-5 across all schemes).
 
-  (0.50, 0.30, 0.20) (default): mean_Q=0.6204  top-5: Serving two masters, Lament over Jerusalem, Return of unclean spirit, Hidden from wise revealed, Jesus on John
-  (0.60, 0.20, 0.20): mean_Q=0.7134  top-5: Serving two masters, Lament over Jerusalem, Return of unclean spirit, Hidden from wise revealed, Jesus on John
-  (0.40, 0.40, 0.20): mean_Q=0.5274  top-5: Serving two masters, Lament over Jerusalem, Return of unclean spirit, Hidden from wise revealed, Jesus on John
-  (0.40, 0.30, 0.30): mean_Q=0.5975  top-5: Serving two masters, Lament over Jerusalem, Return of unclean spirit, Hidden from wise revealed, Jesus on John
-  (0.33, 0.33, 0.34): mean_Q=0.5605  top-5: Serving two masters, Lament over Jerusalem, Return of unclean spirit, Hidden from wise revealed, Jesus on John
-  (0.70, 0.15, 0.15): mean_Q=0.7713  top-5: Serving two masters, Lament over Jerusalem, Return of unclean spirit, Jesus on John, Hidden from wise revealed
-  (0.50, 0.50, 0.00): mean_Q=0.4800  top-5: Serving two masters, Jesus on John, Lament over Jerusalem, Return of unclean spirit, Anxieties about life
-  (0.50, 0.00, 0.50): mean_Q=0.8309  top-5: Serving two masters, Lament over Jerusalem, Return of unclean spirit, Hidden from wise revealed, Lamp of the body
-  (1.00, 0.00, 0.00): mean_Q=0.9452  top-5: Serving two masters, Jesus on John, Lament over Jerusalem, Return of unclean spirit, Anxieties about life
+  (0.80, 0.20) (default): mean_Q=0.8994  top-5: Serving two masters, Lament over Jerusalem, Return of unclean spirit, Hidden from wise revealed, Jesus on John
+  (0.70, 0.30): mean_Q=0.8766  top-5: Serving two masters, Lament over Jerusalem, Return of unclean spirit, Hidden from wise revealed, Jesus on John
+  (0.90, 0.10): mean_Q=0.9223  top-5: Serving two masters, Lament over Jerusalem, Return of unclean spirit, Jesus on John, Hidden from wise revealed
+  (1.00, 0.00): mean_Q=0.9452  top-5: Serving two masters, Jesus on John, Lament over Jerusalem, Return of unclean spirit, Anxieties about life
 
 ## 5. Sentence-Level Bootstrap Robustness
 
 Resamples sentences within each pericope (with replacement) and recomputes
 Q-scores to measure stability under meaningful input perturbation.
 
-- mean_bootstrap_std=0.0449 (across 200 resamples per pericope)
-- Interpretation        : ROBUST (mean std < 0.05)
+- mean_bootstrap_std=0.0567 (across 200 resamples per pericope)
+- Interpretation        : MODERATE SENSITIVITY to sentence composition
 
 ## 6. Word-Overlap vs. Embedding Q-Score Comparison
 
@@ -60,9 +68,9 @@ Compares embedding-based Q-scores with traditional word-level agreement
 (Jaccard coefficient) to demonstrate that embeddings capture information
 beyond simple verbal overlap.
 
-- Pearson r             : 0.764
+- Pearson r             : 0.733
 - p-value               : 0.0000
-- Residual variance     : 0.0013
+- Residual variance     : 0.0020
 - Interpretation        : Moderate correlation — embeddings partially track verbal agreement but capture additional semantic structure
 
 ## 7. Goulder Redaction Test
@@ -71,11 +79,11 @@ Compares Q-score distributions for pericopes Goulder (1989) identifies as
 showing Lukan redaction of Matthew (n=10) against the
 remainder (n=26).
 
-- Goulder mean Q-score  : 0.5948
-- Non-Goulder mean      : 0.6302
-- Welch's t             : -1.381
-- p-value               : 0.1932
-- Cohen's d             : -0.655
+- Goulder mean Q-score  : 0.8685
+- Non-Goulder mean      : 0.9114
+- Welch's t             : -1.405
+- p-value               : 0.1872
+- Cohen's d             : -0.690
 - Interpretation        : No significant difference between Goulder-flagged and non-Goulder pericopes
 
 ## 8. Internal BERT Validation (Known NT Paraphrases)

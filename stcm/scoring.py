@@ -154,7 +154,7 @@ class QScorer:
         dev_a = cos - self._cal.sig_a.mean
 
         # Residual similarity relative to the Mark centroid.
-        # NOTE (§III.2 clarification): For double-tradition pericopes, Mark
+        # NOTE: For double-tradition pericopes, Mark
         # is by definition absent.  The centroid_mark used here is the mean
         # embedding of Mark's triple-tradition pericopes, computed during
         # calibration.  It serves as a proxy for the "Markan direction" in
@@ -169,14 +169,12 @@ class QScorer:
         r_l = residual_vector(e_l, self._cal.centroid_mark)
         resid_sim = cosine_similarity(r_m, r_l)
 
-        # Composite Q-score
+        # Composite Q-score (2-component model: w1=0.8, w3=0.2)
         # Logic:
         #   Higher cosine → more similar → more Q-like
-        #   Smaller deviation from Sig-A baseline → within expected range
         #   Higher residual sim → correlated "surplus" content
         q = (
-            0.5 * cos                        # raw similarity component
-            + 0.3 * max(0.0, dev_a)          # bonus for exceeding baseline
+            0.8 * cos                        # raw similarity component
             + 0.2 * max(0.0, resid_sim)      # residual correlation bonus
         )
 

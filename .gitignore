@@ -32,8 +32,8 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
-# MkDocs build
-site/
+# NOTE: in this repository `site/` is the MkDocs *source* (docs_dir) and
+# `docs/` is the built site published via GitHub Pages — both are tracked.
 
 # PDFs / Books
 *.pdf

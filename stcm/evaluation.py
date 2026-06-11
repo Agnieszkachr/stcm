@@ -46,7 +46,7 @@ log = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-# Thematic categories for the double tradition (§I.1 circularity fix)
+# Thematic categories for the double tradition
 # ---------------------------------------------------------------------------
 # Each double-tradition pericope is assigned to a broad genre/thematic
 # cluster so that the thematic-null can pair pericopes within the same
@@ -92,7 +92,7 @@ THEMATIC_TAGS: Dict[str, str] = {
 }
 
 # ---------------------------------------------------------------------------
-# Goulder redaction pericopes (§II.2)
+# Goulder redaction pericopes
 # ---------------------------------------------------------------------------
 # Pericopes that Goulder (1989) identifies as demonstrating clear Lukan
 # redaction of Matthean material.  Under the Farrer Hypothesis these
@@ -113,7 +113,7 @@ GOULDER_REDACTION_LABELS: List[str] = [
 ]
 
 # ---------------------------------------------------------------------------
-# Known NT paraphrases for internal BERT validation (§III.6)
+# Known NT paraphrases for internal BERT validation
 # ---------------------------------------------------------------------------
 # Pairs of passages with known literary relationships (OT quotations in
 # multiple gospels, Synoptic parallels, etc.) plus a control pair of
@@ -149,7 +149,7 @@ class PermutationTestResult:
 @dataclass
 class SensitivityResult:
     """Outcome of Q-score weight sensitivity analysis."""
-    weight_configs: List[Tuple[float, float, float]]
+    weight_configs: List[Tuple[float, float]]
     top5_per_config: List[List[str]]   # pericope labels for top-5
     mean_q_per_config: List[float]
     top5_stability: float              # Jaccard similarity of top-5 across configs
@@ -213,6 +213,10 @@ class EvaluationResult:
     goulder_test: Optional[GoulderTestResult]
     bert_validation: Optional[BERTValidationResult]
     evaluation_summary_text: str
+    # Raw-cosine (w2 = 0) permutation tests — the confound-free variant that
+    # excludes the residual component entirely.
+    permutation_mean_cos: Optional[PermutationTestResult] = None
+    thematic_null_cos: Optional[PermutationTestResult] = None
 
 
 # ---------------------------------------------------------------------------
@@ -279,7 +283,7 @@ class EvaluationEngine:
                 r_m = residual_vector(e_m, self._cal.centroid_mark)
                 r_l = residual_vector(e_l, self._cal.centroid_mark)
                 resid_sim = cosine_similarity(r_m, r_l)
-                q = 0.5 * cos + 0.3 * max(0.0, dev_a) + 0.2 * max(0.0, resid_sim)
+                q = 0.8 * cos + 0.2 * max(0.0, resid_sim)
                 perm_qs.append(q)
             null_stats.append(stat_fn(np.array(perm_qs)))
             if (i + 1) % 100 == 0:
@@ -301,7 +305,82 @@ class EvaluationEngine:
         )
 
     # ------------------------------------------------------------------
-    # Thematic-null permutation test (§I.1 — circularity fix)
+    # Raw-cosine permutation tests (confound-free variant, w2 = 0)
+    # ------------------------------------------------------------------
+
+    def _raw_cosine_permutation_test(
+        self,
+        report: ScoringReport,
+        corpus: SynopticCorpus,
+        thematic: bool = False,
+    ) -> PermutationTestResult:
+        """
+        Permutation test on the mean *raw cosine similarity* alone (the
+        w2 = 0 model), excluding the residual component.  Because the
+        residual term is potentially genre-confounded (it is computed
+        against a narrative Mark centroid), this variant provides a
+        confound-free significance test of the synoptic signal.
+
+        With thematic=True, Lukan partners are drawn from the same
+        thematic category (the more demanding null).
+        """
+        double = [p for p in corpus.double_tradition if p.matthew and p.luke]
+        seed = self._cfg.random_seed + (7 if thematic else 0)
+        rng = np.random.default_rng(seed)
+
+        observed = float(np.mean([s.matt_luke_cos for s in report.scores]))
+        matt_texts = [p.matthew for p in double]
+        luke_texts = [p.luke for p in double]
+
+        groups: Dict[str, List[int]] = {}
+        if thematic:
+            for idx, p in enumerate(double):
+                tag = THEMATIC_TAGS.get(p.label, "other")
+                groups.setdefault(tag, []).append(idx)
+
+        label = "thematic" if thematic else "random"
+        log.info("Running %d %s raw-cosine permutations …",
+                 self._cfg.n_permutations, label)
+        null_stats: List[float] = []
+        for i in range(self._cfg.n_permutations):
+            perm_cos: List[float] = []
+            if thematic:
+                for j, m_txt in enumerate(matt_texts):
+                    tag = THEMATIC_TAGS.get(double[j].label, "other")
+                    candidates = [k for k in groups[tag] if k != j]
+                    if not candidates:
+                        candidates = [k for k in range(len(double)) if k != j]
+                    pick = rng.choice(candidates)
+                    e_m = self._pipe.embed_text(m_txt)
+                    e_l = self._pipe.embed_text(luke_texts[pick])
+                    perm_cos.append(cosine_similarity(e_m, e_l))
+            else:
+                perm_idx = rng.permutation(len(luke_texts))
+                for j, m_txt in enumerate(matt_texts):
+                    e_m = self._pipe.embed_text(m_txt)
+                    e_l = self._pipe.embed_text(luke_texts[perm_idx[j]])
+                    perm_cos.append(cosine_similarity(e_m, e_l))
+            null_stats.append(float(np.mean(perm_cos)))
+            if (i + 1) % 100 == 0:
+                log.info("  %d / %d %s raw-cosine permutations done",
+                         i + 1, self._cfg.n_permutations, label)
+
+        null_arr = np.array(null_stats)
+        p_value = float(np.mean(null_arr >= observed))
+        z_score = float((observed - null_arr.mean()) / (null_arr.std() + 1e-12))
+        desc = f"Raw-cosine (w2=0) permutation test ({label} null)"
+        log.info("%s: observed=%.4f null_mean=%.4f p=%.4f z=%.3f",
+                 desc, observed, null_arr.mean(), p_value, z_score)
+        return PermutationTestResult(
+            observed_statistic=observed,
+            null_distribution=null_arr,
+            p_value=p_value,
+            z_score=z_score,
+            description=desc,
+        )
+
+    # ------------------------------------------------------------------
+    # Thematic-null permutation test
     # ------------------------------------------------------------------
 
     def _thematic_null_test(
@@ -316,7 +395,7 @@ class EvaluationEngine:
 
         This tests whether the correctly paired pericopes exceed what would
         be expected from mere topical similarity in Koine Greek, addressing
-        the circularity concern raised in the referee report (§I.1).
+        the semantic-circularity concern: topical overlap alone could inflate similarity.
         """
         double = [p for p in corpus.double_tradition if p.matthew and p.luke]
         rng = np.random.default_rng(self._cfg.random_seed + 7)
@@ -355,7 +434,7 @@ class EvaluationEngine:
                 r_m = residual_vector(e_m, self._cal.centroid_mark)
                 r_l = residual_vector(e_l, self._cal.centroid_mark)
                 resid_sim = cosine_similarity(r_m, r_l)
-                q = 0.5 * cos + 0.3 * max(0.0, dev_a) + 0.2 * max(0.0, resid_sim)
+                q = 0.8 * cos + 0.2 * max(0.0, resid_sim)
                 perm_qs.append(q)
             null_stats.append(float(np.mean(perm_qs)))
             if (i + 1) % 100 == 0:
@@ -378,7 +457,7 @@ class EvaluationEngine:
         )
 
     # ------------------------------------------------------------------
-    # Word-overlap baseline comparison (§I.2)
+    # Word-overlap baseline comparison
     # ------------------------------------------------------------------
 
     @staticmethod
@@ -406,7 +485,7 @@ class EvaluationEngine:
         """
         Compare embedding-based Q-scores with simple word-level agreement
         percentages.  A low correlation would demonstrate that the embedding
-        analysis captures information beyond lexical overlap (§I.2).
+        analysis captures information beyond lexical overlap.
         """
         double = [p for p in corpus.double_tradition if p.matthew and p.luke]
         labels: List[str] = []
@@ -446,7 +525,7 @@ class EvaluationEngine:
         )
 
     # ------------------------------------------------------------------
-    # Sentence-level bootstrap robustness (§III.3 — replaces seed test)
+    # Sentence-level bootstrap robustness
     # ------------------------------------------------------------------
 
     def _sentence_bootstrap(
@@ -462,7 +541,7 @@ class EvaluationEngine:
 
         This is a meaningful perturbation-based robustness check, unlike
         the seed-stability test which is trivially zero for a deterministic
-        pipeline (§III.3).
+        pipeline.
         """
         double = [p for p in corpus.double_tradition if p.matthew and p.luke]
         rng = np.random.default_rng(self._cfg.random_seed + 99)
@@ -500,7 +579,7 @@ class EvaluationEngine:
                 r_m = residual_vector(e_m, self._cal.centroid_mark)
                 r_l = residual_vector(e_l, self._cal.centroid_mark)
                 resid_sim = cosine_similarity(r_m, r_l)
-                q = 0.5 * cos + 0.3 * max(0.0, dev_a) + 0.2 * max(0.0, resid_sim)
+                q = 0.8 * cos + 0.2 * max(0.0, resid_sim)
                 boot_qs.append(q)
             all_means.append(float(np.mean(boot_qs)))
             all_stds.append(float(np.std(boot_qs)))
@@ -520,7 +599,7 @@ class EvaluationEngine:
         )
 
     # ------------------------------------------------------------------
-    # Sensitivity analysis (§III.1)
+    # Sensitivity analysis
     # ------------------------------------------------------------------
 
     def _sensitivity_analysis(
@@ -531,34 +610,28 @@ class EvaluationEngine:
         Recompute Q-scores under a grid of alternative weighting schemes
         and report whether the top-5 pericopes remain stable.
         """
-        weight_configs: List[Tuple[float, float, float]] = [
-            (0.5, 0.3, 0.2),   # default
-            (0.6, 0.2, 0.2),   # more weight on raw cosine
-            (0.4, 0.4, 0.2),   # more weight on deviation
-            (0.4, 0.3, 0.3),   # more weight on residual
-            (0.33, 0.33, 0.34), # equal weights
-            (0.7, 0.15, 0.15), # cosine-dominated
-            (0.5, 0.5, 0.0),   # no residual component
-            (0.5, 0.0, 0.5),   # no deviation component
-            (1.0, 0.0, 0.0),   # raw cosine only
+        weight_configs: List[Tuple[float, float]] = [
+            (0.8, 0.2),   # default
+            (0.7, 0.3),   # more weight on residual correlation
+            (0.9, 0.1),   # more weight on raw cosine
+            (1.0, 0.0),   # raw cosine only
         ]
         double = [p for p in corpus.double_tradition if p.matthew and p.luke]
 
         top5_lists: List[List[str]] = []
         mean_qs: List[float] = []
 
-        for w_cos, w_dev, w_res in weight_configs:
+        for w_cos, w_res in weight_configs:
             scores: List[Tuple[str, float]] = []
             for p in double:
                 e_m = self._pipe.embed_text(p.matthew)
                 e_l = self._pipe.embed_text(p.luke)
                 cos = cosine_similarity(e_m, e_l)
-                dev_a = cos - self._cal.sig_a.mean
                 from stcm.utils import residual_vector
                 r_m = residual_vector(e_m, self._cal.centroid_mark)
                 r_l = residual_vector(e_l, self._cal.centroid_mark)
                 resid_sim = cosine_similarity(r_m, r_l)
-                q = w_cos * cos + w_dev * max(0.0, dev_a) + w_res * max(0.0, resid_sim)
+                q = w_cos * cos + w_res * max(0.0, resid_sim)
                 scores.append((p.label, q))
             scores.sort(key=lambda x: x[1], reverse=True)
             top5 = [s[0] for s in scores[:5]]
@@ -566,8 +639,8 @@ class EvaluationEngine:
             top5_lists.append(top5)
             mean_qs.append(mean_q)
             log.debug(
-                "  weights=(%.2f, %.2f, %.2f) mean_Q=%.4f top5=%s",
-                w_cos, w_dev, w_res, mean_q, top5,
+                "  weights=(%.2f, %.2f) mean_Q=%.4f top5=%s",
+                w_cos, w_res, mean_q, top5,
             )
 
         # Compute top-5 stability as mean pairwise Jaccard similarity
@@ -592,7 +665,7 @@ class EvaluationEngine:
         )
 
     # ------------------------------------------------------------------
-    # Goulder redaction test (§II.2)
+    # Goulder redaction test
     # ------------------------------------------------------------------
 
     def _goulder_test(
@@ -650,7 +723,7 @@ class EvaluationEngine:
         )
 
     # ------------------------------------------------------------------
-    # Internal BERT validation (§III.6)
+    # Internal BERT validation
     # ------------------------------------------------------------------
 
     def _bert_validation(
@@ -744,33 +817,40 @@ class EvaluationEngine:
             "Permutation test: top-10 mean Q-score",
         )
 
-        # 2. Thematic-null permutation test (§I.1)
+        # 1b. Raw-cosine (w2 = 0) permutation tests — confound-free variant
+        log.info("Starting raw-cosine permutation test (random null) …")
+        perm_cos = self._raw_cosine_permutation_test(report, corpus, thematic=False)
+        log.info("Starting raw-cosine permutation test (thematic null) …")
+        perm_cos_thematic = self._raw_cosine_permutation_test(report, corpus, thematic=True)
+
+        # 2. Thematic-null permutation test
         log.info("Starting thematic-null permutation test …")
         thematic = self._thematic_null_test(report, corpus)
 
-        # 3. Sensitivity analysis (§III.1)
+        # 3. Sensitivity analysis
         log.info("Starting weight sensitivity analysis …")
         sensitivity = self._sensitivity_analysis(corpus)
 
-        # 4. Sentence-level bootstrap (§III.3)
+        # 4. Sentence-level bootstrap
         log.info("Starting sentence-level bootstrap robustness …")
         bootstrap = self._sentence_bootstrap(report, corpus)
 
-        # 5. Word-overlap comparison (§I.2)
+        # 5. Word-overlap comparison
         log.info("Starting word-overlap baseline comparison …")
         word_overlap = self._word_overlap_comparison(report, corpus)
 
-        # 6. Goulder redaction test (§II.2)
+        # 6. Goulder redaction test
         log.info("Starting Goulder redaction test …")
         goulder = self._goulder_test(report)
 
-        # 7. Internal BERT validation (§III.6)
+        # 7. Internal BERT validation
         log.info("Starting internal BERT validation …")
         bert_val = self._bert_validation(corpus)
 
         summary = self._build_summary(
             perm_mean, perm_top, thematic, sensitivity,
             bootstrap, word_overlap, goulder, bert_val,
+            perm_cos=perm_cos, perm_cos_thematic=perm_cos_thematic,
         )
         return EvaluationResult(
             permutation_mean_q=perm_mean,
@@ -782,6 +862,8 @@ class EvaluationEngine:
             goulder_test=goulder,
             bert_validation=bert_val,
             evaluation_summary_text=summary,
+            permutation_mean_cos=perm_cos,
+            thematic_null_cos=perm_cos_thematic,
         )
 
     def _build_summary(
@@ -794,6 +876,8 @@ class EvaluationEngine:
         word_overlap: WordOverlapResult,
         goulder: GoulderTestResult,
         bert_val: BERTValidationResult,
+        perm_cos: Optional[PermutationTestResult] = None,
+        perm_cos_thematic: Optional[PermutationTestResult] = None,
     ) -> str:
         # Sensitivity details
         sens_lines = []
@@ -803,7 +887,7 @@ class EvaluationEngine:
         )):
             tag = " (default)" if i == 0 else ""
             sens_lines.append(
-                f"  ({w[0]:.2f}, {w[1]:.2f}, {w[2]:.2f}){tag}: "
+                f"  ({w[0]:.2f}, {w[1]:.2f}){tag}: "
                 f"mean_Q={mq:.4f}  top-5: {', '.join(t[:25] for t in top5)}"
             )
         sens_block = "\n".join(sens_lines)
@@ -819,6 +903,24 @@ class EvaluationEngine:
         for lbl, sim in zip(bert_val.pair_labels, bert_val.similarities):
             bert_lines.append(f"  {lbl:<45s} sim={sim:.3f}")
         bert_block = "\n".join(bert_lines)
+
+        # Raw-cosine (w2 = 0) permutation block
+        if perm_cos is not None and perm_cos_thematic is not None:
+            raw_cos_block = f"""## 3b. Raw-Cosine (w2 = 0) Permutation Tests (Confound-Free)
+
+Repeats both permutation tests on the mean raw cosine similarity alone,
+excluding the potentially genre-confounded residual component.
+
+- Observed mean cosine  : {perm_cos.observed_statistic:.4f}
+- Random null mean      : {perm_cos.null_distribution.mean():.4f}
+- Random null std       : {perm_cos.null_distribution.std():.4f}
+- Random p-value        : {perm_cos.p_value:.4f}  (z={perm_cos.z_score:.3f})
+- Thematic null mean    : {perm_cos_thematic.null_distribution.mean():.4f}
+- Thematic null std     : {perm_cos_thematic.null_distribution.std():.4f}
+- Thematic p-value      : {perm_cos_thematic.p_value:.4f}  (z={perm_cos_thematic.z_score:.3f})
+"""
+        else:
+            raw_cos_block = ""
 
         return textwrap.dedent(f"""
 # STCM Evaluation Summary
@@ -853,10 +955,11 @@ similarity in Koine Greek.
 - z-score               : {thematic.z_score:.3f}
 - Interpretation        : {"SIGNIFICANT — signal exceeds thematic baseline" if thematic.p_value < 0.05 else "NOT SIGNIFICANT against thematic null"}
 
+{raw_cos_block}
 ## 4. Weight Sensitivity Analysis
 
-Tests Q-score stability across nine alternative weighting schemes
-(w_cosine, w_deviation, w_residual).  Top-5 Jaccard stability = {sensitivity.top5_stability:.3f}
+Tests Q-score stability across four alternative weighting schemes
+(w_cosine, w_residual).  Top-5 Jaccard stability = {sensitivity.top5_stability:.3f}
 (1.0 = identical top-5 across all schemes).
 
 {sens_block}
