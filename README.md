@@ -3,6 +3,8 @@
 > A calibrated source-analysis approach to the Synoptic Problem
 > using embedding-space geometry.
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21761952.svg)](https://doi.org/10.5281/zenodo.21761952)
+
 📖 **[Documentation & Interactive Results](https://agnieszkachr.github.io/stcm/)**
 
 > [!IMPORTANT]
@@ -209,12 +211,18 @@ Greek text: [SBLGNT](https://github.com/LogosBible/SBLGNT) (SBL Greek New Testam
 
 ## Citation
 
+Archived on Zenodo: [10.5281/zenodo.21761952](https://doi.org/10.5281/zenodo.21761952)
+
 ```bibtex
 @software{stcm2026,
-  title  = {STCM: Synoptic Transform Calibration Model},
-  year   = {2026},
-  url    = {https://github.com/agnieszkachr/stcm},
-  note   = {A calibrated source-analysis approach to the Synoptic Problem}
+  author    = {Ziemińska, Agnieszka},
+  title     = {STCM: Synoptic Transform Calibration Model},
+  year      = {2026},
+  version   = {v1.0},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.21761952},
+  url       = {https://github.com/agnieszkachr/stcm},
+  note      = {A calibrated source-analysis approach to the Synoptic Problem}
 }
 ```
 
