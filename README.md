@@ -211,14 +211,14 @@ Greek text: [SBLGNT](https://github.com/LogosBible/SBLGNT) (SBL Greek New Testam
 
 ## Citation
 
-Archived on Zenodo. Cite the concept DOI [10.5281/zenodo.21761951](https://doi.org/10.5281/zenodo.21761951), which always resolves to the latest release; the current version is v1.1 ([10.5281/zenodo.21762152](https://doi.org/10.5281/zenodo.21762152)).
+Archived on Zenodo. Cite the concept DOI [10.5281/zenodo.21761951](https://doi.org/10.5281/zenodo.21761951), which always resolves to the latest release; the DOI of any individual version is listed on that record under *Versions*.
 
 ```bibtex
 @software{stcm2026,
   author    = {Ziemińska, Agnieszka},
   title     = {STCM: Synoptic Transform Calibration Model},
   year      = {2026},
-  version   = {v1.1},
+  version   = {v1.2},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.21761951},
   url       = {https://github.com/Agnieszkachr/stcm},
