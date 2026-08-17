@@ -1,0 +1,7 @@
+* text=auto
+
+*.png binary
+*.pkl binary
+*.gz binary
+*.docx binary
+*.xlsx binary
