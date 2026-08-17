@@ -25,6 +25,9 @@
 | Double tradition: excess over mean floor | 0.0941 | 0.5979 |
 | Double tradition: excess over nearest floor | 0.0380 | 0.2658 |
 
+- Triple tradition subsampled to n=36, excess over nearest floor (raw): mean +0.0020, SD 0.0021, 95% of draws [-0.0018, +0.0062]
+- Triple tradition subsampled to n=36, excess over nearest floor (centred): mean +0.1146, SD 0.0192, 95% of draws [+0.0797, +0.1551]
+
 Internal homogeneity (mean similarity among a single evangelist's own pericopes within each tradition, raw cosine):
 - Triple tradition: Matthew 0.9090 | Luke 0.9046
 - Double tradition: Matthew 0.8447 | Luke 0.8622

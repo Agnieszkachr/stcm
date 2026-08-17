@@ -288,6 +288,23 @@ def main():
     out.append(f"| Double tradition: excess over mean floor | {dt_raw - floor_raw:.4f} | {dt_cen - floor_cen:.4f} |")
     out.append(f"| Double tradition: excess over nearest floor | {dt_raw - dt_nn_raw:.4f} | {dt_cen - dt_nn_cen:.4f} |")
     out.append("")
+    # The nearest-neighbour floor is an order statistic, so it rises with the
+    # size of the candidate pool (49 triple vs 36 double pericopes) and the
+    # bias favours the double tradition. Size-match by subsampling.
+    rng_ss = np.random.default_rng(SEED)
+    nd = len(double)
+    for tag, Sm in (("raw", St_raw), ("centred", St_cen)):
+        exc = []
+        for _ in range(N_BOOT):
+            idx = rng_ss.choice(len(triple), size=nd, replace=False)
+            Ss = Sm[np.ix_(idx, idx)]
+            exc.append(float(np.diag(Ss).mean()) - nn_floor(Ss))
+        exc = np.array(exc)
+        lo, hi = np.percentile(exc, [2.5, 97.5])
+        out.append(f"- Triple tradition subsampled to n={nd}, excess over nearest floor "
+                   f"({tag}): mean {exc.mean():+.4f}, SD {exc.std():.4f}, "
+                   f"95% of draws [{lo:+.4f}, {hi:+.4f}]")
+    out.append("")
     out.append("Internal homogeneity (mean similarity among a single evangelist's own "
                "pericopes within each tradition, raw cosine):")
     out.append(f"- Triple tradition: Matthew {within(TM, cos):.4f} | Luke {within(TL, cos):.4f}")
