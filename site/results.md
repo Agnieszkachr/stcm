@@ -18,6 +18,25 @@ The primary statistic for both inference and ranking is the **mean-centred cosin
 
 Full data for all 36 pericopes is provided in the article (Appendix A, Table A1) and in `outputs/reports/centred_cosine_ranking.csv`. (A legacy composite index remains in `q_score_distribution.csv` for backward compatibility; it is not used for inference or ranking.)
 
+## 2b. Comparing the Two Traditions
+
+The corpus mean used for centring is dominated by triple-tradition vectors (147 of 219), which shortens those vectors more (mean centred norm 0.3036 against 0.3895). Comparing the two matched means directly would therefore flatter the double tradition, so each set is measured against **its own** mismatched-pair floor.
+
+| Quantity | Raw cosine | Mean-centred |
+|---|---|---|
+| Triple tradition: matched | 0.9472 | 0.4749 |
+| Triple tradition: mismatched-pair floor | 0.9037 | 0.0096 |
+| Triple tradition: nearest non-parallel floor | 0.9466 | 0.3816 |
+| **Triple tradition: excess over mean floor** | **0.0435** | **0.4654** |
+| Double tradition: matched | 0.9452 | 0.6567 |
+| Double tradition: mismatched-pair floor | 0.8510 | 0.0589 |
+| Double tradition: nearest non-parallel floor | 0.9072 | 0.3909 |
+| **Double tradition: excess over mean floor** | **0.0941** | **0.5979** |
+
+The result does not depend on the anisotropy correction. In the raw space the two matched means are nearly identical, and what separates the traditions is the floor: the triple-tradition material is internally homogeneous narrative inherited from Mark, so any two of its passages already resemble one another closely.
+
+Two controls close the obvious objections. Measuring each pericope against the **most similar passage it is not parallel to** removes any advantage the double tradition gains from being internally more varied; since that statistic rises with pool size, the triple tradition is subsampled to *n* = 36 over 1,000 draws. The excess is then 0.0380 against 0.0020 raw and 0.2658 against 0.1155 centred, and **none of the 1,000 draws** reaches the double-tradition value. Repeating everything under six centring schemes leaves the ordering unchanged.
+
 ## 3. Statistical Significance
 
 ### Centred-Cosine Permutation Tests (Primary)

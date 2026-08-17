@@ -14,7 +14,7 @@ graph TD
     B --> C[Triple-Tradition Calibration]
     C --> D[Signature A: Independent baseline]
     C --> E[Signature B: Residual dependence]
-    D --> F[Double-Tradition Q-Scoring]
+    D --> F[Double-Tradition Scoring: centred cosine]
     E --> F
     F --> G[Latent Q Reconstruction]
     F --> H[Permutation Testing]

@@ -19,8 +19,8 @@ A significant minority of scholars reject Q, most notably through the **Farrer H
 
 STCM does not attempt to "prove" Q. Instead, it tests whether the statistical distribution of the texts in high-dimensional embedding space is *consistent* with the Q hypothesis. 
 
-If Matthew and Luke both used Mark, we can observe exactly what a "shared source" relationship looks like mathematically by analyzing the Triple Tradition. We use this to calibrate two signatures:
+If Matthew and Luke both used Mark, we can observe exactly what a "shared source" relationship looks like mathematically by analysing the Triple Tradition. We use this to calibrate two signatures:
 - **Signature A:** The expected similarity between two texts drawn from a common written source.
 - **Signature B:** The expected correlation in how two different authors modify their common source.
 
-We then project the Double Tradition material into this space. If the Double Tradition scores highly against these calibrated signatures, the geometry of the text is highly consistent with a shared written source (Q).
+We then measure the Double Tradition in the same space. The comparison that matters is not the raw level of similarity but the **excess over each set's own floor**: how much more alike true parallels are than unrelated passages of the same kind already are. On that measure the double tradition exceeds the Markan calibration set, in both the corrected and the uncorrected geometry. This is consistent with derivation from a shared written source; it does not by itself decide between Q and Luke's direct use of Matthew.

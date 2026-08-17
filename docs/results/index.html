@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -423,6 +423,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2b-comparing-the-two-traditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2b. Comparing the Two Traditions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#3-statistical-significance" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -650,6 +661,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2b-comparing-the-two-traditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2b. Comparing the Two Traditions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#3-statistical-significance" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -825,6 +847,61 @@
 <li><em>Hidden from Wise, Revealed</em> (0.8618)</li>
 </ol>
 <p>Full data for all 36 pericopes is provided in the article (Appendix A, Table A1) and in <code>outputs/reports/centred_cosine_ranking.csv</code>. (A legacy composite index remains in <code>q_score_distribution.csv</code> for backward compatibility; it is not used for inference or ranking.)</p>
+<h2 id="2b-comparing-the-two-traditions">2b. Comparing the Two Traditions</h2>
+<p>The corpus mean used for centring is dominated by triple-tradition vectors (147 of 219), which shortens those vectors more (mean centred norm 0.3036 against 0.3895). Comparing the two matched means directly would therefore flatter the double tradition, so each set is measured against <strong>its own</strong> mismatched-pair floor.</p>
+<table>
+<thead>
+<tr>
+<th>Quantity</th>
+<th>Raw cosine</th>
+<th>Mean-centred</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Triple tradition: matched</td>
+<td>0.9472</td>
+<td>0.4749</td>
+</tr>
+<tr>
+<td>Triple tradition: mismatched-pair floor</td>
+<td>0.9037</td>
+<td>0.0096</td>
+</tr>
+<tr>
+<td>Triple tradition: nearest non-parallel floor</td>
+<td>0.9466</td>
+<td>0.3816</td>
+</tr>
+<tr>
+<td><strong>Triple tradition: excess over mean floor</strong></td>
+<td><strong>0.0435</strong></td>
+<td><strong>0.4654</strong></td>
+</tr>
+<tr>
+<td>Double tradition: matched</td>
+<td>0.9452</td>
+<td>0.6567</td>
+</tr>
+<tr>
+<td>Double tradition: mismatched-pair floor</td>
+<td>0.8510</td>
+<td>0.0589</td>
+</tr>
+<tr>
+<td>Double tradition: nearest non-parallel floor</td>
+<td>0.9072</td>
+<td>0.3909</td>
+</tr>
+<tr>
+<td><strong>Double tradition: excess over mean floor</strong></td>
+<td><strong>0.0941</strong></td>
+<td><strong>0.5979</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The result does not depend on the anisotropy correction. In the raw space the two matched means are nearly identical, and what separates the traditions is the floor: the triple-tradition material is internally homogeneous narrative inherited from Mark, so any two of its passages already resemble one another closely.</p>
+<p>Two controls close the obvious objections. Measuring each pericope against the <strong>most similar passage it is not parallel to</strong> removes any advantage the double tradition gains from being internally more varied; since that statistic rises with pool size, the triple tradition is subsampled to <em>n</em> = 36 over 1,000 draws. The excess is then 0.0380 against 0.0020 raw and 0.2658 against 0.1155 centred, and <strong>none of the 1,000 draws</strong> reaches the double-tradition value. Repeating everything under six centring schemes leaves the ordering unchanged.</p>
 <h2 id="3-statistical-significance">3. Statistical Significance</h2>
 <h3 id="centred-cosine-permutation-tests-primary">Centred-Cosine Permutation Tests (Primary)</h3>
 <p>Contextual embedding spaces are anisotropic — even unrelated passages average 0.851 raw cosine. After mean-centring, the unrelated-pair floor collapses to 0.059 while the matched-pair mean remains 0.657, widening the contrast from 0.094 to 0.598. Against 1,000 random permutations the observed mean (0.6567) far exceeds the null (0.0737, σ = 0.0278, <em>z</em> = 20.98, <em>p</em> &lt; 0.001); against the more demanding thematic null — pairing each Matthean pericope with a <em>thematically similar</em> Lukan one — it likewise dominates (null 0.1164, σ = 0.0213, <em>z</em> = 25.37, <em>p</em> &lt; 0.001).</p>
@@ -903,7 +980,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

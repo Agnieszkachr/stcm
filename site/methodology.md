@@ -17,28 +17,42 @@ We analyse the 49 passages where Matthew, Mark, and Luke overlap. Assuming Marka
 
 For double-tradition pericopes (where Mark is absent), the residual is computed relative to the **Mark centroid** — the mean embedding of all Mark's triple-tradition pericopes. This centroid represents the typical direction of synoptic narrative as shaped by Mark in embedding space. However, Mark's triple-tradition material is overwhelmingly *narrative*, whereas the double-tradition material is predominantly *discourse* and *sayings*. Computing a residual against a narrative centroid for sayings material may introduce structural distortion, potentially inflating residuals. The magnitude of this effect is difficult to quantify without a discourse-specific calibration set.
 
-## 3. Q-Scoring (Double Tradition)
-For passages where Matthew and Luke share material absent from Mark (the Double Tradition), we compute a composite **Q-Score**:
+## 3. Primary Statistic — Mean-Centred Cosine
+Contextual embedding spaces are anisotropic: vectors crowd into a narrow cone, so even unrelated texts show high raw cosine similarity (Ethayarajh 2019). The primary statistic therefore subtracts the corpus mean vector, computed over all 219 pericope embeddings, before taking cosines (cf. Su et al. 2021):
 
 ```
-Q-score = 0.8 × cos(Matt, Luke) + 0.2 × max(0, resid_sim)
+centred cosine = cos(emb(Matt) − μ, emb(Luke) − μ)
 ```
 
-Raw cosine similarity is the dominant signal, supplemented by a down-weighted residual-correlation component. Because the residual term is computed against a narrative Mark centroid and is therefore potentially genre-confounded, the composite is interpreted as a *relative ranking index*; the raw-cosine-only model (w₂ = 0) provides the confound-free significance check.
+This single, weight-free statistic carries **all inference and ranking**. Under it, unrelated pairs average 0.0589 while matched double-tradition pairs average 0.6567. The raw cosine is reported in parallel throughout and the residual correlation is analysed separately.
 
-A **sensitivity analysis** across four weighting schemes — (0.8, 0.2), (0.7, 0.3), (0.9, 0.1), and (1.0, 0.0) — confirms that the top-scoring pericopes remain highly stable regardless of parametrisation (top-5 Jaccard = 0.833).
+A legacy composite index (0.8 × cosine + 0.2 × max(0, residual)) survives in the pipeline outputs for backward compatibility with earlier versions of this project, together with its weight-sensitivity diagnostic. It is **not** used for inference or ranking.
 
-## 4. Latent Q Reconstruction
+## 4. Comparing the Two Traditions
+The corpus mean is not neutral between the traditions: 147 of the 219 vectors are triple-tradition, so the origin of the centred space lies nearer that material and centring shortens those vectors more (mean centred norm 0.3036 against 0.3895). Setting the two matched means side by side would therefore flatter the double tradition. Each set is instead measured against **its own** mismatched-pair floor.
+
+On that basis the result does not depend on the anisotropy correction at all. In the raw space the matched means are nearly identical (0.9452 and 0.9472), but the triple-tradition floor is far higher (0.9037 against 0.8510), because that material is internally homogeneous narrative inherited from Mark. The excess over floor is 0.0941 against 0.0435; after centring, 0.5979 against 0.4654.
+
+Two controls close the remaining gaps:
+
+- **Nearest-neighbour floor** — each pericope measured against the most similar passage it is *not* parallel to, which removes any advantage the double tradition might gain from being internally more varied. Because this is an order statistic and rises with pool size, the triple tradition is subsampled to *n* = 36 over 1,000 draws. Excess: 0.0380 against 0.0020 raw, 0.2658 against 0.1155 centred; **0 of 1,000** draws reach the double-tradition value.
+- **Centring sensitivity** — the comparison is repeated under six definitions of the centring vector, including one that balances the traditions by construction. The ordering is invariant across all six.
+
+## 5. Latent Q Reconstruction
 We estimate the hypothetical embedding of Q using an iterative, ridge-regularised centroid-shrinkage algorithm. For each pericope, the calibrated residual transforms are stripped from the Matthew and Luke embeddings, and a weighted centroid (including the previous estimate as a shrinkage regulariser) converges when the L2 norm of the update step falls below 1 × 10⁻⁶ (max 100 iterations). All 36 pericopes converge.
 
-## 5. Evaluation Suite
-The evaluation module performs eight analyses:
+## 6. Evaluation Suite
+All tests below are computed on the mean-centred cosine, with the raw cosine reported in parallel:
 
-1. **Random permutation test** — 1000 random Matt–Luke pairings produce a null distribution; observed Q-scores are tested against this (empirical *p* = 0.001, 1,000 permutations).
-2. **Top-10 permutation test** — As above, for the ten highest-scoring pericopes.
-3. **Thematic-null permutation test** — A more demanding null that pairs each Matthean pericope with a *thematically similar* Lukan pericope (wisdom with wisdom, apocalyptic with apocalyptic, etc.), controlling for the possibility that topical overlap alone inflates similarity. Signal remains significant (empirical *p* = 0.001, 1,000 permutations).
-4. **Weight sensitivity analysis** — Recomputes Q-scores under four alternative weighting schemes (including the raw-cosine-only model); reports top-5 Jaccard stability.
-5. **Sentence-level bootstrap** — Resamples sentences within each pericope (200 resamples) to measure robustness to meaningful input perturbation (mean std = 0.0567).
-6. **Word-overlap comparison** — Correlates embedding Q-scores with word-level Jaccard coefficients to demonstrate that embeddings capture information beyond lexical overlap.
-7. **Goulder redaction test** — Compares Q-score distributions of pericopes Goulder (1989) identifies as demonstrating Lukan redaction of Matthew against the remainder (Welch's t-test, Cohen's d). The test is underpowered at current sample sizes (*n* = 10 vs. *n* = 26); the medium effect size leaves the result genuinely inconclusive.
-8. **Internal BERT validation** — Tests model calibration on known NT paraphrases vs. unrelated passage pairs.
+1. **Random permutation test** — 1,000 random Matt–Luke pairings produce a null distribution; the observed mean is tested against it (0.6567 vs null 0.0737, *z* = 20.98, empirical *p* < 0.001).
+2. **Top-10 permutation test** — As above, for the ten highest-ranked pericopes.
+3. **Thematic-null permutation test** — A more demanding null pairing each Matthean pericope with a *thematically similar* Lukan one (wisdom with wisdom, apocalyptic with apocalyptic), controlling for topical overlap. The signal survives (null 0.1164, *z* = 25.37, *p* < 0.001).
+4. **Raw-cosine permutation tests** — The same two tests on the uncorrected cosine; fully concordant (0.9452 vs nulls 0.8533 and 0.8585, both *p* < 0.001).
+5. **Cross-tradition floor comparison** — Computes the mismatched-pair floor for the triple tradition as well as the double, so each set is read against its own baseline.
+6. **Nearest-neighbour floor with size matching** — Controls for internal homogeneity; the triple tradition is subsampled to *n* = 36 over 1,000 draws.
+7. **Centring-vector sensitivity** — Recomputes both traditions under six centring schemes.
+8. **Sentence-level bootstrap** — Resamples sentences within each pericope (200 resamples); mean perturbation SD 0.1309 on the centred scale.
+9. **Word-overlap comparison** — Correlates centred cosines with word-level Jaccard coefficients (*r* = 0.770; ~41% of variance unexplained).
+10. **Goulder redaction test** — Compares centred-cosine distributions for the pericopes Goulder (1989) identifies as showing Lukan redaction of Matthew against the remainder (Welch's *t* = −1.177, *p* = 0.261, Cohen's *d* = −0.523). Underpowered at *n* = 10 vs *n* = 26; genuinely inconclusive.
+11. **Directionality inference** — Exact leave-one-out ridge regression with a bootstrap CI and a sign-flip permutation test; no significant asymmetry (Δ*R*² = +0.030, *p* = 0.102).
+12. **Internal BERT validation** — Model calibration on known NT paraphrases vs unrelated passage pairs (separation 0.149 in the uncorrected space).
