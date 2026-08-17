@@ -236,7 +236,6 @@ Archived on Zenodo. Cite the concept DOI [10.5281/zenodo.21761951](https://doi.o
   author    = {Ziemińska, Agnieszka},
   title     = {STCM: Synoptic Transform Calibration Model},
   year      = {2026},
-  version   = {v1.2.1},
   publisher = {Zenodo},
   doi       = {10.5281/zenodo.21761951},
   url       = {https://github.com/Agnieszkachr/stcm},
