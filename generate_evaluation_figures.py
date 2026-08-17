@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import csv
 import pathlib
+import shutil
 import sys
 
 import matplotlib
@@ -188,6 +189,19 @@ def main():
     plt.close(fig)
 
     print("Figures written to", fig_dir)
+
+    # Mirror the figures into the MkDocs source tree. The documentation site
+    # is built with docs_dir='site', so anything referenced by site/*.md must
+    # live under site/ — a relative link out to outputs/ resolves at build
+    # time but breaks once the site is deployed. Copying here keeps the
+    # published pages in step with every regeneration.
+    site_img = _REPO / "site" / "img"
+    site_img.mkdir(parents=True, exist_ok=True)
+    copied = 0
+    for png in sorted(fig_dir.glob("fig*.png")):
+        shutil.copyfile(png, site_img / png.name)
+        copied += 1
+    print(f"Mirrored {copied} figures to", site_img)
 
 
 if __name__ == "__main__":
