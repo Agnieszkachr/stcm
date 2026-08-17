@@ -26,7 +26,9 @@ The core hypothesis under test: **do the double-tradition pericopes (passages fo
 
 4. **Evaluation** — Random and thematic-null permutation tests on the centred cosine, the raw cosine, and the residual correlation; sentence-level bootstrap robustness; word-overlap baseline comparison; Goulder redaction test; directionality inference (bootstrap CI + sign-flip permutation test); and internal BERT validation on known NT paraphrases.
 
-5. **Confound and advanced analyses** — Passage length, literary form, and compositional-stratum analyses with the article figure set (`generate_evaluation_figures.py`); anisotropy correction, genre-floor quantification, directionality inference, and the centred-cosine ranking (`advanced_analysis.py`).
+5. **Cross-tradition comparison** — Each tradition is measured against **its own** mismatched-pair floor rather than against the other's mean, since the centring vector is dominated by triple-tradition material. A nearest-neighbour floor (each pericope against the most similar passage it is *not* parallel to) controls for internal homogeneity, size-matched by subsampling the triple tradition to n = 36 over 1,000 draws. The whole comparison is repeated under six centring schemes.
+
+6. **Confound and advanced analyses** — Passage length, literary form, and compositional-stratum analyses with the article figure set (`generate_evaluation_figures.py`); anisotropy correction, genre-floor quantification, directionality inference, and the centred-cosine ranking (`advanced_analysis.py`).
 
 ### Key Results
 
@@ -36,6 +38,10 @@ The core hypothesis under test: **do the double-tradition pericopes (passages fo
 | Triple-tradition calibration (Sig-A) | μ = 0.9472, σ = 0.0321 (95% CI: [0.9376, 0.9561]); centred mean 0.4749 |
 | Residual signature (Sig-B) | μ = 0.3693, σ = 0.1972 |
 | **Centred cosine (primary statistic)** | matched mean 0.6567 (SD 0.1981) vs unrelated-pair floor 0.0589; random null 0.0737 (SD 0.0278), *z* = 20.98; thematic null 0.1164 (SD 0.0213), *z* = 25.37; both *p* < 0.001 |
+| **Excess over own mean floor (DT vs TT)** | raw 0.0941 vs 0.0435; centred 0.5979 vs 0.4654 — the double tradition exceeds the Markan calibration set in **both** geometries |
+| **Excess over nearest non-parallel pair** | raw 0.0380 vs 0.0020; centred 0.2658 vs 0.1155 (triple tradition subsampled to n = 36, 1,000 draws; 0 of 1,000 reach the double-tradition value) |
+| Centring sensitivity | ordering invariant across all six centring schemes (219 / 72 / 147 / Mark-only / balanced / Matt+Luke-only) |
+| Internal homogeneity (raw) | triple tradition Matt 0.9090, Luke 0.9046; double tradition Matt 0.8447, Luke 0.8622 |
 | Raw-cosine permutation tests (concordant) | observed 0.9452 vs random null 0.8533 (SD 0.0044), *z* = 20.66; thematic null 0.8585 (SD 0.0048), *z* = 18.01; both *p* < 0.001 |
 | Residual genre floor | matched 0.7166 vs mismatched floor 0.2290; *z* = 21.27 / 22.64; *p* < 0.001 |
 | Sentence-level bootstrap SD (centred) | 0.1309 (range of statistic: [0.1799, 0.9833]) |
@@ -117,7 +123,7 @@ stcm/
 │   ├── scoring.py         # Double-tradition similarity computation
 │   ├── reconstruction.py  # Latent Q embedding estimation
 │   └── evaluation.py      # Full robustness evaluation suite
-├── advanced_analysis.py            # Anisotropy, genre floor, directionality, centred ranking
+├── advanced_analysis.py            # Anisotropy, floors, centring sensitivity, directionality, ranking
 ├── generate_evaluation_figures.py  # Article figures from the centred ranking
 ├── site/                  # Markdown source files for MkDocs (docs_dir)
 ├── docs/                  # Generated HTML site for GitHub Pages (site_dir)
@@ -158,6 +164,14 @@ For double-tradition pericopes (where Mark is absent), the residual is computed 
 
 Contextual embedding spaces are anisotropic: vectors crowd into a narrow cone, so even unrelated texts show high raw cosine similarity (Ethayarajh 2019). The primary statistic therefore subtracts the corpus mean vector (computed over all 219 pericope embeddings) before computing cosines (cf. Su et al. 2021). Under this correction, unrelated pairs average ≈ 0.06 while correctly paired double-tradition passages average 0.66. The centred cosine carries **all inference and ranking**; it has no tunable parameters. The per-pericope ranking is released as `outputs/reports/centred_cosine_ranking.csv`.
 
+### Comparing the Two Traditions
+
+The corpus mean used for centring is not neutral between the traditions: 147 of the 219 vectors are triple-tradition, so the origin lies nearer that material and centring shortens those vectors more (mean centred norm 0.3036 for triple-tradition Matt/Luke vectors against 0.3895 for double-tradition ones). Comparing the two matched means directly would therefore flatter the double tradition. Each set is instead measured against **its own** mismatched-pair floor.
+
+On that basis the result does not depend on the anisotropy correction at all. In the raw space the matched means are nearly identical (0.9452 and 0.9472), but the triple-tradition floor is far higher (0.9037 against 0.8510) because that material is internally homogeneous narrative inherited from Mark. The excess over floor is 0.0941 against 0.0435.
+
+Two further controls close the remaining gaps. A **nearest-neighbour floor** — each pericope against the most similar passage it is *not* parallel to — removes any advantage the double tradition might gain from being internally more varied; because that statistic is an order statistic and rises with pool size, the triple tradition is subsampled to n = 36 over 1,000 draws. A **centring-sensitivity analysis** repeats everything under six definitions of the centring vector. The ordering survives every one of these.
+
 A legacy composite index (0.8 × cosine + 0.2 × max(0, residual)) remains in the pipeline outputs for backward compatibility with earlier versions; it is not used for inference or ranking. The pipeline's weight-sensitivity analysis covering that index (top-5 Jaccard = 0.833 across four schemes) is likewise retained as a legacy diagnostic.
 
 ### Reconstruction
@@ -178,8 +192,11 @@ The evaluation module (`stcm/evaluation.py`) and the advanced-analysis script to
 8. **Goulder redaction test** — Compares centred-cosine distributions of pericopes Goulder (1989) identifies as demonstrating Lukan redaction of Matthew against the remainder. The test is underpowered at current sample sizes (*d* = −0.523, *p* = 0.261); the result is genuinely inconclusive.
 9. **Directionality inference** — Exact leave-one-out ridge regression (hat-matrix identity) predicting Luke from Matthew and vice versa, with a 95% percentile bootstrap confidence interval and a sign-flip permutation test for the predictability asymmetry. No significant asymmetry is detected at n = 36.
 10. **Internal BERT validation** — Tests model calibration on known NT paraphrases (expected high similarity) vs. unrelated passages (expected low similarity); separation = 0.149 in the uncorrected space.
+11. **Cross-tradition floor comparison** — Computes the mismatched-pair floor for the triple tradition as well as the double, so each set is read against its own baseline, and reports both excesses in raw and centred geometry.
+12. **Nearest-neighbour floor with size matching** — Replaces the average mismatched pair with the most similar non-parallel pair, controlling for internal homogeneity, and size-matches by subsampling the triple tradition to n = 36 over 1,000 draws.
+13. **Centring-vector sensitivity** — Recomputes both traditions under six centring schemes and checks that the ordering is invariant.
 
-The confound analyses (passage length, literary form, Kloppenborg strata) and the article figure set are produced by `generate_evaluation_figures.py` from the centred ranking. `advanced_analysis.py` provides the anisotropy diagnosis and mean-centred similarity analyses (Ethayarajh 2019; Su et al. 2021), the genre-floor quantification, the directionality inference, and `centred_cosine_ranking.csv`; its results are written to `outputs/reports/advanced_analysis.md`.
+The confound analyses (passage length, literary form, Kloppenborg strata) and the article figure set are produced by `generate_evaluation_figures.py` from the centred ranking. `advanced_analysis.py` provides the anisotropy diagnosis and mean-centred similarity analyses (Ethayarajh 2019; Su et al. 2021), the genre-floor quantification, the cross-tradition and nearest-neighbour floors with size matching, the centring-sensitivity table, the directionality inference, and `centred_cosine_ranking.csv`; its results are written to `outputs/reports/advanced_analysis.md`.
 
 ### Pre-training disclosure
 
@@ -202,6 +219,7 @@ This model is explicitly falsifiable on six criteria:
 - The Mark centroid used for double-tradition residuals is a global average, not a pericope-specific proxy, and the genre floor that bounds the resulting confound is estimated within the synoptic corpus itself (an internal rather than external control).
 - "Inverse transform" is a regularised approximation, not a true mathematical inverse; 100% convergence is expected on mathematical grounds for centroid computation in high-dimensional space.
 - Results depend on the embedding model's capture of Koine Greek semantics, and the pre-training corpus includes the New Testament (see Pre-training disclosure above).
+- All floors — mean, genre and nearest-neighbour alike — are estimated inside the synoptic corpus itself. They are internal controls; an external corpus of contemporaneous Koine narrative and discourse would be needed for an independent estimate.
 - The pericope alignment table is a representative subset of the Aland Synopsis, not exhaustive.
 - The sample size (36 double-tradition, 49 triple-tradition pericopes) constrains statistical power for sub-group analyses and the directionality test.
 
