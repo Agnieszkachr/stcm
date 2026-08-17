@@ -14,12 +14,20 @@
 
 | Quantity | Raw cosine | Mean-centred cosine |
 |---|---|---|
-| Triple-tradition Matt-Luke mean (matched; Sig-A) | 0.9472 | 0.4749 |
-| Mismatched triple-tradition pairs (floor) | 0.9037 | 0.0096 |
-| Triple-tradition matched-minus-floor contrast | 0.0435 | 0.4654 |
-| Double-tradition Matt-Luke mean (matched) | 0.9452 | 0.6567 |
-| Mismatched double-tradition pairs (floor) | 0.8510 | 0.0589 |
-| Double-tradition matched-minus-floor contrast | 0.0941 | 0.5979 |
+| Triple tradition: Matt-Luke mean (matched; Sig-A) | 0.9472 | 0.4749 |
+| Triple tradition: mismatched-pair floor (mean) | 0.9037 | 0.0096 |
+| Triple tradition: nearest non-parallel floor | 0.9466 | 0.3816 |
+| Triple tradition: excess over mean floor | 0.0435 | 0.4654 |
+| Triple tradition: excess over nearest floor | 0.0006 | 0.0934 |
+| Double tradition: Matt-Luke mean (matched) | 0.9452 | 0.6567 |
+| Double tradition: mismatched-pair floor (mean) | 0.8510 | 0.0589 |
+| Double tradition: nearest non-parallel floor | 0.9072 | 0.3909 |
+| Double tradition: excess over mean floor | 0.0941 | 0.5979 |
+| Double tradition: excess over nearest floor | 0.0380 | 0.2658 |
+
+Internal homogeneity (mean similarity among a single evangelist's own pericopes within each tradition, raw cosine):
+- Triple tradition: Matthew 0.9090 | Luke 0.9046
+- Double tradition: Matthew 0.8447 | Luke 0.8622
 
 - Mean centred norm, double-tradition vectors   : 0.3895
 - Mean centred norm, triple-tradition Matt+Luke : 0.3036

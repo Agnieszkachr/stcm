@@ -257,15 +257,41 @@ def main():
     tt_floor_raw = float(St_raw[offt].mean())
     tt_floor_cen = float(St_cen[offt].mean())
 
+    # Nearest-neighbour floor: each pericope against the MOST similar passage
+    # it is not parallel to. This controls for any difference in internal
+    # homogeneity between the two traditions, which a mean floor does not.
+    def nn_floor(Sm):
+        k = Sm.shape[0]
+        return float(np.mean([np.delete(Sm[i], i).max() for i in range(k)]))
+
+    dt_nn_raw = nn_floor(S_raw)
+    dt_nn_cen = nn_floor(S_cen)
+    tt_nn_raw = nn_floor(St_raw)
+    tt_nn_cen = nn_floor(St_cen)
+
+    # Internal homogeneity of each tradition, per evangelist.
+    def within(V, f):
+        k = len(V); Sm = pair_matrix(V, V, f); o = ~np.eye(k, dtype=bool)
+        return float(Sm[o].mean())
+
     out.append("## 2. Anisotropy diagnosis and mean-centred similarities\n")
     out.append("| Quantity | Raw cosine | Mean-centred cosine |")
     out.append("|---|---|---|")
-    out.append(f"| Triple-tradition Matt-Luke mean (matched; Sig-A) | {siga_raw:.4f} | {siga_cen:.4f} |")
-    out.append(f"| Mismatched triple-tradition pairs (floor) | {tt_floor_raw:.4f} | {tt_floor_cen:.4f} |")
-    out.append(f"| Triple-tradition matched-minus-floor contrast | {siga_raw - tt_floor_raw:.4f} | {siga_cen - tt_floor_cen:.4f} |")
-    out.append(f"| Double-tradition Matt-Luke mean (matched) | {dt_raw:.4f} | {dt_cen:.4f} |")
-    out.append(f"| Mismatched double-tradition pairs (floor) | {floor_raw:.4f} | {floor_cen:.4f} |")
-    out.append(f"| Double-tradition matched-minus-floor contrast | {dt_raw - floor_raw:.4f} | {dt_cen - floor_cen:.4f} |")
+    out.append(f"| Triple tradition: Matt-Luke mean (matched; Sig-A) | {siga_raw:.4f} | {siga_cen:.4f} |")
+    out.append(f"| Triple tradition: mismatched-pair floor (mean) | {tt_floor_raw:.4f} | {tt_floor_cen:.4f} |")
+    out.append(f"| Triple tradition: nearest non-parallel floor | {tt_nn_raw:.4f} | {tt_nn_cen:.4f} |")
+    out.append(f"| Triple tradition: excess over mean floor | {siga_raw - tt_floor_raw:.4f} | {siga_cen - tt_floor_cen:.4f} |")
+    out.append(f"| Triple tradition: excess over nearest floor | {siga_raw - tt_nn_raw:.4f} | {siga_cen - tt_nn_cen:.4f} |")
+    out.append(f"| Double tradition: Matt-Luke mean (matched) | {dt_raw:.4f} | {dt_cen:.4f} |")
+    out.append(f"| Double tradition: mismatched-pair floor (mean) | {floor_raw:.4f} | {floor_cen:.4f} |")
+    out.append(f"| Double tradition: nearest non-parallel floor | {dt_nn_raw:.4f} | {dt_nn_cen:.4f} |")
+    out.append(f"| Double tradition: excess over mean floor | {dt_raw - floor_raw:.4f} | {dt_cen - floor_cen:.4f} |")
+    out.append(f"| Double tradition: excess over nearest floor | {dt_raw - dt_nn_raw:.4f} | {dt_cen - dt_nn_cen:.4f} |")
+    out.append("")
+    out.append("Internal homogeneity (mean similarity among a single evangelist's own "
+               "pericopes within each tradition, raw cosine):")
+    out.append(f"- Triple tradition: Matthew {within(TM, cos):.4f} | Luke {within(TL, cos):.4f}")
+    out.append(f"- Double tradition: Matthew {within(M, cos):.4f} | Luke {within(L, cos):.4f}")
     out.append("")
 
     # Mean centred norms, quantifying the asymmetry the centring introduces.
