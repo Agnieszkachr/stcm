@@ -16,6 +16,9 @@ Analyses
    subtracting the corpus mean vector, and permutation tests are run on
    the mean-centred cosine, which serves as the primary ranking
    statistic throughout.
+2c. Sensitivity of the two-tradition comparison to the choice of
+   centring vector, and the mismatched-pair floor of the triple
+   tradition, so that each tradition is read against its own baseline.
 3. Genre-floor quantification for the residual signature: the mean
    residual correlation among MISMATCHED double-tradition pairs measures
    the shared discourse-vs-narrative displacement; matched pairs are
@@ -241,13 +244,66 @@ def main():
     dt_raw = float(np.diag(S_raw).mean())
     dt_cen = float(np.diag(S_cen).mean())
 
+    # Mismatched-pair floor for the TRIPLE tradition as well, so that each
+    # set is read against its own baseline. The corpus mean is dominated by
+    # triple-tradition vectors (147 of 219), which shortens those vectors
+    # more under centring; comparing the two matched means directly would
+    # therefore favour the double tradition for a reason that has nothing
+    # to do with the texts.
+    nt = len(triple)
+    offt = ~np.eye(nt, dtype=bool)
+    St_raw = pair_matrix(TM, TL, cos)
+    St_cen = pair_matrix(TM, TL, ccos)
+    tt_floor_raw = float(St_raw[offt].mean())
+    tt_floor_cen = float(St_cen[offt].mean())
+
     out.append("## 2. Anisotropy diagnosis and mean-centred similarities\n")
     out.append("| Quantity | Raw cosine | Mean-centred cosine |")
     out.append("|---|---|---|")
-    out.append(f"| Triple-tradition Matt-Luke mean (Sig-A) | {siga_raw:.4f} | {siga_cen:.4f} |")
-    out.append(f"| Double-tradition Matt-Luke mean | {dt_raw:.4f} | {dt_cen:.4f} |")
+    out.append(f"| Triple-tradition Matt-Luke mean (matched; Sig-A) | {siga_raw:.4f} | {siga_cen:.4f} |")
+    out.append(f"| Mismatched triple-tradition pairs (floor) | {tt_floor_raw:.4f} | {tt_floor_cen:.4f} |")
+    out.append(f"| Triple-tradition matched-minus-floor contrast | {siga_raw - tt_floor_raw:.4f} | {siga_cen - tt_floor_cen:.4f} |")
+    out.append(f"| Double-tradition Matt-Luke mean (matched) | {dt_raw:.4f} | {dt_cen:.4f} |")
     out.append(f"| Mismatched double-tradition pairs (floor) | {floor_raw:.4f} | {floor_cen:.4f} |")
-    out.append(f"| Matched-minus-floor contrast | {dt_raw - floor_raw:.4f} | {dt_cen - floor_cen:.4f} |")
+    out.append(f"| Double-tradition matched-minus-floor contrast | {dt_raw - floor_raw:.4f} | {dt_cen - floor_cen:.4f} |")
+    out.append("")
+
+    # Mean centred norms, quantifying the asymmetry the centring introduces.
+    norm_dt = float(np.mean([np.linalg.norm(v - mu) for v in (M + L)]))
+    norm_tt = float(np.mean([np.linalg.norm(v - mu) for v in (TM + TL)]))
+    norm_mk = float(np.mean([np.linalg.norm(v - mu) for v in TK]))
+    out.append(f"- Mean centred norm, double-tradition vectors   : {norm_dt:.4f}")
+    out.append(f"- Mean centred norm, triple-tradition Matt+Luke : {norm_tt:.4f}")
+    out.append(f"- Mean centred norm, Mark vectors               : {norm_mk:.4f}")
+    out.append("")
+
+    # ------------------------------------------------------------------
+    # 2c. Sensitivity of the two-tradition comparison to the centring vector
+    # ------------------------------------------------------------------
+    def tradition_stats(A, B, centre):
+        k = len(A)
+        Sm = pair_matrix(A, B, lambda a, b: cos(a - centre, b - centre))
+        offk = ~np.eye(k, dtype=bool)
+        return float(np.diag(Sm).mean()), float(Sm[offk].mean())
+
+    mu_dt = np.array(M + L).mean(axis=0)
+    mu_tt = np.array(TM + TK + TL).mean(axis=0)
+    schemes = [
+        ("All 219 pericope vectors (used throughout)", mu),
+        ("Double-tradition vectors only (72)", mu_dt),
+        ("Triple-tradition vectors only (147)", mu_tt),
+        ("Mark vectors only (49)", np.array(TK).mean(axis=0)),
+        ("Mean of the two tradition means (balanced)", (mu_dt + mu_tt) / 2.0),
+        ("Matthew and Luke vectors only, both traditions (170)",
+         np.array(M + L + TM + TL).mean(axis=0)),
+    ]
+    out.append("## 2c. Sensitivity to the centring vector\n")
+    out.append("| Centring vector | DT matched | DT contrast | TT matched | TT contrast |")
+    out.append("|---|---|---|---|---|")
+    for name, centre in schemes:
+        dm, df = tradition_stats(M, L, centre)
+        tm, tf = tradition_stats(TM, TL, centre)
+        out.append(f"| {name} | {dm:.4f} | {dm - df:.4f} | {tm:.4f} | {tm - tf:.4f} |")
     out.append("")
 
     cen = permutation_tests(S_cen, labels)

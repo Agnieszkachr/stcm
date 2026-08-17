@@ -14,10 +14,27 @@
 
 | Quantity | Raw cosine | Mean-centred cosine |
 |---|---|---|
-| Triple-tradition Matt-Luke mean (Sig-A) | 0.9472 | 0.4749 |
-| Double-tradition Matt-Luke mean | 0.9452 | 0.6567 |
+| Triple-tradition Matt-Luke mean (matched; Sig-A) | 0.9472 | 0.4749 |
+| Mismatched triple-tradition pairs (floor) | 0.9037 | 0.0096 |
+| Triple-tradition matched-minus-floor contrast | 0.0435 | 0.4654 |
+| Double-tradition Matt-Luke mean (matched) | 0.9452 | 0.6567 |
 | Mismatched double-tradition pairs (floor) | 0.8510 | 0.0589 |
-| Matched-minus-floor contrast | 0.0941 | 0.5979 |
+| Double-tradition matched-minus-floor contrast | 0.0941 | 0.5979 |
+
+- Mean centred norm, double-tradition vectors   : 0.3895
+- Mean centred norm, triple-tradition Matt+Luke : 0.3036
+- Mean centred norm, Mark vectors               : 0.3005
+
+## 2c. Sensitivity to the centring vector
+
+| Centring vector | DT matched | DT contrast | TT matched | TT contrast |
+|---|---|---|---|---|
+| All 219 pericope vectors (used throughout) | 0.6567 | 0.5979 | 0.4749 | 0.4654 |
+| Double-tradition vectors only (72) | 0.6295 | 0.6578 | 0.5880 | 0.3609 |
+| Triple-tradition vectors only (147) | 0.6899 | 0.5303 | 0.4527 | 0.4746 |
+| Mark vectors only (49) | 0.7208 | 0.4824 | 0.4973 | 0.4345 |
+| Mean of the two tradition means (balanced) | 0.6439 | 0.6254 | 0.4984 | 0.4465 |
+| Matthew and Luke vectors only, both traditions (170) | 0.6455 | 0.6205 | 0.4915 | 0.4524 |
 
 ## 2b. Permutation tests on mean-centred cosine (primary statistic)
 
