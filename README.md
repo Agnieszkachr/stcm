@@ -102,11 +102,11 @@ outputs/
 │   ├── calibration_signatures.pkl     # Calibrated signatures
 │   └── reconstructed_q_embeddings.pkl
 └── reports/
-    ├── evaluation_summary.md          # Full evaluation suite results
+    ├── evaluation_summary.md          # LEGACY suite on the retired composite index
     ├── advanced_analysis.md           # Anisotropy, genre floor, directionality
     ├── centred_cosine_ranking.csv     # Primary per-pericope ranking (all 36)
     ├── q_score_distribution.csv       # Per-pericope measurements (legacy index incl.)
-    └── system_validation.txt          # System report
+    └── system_validation.txt          # LEGACY system report (composite index)
 ```
 
 ## Architecture

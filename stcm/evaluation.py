@@ -925,6 +925,19 @@ excluding the potentially genre-confounded residual component.
         return textwrap.dedent(f"""
 # STCM Evaluation Summary
 
+> [!WARNING]
+> **LEGACY REPORT — NOT THE STATISTICS REPORTED IN THE ARTICLE.**
+> Every figure below is computed on the **retired composite Q-score**
+> (0.8 x cosine + 0.2 x max(0, residual)), which no longer carries any
+> inference or ranking in this project. The word-overlap correlation,
+> sentence-level bootstrap and Goulder test therefore differ from the
+> published values, because there they are computed on the mean-centred
+> cosine. Do not compare these numbers with the article.
+>
+> The authoritative report is `outputs/reports/advanced_analysis.md`,
+> produced by `advanced_analysis.py`. This file is retained only for
+> backward compatibility with earlier versions of the pipeline.
+
 ## 1. Permutation Test: Mean Q-Score (Random Null)
 
 - Observed mean Q-score : {perm_mean.observed_statistic:.4f}

@@ -1,5 +1,12 @@
 STCM System Validation Report
 ==================================================
+*** LEGACY REPORT - NOT THE STATISTICS REPORTED IN THE ARTICLE ***
+The Q-score figures below use the retired composite index
+(0.8 x cosine + 0.2 x max(0, residual)) and are NOT comparable with
+the published results, which rest on the mean-centred cosine.
+Authoritative report: outputs/reports/advanced_analysis.md
+==================================================
+
 Embedding model       : ABeZet/Koine-Greek-BERT
 Embedder in use       : ABeZet/Koine-Greek-BERT
 Double-tradition n    : 36
