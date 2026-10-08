@@ -40,77 +40,15 @@ from stcm.config import EvaluationConfig, default_config
 from stcm.data_loader import Pericope, SynopticCorpus
 from stcm.embeddings import EmbeddingPipeline
 from stcm.scoring import QScorer, ScoringReport
-from stcm.utils import cosine_similarity, normalise_greek, strip_accents, residual_vector
+from stcm.utils import cosine_similarity, normalise_greek, residual_vector, word_tokens
 
 log = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-# Thematic categories for the double tradition
+# Per-pericope annotations live in stcm/metadata.py (single source of truth)
 # ---------------------------------------------------------------------------
-# Each double-tradition pericope is assigned to a broad genre/thematic
-# cluster so that the thematic-null can pair pericopes within the same
-# category rather than at random.
-
-THEMATIC_TAGS: Dict[str, str] = {
-    "John's preaching":              "prophetic",
-    "Temptation narrative (full)":   "narrative",
-    "Beatitudes":                    "wisdom",
-    "Love of enemies":               "wisdom",
-    "Lord's Prayer":                 "liturgical",
-    "Anxieties about life":          "wisdom",
-    "Narrow gate":                   "wisdom",
-    "Centurion's servant":           "narrative",
-    "John's question from prison":   "prophetic",
-    "Jesus on John":                 "prophetic",
-    "Woes on Galilean cities":       "prophetic",
-    "Hidden from wise revealed":     "wisdom",
-    "Mission discourse":             "discipleship",
-    "Harvest plentiful":             "discipleship",
-    "Sign of Jonah":                 "prophetic",
-    "Return of unclean spirit":      "prophetic",
-    "Lamp of the body":              "wisdom",
-    "Leaven of Pharisees":           "discipleship",
-    "Fear of God not men":           "discipleship",
-    "Blasphemy Holy Spirit":         "prophetic",
-    "Thief in the night":            "apocalyptic",
-    "Faithful servant":              "apocalyptic",
-    "Not peace but sword":           "discipleship",
-    "Reading the signs":             "apocalyptic",
-    "Settling with opponent":        "wisdom",
-    "Mustard seed and leaven":       "parable",
-    "Many come from east west":      "apocalyptic",
-    "Lament over Jerusalem":         "prophetic",
-    "Parable of Great Banquet":      "parable",
-    "Conditions of discipleship":    "discipleship",
-    "Salt of the earth":             "wisdom",
-    "Lost sheep":                    "parable",
-    "Serving two masters":           "wisdom",
-    "Day of the Son of Man":         "apocalyptic",
-    "Talents / Minas":               "parable",
-    "Judging twelve tribes":         "apocalyptic",
-}
-
-# ---------------------------------------------------------------------------
-# Goulder redaction pericopes
-# ---------------------------------------------------------------------------
-# Pericopes that Goulder (1989) identifies as demonstrating clear Lukan
-# redaction of Matthean material.  Under the Farrer Hypothesis these
-# should show *directional* dependence signatures; under the Q hypothesis
-# they should score comparably to non-Goulder pericopes.
-
-GOULDER_REDACTION_LABELS: List[str] = [
-    "Beatitudes",
-    "Love of enemies",
-    "Lord's Prayer",
-    "Anxieties about life",
-    "Narrow gate",
-    "Faithful servant",
-    "Not peace but sword",
-    "Conditions of discipleship",
-    "Parable of Great Banquet",
-    "Talents / Minas",
-]
+from stcm.metadata import THEMATIC_TAGS, GOULDER_REDACTION_LABELS  # noqa: E402,F401
 
 # ---------------------------------------------------------------------------
 # Known NT paraphrases for internal BERT validation
@@ -121,14 +59,16 @@ GOULDER_REDACTION_LABELS: List[str] = [
 # where ref is (chapter, verse_start, verse_end).
 
 NT_VALIDATION_PAIRS: List[Tuple[str, str, Tuple, str, Tuple]] = [
-    # Synoptic parallels (known shared source — should be high similarity)
-    ("Lord's Prayer: Matt vs Luke",     "matthew", (6, 9, 13),  "luke", (11, 2, 4)),
-    ("Beatitudes: Matt vs Luke",        "matthew", (5, 3, 12),  "luke", (6, 20, 23)),
+    # Synoptic parallels from the TRIPLE tradition (known shared source —
+    # should be high similarity).  Double-tradition passages are deliberately
+    # not used here, since they are the test set.
     ("Feeding 5000: Matt vs Mark",      "matthew", (14, 13, 21), "mark", (6, 30, 44)),
-    ("Baptism: Mark vs Luke",           "mark",    (1, 9, 11),  "luke", (3, 21, 22)),
+    ("Paralytic: Matt vs Luke",         "matthew", (9, 1, 8),    "luke", (5, 17, 26)),
+    ("Transfiguration: Mark vs Luke",   "mark",    (9, 2, 13),   "luke", (9, 28, 36)),
+    ("Baptism: Mark vs Luke",           "mark",    (1, 9, 11),   "luke", (3, 21, 22)),
     # Control: unrelated passages (should show low similarity)
-    ("Genealogy vs Crucifixion",        "matthew", (1, 1, 17),  "luke", (23, 26, 49)),
-    ("Sermon Mount vs Passion",         "matthew", (5, 1, 12),  "mark", (15, 1, 15)),
+    ("Genealogy vs Crucifixion",        "matthew", (1, 1, 17),   "luke", (23, 26, 49)),
+    ("Birth of Jesus vs Trial",         "matthew", (1, 18, 25),  "mark", (15, 1, 15)),
 ]
 
 
@@ -188,6 +128,7 @@ class GoulderTestResult:
     effect_size: float                  # Cohen's d
     goulder_labels: List[str]
     description: str
+    n_non_goulder: int = 0
 
 
 @dataclass
@@ -464,11 +405,11 @@ class EvaluationEngine:
     def _word_overlap(text_a: str, text_b: str) -> float:
         """
         Compute word-level agreement between two Greek texts as the Jaccard
-        coefficient of their word-token multisets.  Strips accents for
-        approximate matching.
+        coefficient of their word-token multisets.  Tokens are accent-
+        stripped, lower-cased and freed of punctuation (see utils.word_tokens).
         """
-        words_a = strip_accents(normalise_greek(text_a)).split()
-        words_b = strip_accents(normalise_greek(text_b)).split()
+        words_a = word_tokens(text_a)
+        words_b = word_tokens(text_b)
         if not words_a or not words_b:
             return 0.0
         counter_a = Counter(words_a)
@@ -720,6 +661,7 @@ class EvaluationEngine:
             effect_size=d,
             goulder_labels=found_labels,
             description=desc,
+            n_non_goulder=len(non_goulder_qs),
         )
 
     # ------------------------------------------------------------------
@@ -1000,7 +942,7 @@ beyond simple verbal overlap.
 
 Compares Q-score distributions for pericopes Goulder (1989) identifies as
 showing Lukan redaction of Matthew (n={len(goulder.goulder_labels)}) against the
-remainder (n={len([s for s in range(36)]) - len(goulder.goulder_labels)}).
+remainder (n={goulder.n_non_goulder}).
 
 - Goulder mean Q-score  : {goulder.goulder_mean_q:.4f}
 - Non-Goulder mean      : {goulder.non_goulder_mean_q:.4f}

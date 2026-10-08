@@ -7,6 +7,12 @@ Primary model : ABeZet/Koine-Greek-BERT (HuggingFace)
 Fallback       : character n-gram hash embedder (offline, deterministic,
                  opt-in via STCM_ALLOW_FALLBACK=1)
 
+Each pericope is encoded as ONE sequence (whole-text contextual encoding)
+and represented by the attention-masked mean of the last hidden states,
+L2-normalised.  Texts longer than the model window (512 tokens) are split
+at sentence boundaries and the chunk vectors are averaged with token-count
+weights; nothing is ever truncated.
+
 The embedder is loaded lazily, on the first cache miss: a fully cached
 corpus can be analysed without the model weights (or torch/transformers)
 being installed at all.
@@ -17,7 +23,7 @@ import hashlib
 import logging
 import pathlib
 import pickle
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import numpy as np
 
@@ -25,6 +31,9 @@ from stcm.config import EmbeddingConfig, default_config
 from stcm.utils import normalise_greek, text_hash
 
 log = logging.getLogger(__name__)
+
+# Bump whenever the text normalisation or the encoding scheme changes.
+ENCODING_VERSION = "v2"
 
 
 # ---------------------------------------------------------------------------
@@ -83,17 +92,67 @@ class _TransformerEmbedder:
         self._config = config
         log.info("Model loaded on device: %s", device)
 
-    def embed(self, text: str) -> np.ndarray:
+    def n_tokens(self, text: str) -> int:
+        """Number of subword tokens (without special tokens)."""
+        return len(self._tokenizer(normalise_greek(text), add_special_tokens=False)["input_ids"])
+
+    def _chunks(self, text: str) -> List[str]:
+        """
+        Split a text into chunks that fit the model's window.
+
+        The whole text is encoded in one pass whenever it fits (this is the
+        case for every double-tradition pericope).  Longer texts are split
+        at sentence boundaries (. ; ·) into the smallest number of chunks
+        that each fit within max_length - 2 tokens; a chunk is never cut
+        mid-sentence unless a single sentence alone exceeds the window, in
+        which case it is split on whitespace.  Silent truncation never
+        occurs.
+        """
+        limit = self._config.max_length - 2
+        if self.n_tokens(text) <= limit:
+            return [text]
+        import re
+        sents = [s.strip() for s in re.split(r"(?<=[.;·])\s+", text) if s.strip()]
+        chunks: List[str] = []
+        cur = ""
+        for s in sents:
+            if self.n_tokens(s) > limit:
+                # Degenerate case: split a very long sentence on words.
+                words = s.split()
+                piece = ""
+                for w in words:
+                    cand = (piece + " " + w).strip()
+                    if self.n_tokens(cand) > limit and piece:
+                        chunks.append(piece)
+                        piece = w
+                    else:
+                        piece = cand
+                s = piece
+            cand = (cur + " " + s).strip()
+            if self.n_tokens(cand) > limit and cur:
+                chunks.append(cur)
+                cur = s
+            else:
+                cur = cand
+        if cur:
+            chunks.append(cur)
+        return chunks
+
+    def _encode(self, text: str) -> Tuple[np.ndarray, int]:
+        """Mean-pooled last-hidden-state vector for one chunk, with its token count."""
         import torch  # type: ignore
 
-        text = normalise_greek(text)
         enc = self._tokenizer(
             text,
             return_tensors="pt",
-            truncation=True,
-            max_length=self._config.max_length,
-            padding=True,
+            truncation=False,
+            padding=False,
         )
+        n_tok = int(enc["attention_mask"].sum())
+        if n_tok > self._config.max_length:
+            raise ValueError(
+                f"Chunk of {n_tok} tokens exceeds max_length={self._config.max_length}"
+            )
         enc = {k: v.to(self._device) for k, v in enc.items()}
         with torch.no_grad():
             out = self._model(**enc)
@@ -101,7 +160,26 @@ class _TransformerEmbedder:
         hidden = out.last_hidden_state  # (1, T, H)
         mask = enc["attention_mask"].unsqueeze(-1).float()  # (1, T, 1)
         vec = (hidden * mask).sum(dim=1) / mask.sum(dim=1)  # (1, H)
-        vec = vec.squeeze(0).cpu().numpy().astype(np.float32)
+        return vec.squeeze(0).cpu().numpy().astype(np.float32), n_tok
+
+    def embed(self, text: str) -> np.ndarray:
+        """
+        Embed a text: one forward pass if it fits the window, otherwise the
+        token-count-weighted mean of the chunk vectors (equivalent to mean
+        pooling over all tokens of the text), L2-normalised.
+        """
+        text = normalise_greek(text)
+        chunks = self._chunks(text)
+        if len(chunks) > 1:
+            log.info("Text of %d tokens split into %d chunks for encoding.",
+                     self.n_tokens(text), len(chunks))
+        vecs, weights = [], []
+        for c in chunks:
+            v, n = self._encode(c)
+            vecs.append(v)
+            weights.append(n)
+        vec = np.average(np.array(vecs), axis=0, weights=np.array(weights, dtype=np.float64))
+        vec = vec.astype(np.float32)
         # L2-normalise
         norm = np.linalg.norm(vec)
         if norm > 0:
@@ -248,18 +326,14 @@ class EmbeddingPipeline:
         # The cache key includes the model identity so that switching
         # models (e.g. Ancient-Greek-BERT -> Koine-Greek-BERT) can never
         # silently reuse vectors produced by a different model.
-        key = text_hash(f"{self._cfg.model_name}::{text}")
+        # The key includes the model identity and the encoding-scheme
+        # version (v2 = sigla stripped, no truncation, chunked encoding of
+        # long texts), so that vectors produced by an earlier scheme can
+        # never be silently reused.
+        key = text_hash(f"{self._cfg.model_name}::{ENCODING_VERSION}::{normalise_greek(text)}")
         cached = self._load_cache(key)
         if cached is not None:
             return cached
-        # Backward compatibility: caches written before v0.2 were keyed by
-        # the text hash alone.  Accept them only for the default published
-        # model, and migrate the entry to the new key on first access.
-        if self._cfg.model_name == "ABeZet/Koine-Greek-BERT":
-            legacy = self._load_cache(text_hash(text))
-            if legacy is not None:
-                self._save_cache(key, legacy)
-                return legacy
         vec = self._ensure_embedder().embed(text)
         self._save_cache(key, vec)
         return vec

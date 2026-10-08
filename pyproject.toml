@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stcm"
-version = "0.1.0"
+version = "2.0.0"
 description = "Synoptic Transform Calibration Model — A supervised source-reconstruction approach to the Synoptic Problem"
 readme = "README.md"
 license = {text = "MIT"}

@@ -385,10 +385,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#speeding-up-execution" class="md-nav__link">
+  <a href="#legacy-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Speeding up Execution
+        Legacy steps
       
     </span>
   </a>
@@ -528,10 +528,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#speeding-up-execution" class="md-nav__link">
+  <a href="#legacy-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Speeding up Execution
+        Legacy steps
       
     </span>
   </a>
@@ -595,16 +595,15 @@
 <pre><code class="language-bash">python run_pipeline.py
 </code></pre>
 <p>This will:
-1. Load the SBLGNT texts
-2. Load the embedding model (or fallback if offline)
-3. Calibrate on the Triple Tradition
-4. Score the Double Tradition (Q material)
-5. Reconstruct latent Q embeddings
-6. Run 1000 permutations for robustness evaluation
-7. Save all output to <code>outputs/</code></p>
-<h2 id="speeding-up-execution">Speeding up Execution</h2>
-<p>The permutation tests in the evaluation step take the longest. To skip them during development or quick checks:</p>
-<pre><code class="language-bash">python run_pipeline.py --skip-eval
+1. Load the SBLGNT texts and check the alignment tables (no verse in two units; no verse in both sets)
+2. Load the embedding model lazily (only on a cache miss)
+3. Calibrate on the Triple Tradition (46 pericopes)
+4. Run the advanced analysis on the Double Tradition (51 pericopes): centred-cosine statistics, four permutation nulls, floors, covariates, directionality with controls
+5. Draw Figures 1–6
+6. Save all output to <code>outputs/</code></p>
+<h2 id="legacy-steps">Legacy steps</h2>
+<p>The retired composite Q-score, the latent-Q reconstruction and the old evaluation suite are not part of the article. They run only on request:</p>
+<pre><code class="language-bash">python run_pipeline.py --legacy
 </code></pre>
 <h2 id="resuming-from-cache">Resuming from Cache</h2>
 <p>If a previous run was interrupted or you only want to re-run the final evaluation steps, use the <code>--resume</code> flag. It reads <code>logs/STEP_LOG.md</code> to determine the last completed step and picks up from there.</p>
@@ -625,9 +624,11 @@ python run_pipeline.py
 </code></pre>
 <h2 id="understanding-outputs">Understanding Outputs</h2>
 <p>Look in the <code>outputs/</code> directory for your results:
-- <code>reports/q_score_distribution.csv</code> — Contains the raw scores for every analyzed double-tradition pericope.
-- <code>reports/evaluation_summary.md</code> — Contains the p-values and z-scores showing statistical significance.
-- <code>figures/q_score_histogram.png</code> — A visualization of how Q material aligns with the Triple Tradition baseline.</p>
+- <code>reports/advanced_analysis.md</code> — Every statistic in the article: calibration table, anisotropy table, permutation nulls, genre floor, directionality with controls, covariates, bootstrap.
+- <code>reports/centred_cosine_ranking.csv</code> — The per-pericope ranking with verse references, stratum, form, lengths and word overlap.
+- <code>reports/key_stats.json</code> — The handful of numbers the figure script needs.
+- <code>figures/evaluation/fig1–fig6</code> — The article figure set.
+- <code>reports/evaluation_summary.md</code>, <code>reports/q_score_distribution.csv</code>, <code>reports/system_validation.txt</code> — legacy outputs (<code>--legacy</code> only).</p>
 
 
 

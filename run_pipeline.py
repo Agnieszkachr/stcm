@@ -6,15 +6,17 @@ End-to-end STCM pipeline runner.
 Steps executed:
   1. Load & validate SBLGNT corpus
   2. Embed all pericopes
-  3. Calibrate on triple tradition
-  4. Score double tradition (Q candidates)
-  5. Reconstruct latent Q embeddings
-  6. Evaluate robustness
-  7. Save all outputs and STEP_LOG.md
+  3. Calibrate on triple tradition (Mark centroid, Signatures A/B)
+  4. Advanced analysis: centred-cosine statistics, permutation nulls,
+     confounds, directionality (advanced_analysis.py)
+  5. Figures 1-6 (generate_evaluation_figures.py)
+
+The legacy composite Q-score, reconstruction and evaluation_summary steps
+(retired from the article) run only with --legacy.
 
 Usage
 -----
-    python run_pipeline.py [--skip-eval] [--model ABeZet/Koine-Greek-BERT]
+    python run_pipeline.py [--legacy] [--skip-eval] [--model ABeZet/Koine-Greek-BERT]
 
 The pipeline is resumable: if outputs/models/calibration_signatures.pkl exists,
 calibration is skipped and loaded from disk.
@@ -94,6 +96,9 @@ def main() -> None:
                         help="Override embedding model (e.g. ABeZet/Koine-Greek-BERT)")
     parser.add_argument("--resume", action="store_true",
                         help="Skip already-completed steps (detect from STEP_LOG.md)")
+    parser.add_argument("--legacy", action="store_true",
+                        help="Also run the retired composite Q-score, reconstruction "
+                             "and evaluation_summary steps (not used in the article)")
     args = parser.parse_args()
 
     # Setup
@@ -173,89 +178,114 @@ def main() -> None:
     logger.info("STEP 3 COMPLETE (%.1f s)", time.time() - t0)
 
     # -----------------------------------------------------------------------
-    # STEP 4: Scoring (double tradition)
+    # STEP 4: Advanced analysis (the statistics reported in the article)
     # -----------------------------------------------------------------------
     t0 = time.time()
-    banner("STEP 4 — Scoring double-tradition pericopes")
-    scorer = QScorer(
-        calibration=calibration,
-        pipeline=pipeline,
-        config=cfg.scoring,
-    )
-    report = scorer.batch_score_double_tradition(corpus)
-    scorer.generate_distribution_report(report)
-    append_step_log(4, "Double-tradition scoring complete", [
-        "outputs/reports/q_score_distribution.csv",
-        "outputs/figures/q_score_histogram.png",
+    banner("STEP 4 — Advanced analysis (centred cosine, nulls, confounds, directionality)")
+    import advanced_analysis
+    advanced_analysis.main()
+    append_step_log(4, "Advanced analysis complete", [
+        "outputs/reports/advanced_analysis.md",
+        "outputs/reports/centred_cosine_ranking.csv",
     ])
     logger.info("STEP 4 COMPLETE (%.1f s)", time.time() - t0)
 
-    # Print top 10
-    logger.info("Top 10 Q-scored pericopes:")
-    for i, s in enumerate(report.top_k(10), 1):
-        logger.info("  %2d. %-40s Q=%.4f", i, s.label, s.q_score)
-
     # -----------------------------------------------------------------------
-    # STEP 5: Reconstruction
+    # STEP 5: Figures
     # -----------------------------------------------------------------------
     t0 = time.time()
-    banner("STEP 5 — Reconstructing latent Q embeddings")
-    rec_path = cfg.paths.outputs_models / "reconstructed_q_embeddings.pkl"
-    reconstruction = reconstruct_and_save(
-        corpus=corpus,
-        calibration=calibration,
-        pipeline=pipeline,
-        config=cfg.reconstruction,
-        out_path=rec_path,
-    )
-    logger.info(
-        "Reconstruction: conv_rate=%.2f mean_var=%.6f",
-        reconstruction.convergence_rate,
-        reconstruction.mean_variance,
-    )
-    append_step_log(5, "Latent Q embedding reconstruction complete", [
-        "outputs/models/reconstructed_q_embeddings.pkl",
-    ])
+    banner("STEP 5 — Figures 1-6")
+    import generate_evaluation_figures
+    generate_evaluation_figures.main()
+    append_step_log(5, "Figures generated", ["outputs/figures/evaluation/"])
     logger.info("STEP 5 COMPLETE (%.1f s)", time.time() - t0)
 
-    # -----------------------------------------------------------------------
-    # STEP 6: Evaluation
-    # -----------------------------------------------------------------------
-    eval_result = None
-    if not args.skip_eval:
+    if args.legacy:
+        banner("LEGACY STEPS — composite Q-score, reconstruction, evaluation_summary")
+        # -----------------------------------------------------------------------
+        # STEP 4: Scoring (double tradition)
+        # -----------------------------------------------------------------------
         t0 = time.time()
-        banner("STEP 6 — Robustness evaluation (permutation tests)")
-        eval_result = evaluate_and_save(
-            report=report,
+        banner("STEP 4 — Scoring double-tradition pericopes")
+        scorer = QScorer(
+            calibration=calibration,
+            pipeline=pipeline,
+            config=cfg.scoring,
+        )
+        report = scorer.batch_score_double_tradition(corpus)
+        scorer.generate_distribution_report(report)
+        append_step_log(4, "Double-tradition scoring complete", [
+            "outputs/reports/q_score_distribution.csv",
+            "outputs/figures/q_score_histogram.png",
+        ])
+        logger.info("STEP 4 COMPLETE (%.1f s)", time.time() - t0)
+
+        # Print top 10
+        logger.info("Top 10 Q-scored pericopes:")
+        for i, s in enumerate(report.top_k(10), 1):
+            logger.info("  %2d. %-40s Q=%.4f", i, s.label, s.q_score)
+
+        # -----------------------------------------------------------------------
+        # STEP 5: Reconstruction
+        # -----------------------------------------------------------------------
+        t0 = time.time()
+        banner("STEP 5 — Reconstructing latent Q embeddings")
+        rec_path = cfg.paths.outputs_models / "reconstructed_q_embeddings.pkl"
+        reconstruction = reconstruct_and_save(
             corpus=corpus,
             calibration=calibration,
             pipeline=pipeline,
-            config=cfg.evaluation,
+            config=cfg.reconstruction,
+            out_path=rec_path,
         )
         logger.info(
-            "Permutation test p-value: %.4f (z=%.3f)",
-            eval_result.permutation_mean_q.p_value,
-            eval_result.permutation_mean_q.z_score,
+            "Reconstruction: conv_rate=%.2f mean_var=%.6f",
+            reconstruction.convergence_rate,
+            reconstruction.mean_variance,
         )
-        append_step_log(6, "Robustness evaluation complete", [
-            "outputs/reports/evaluation_summary.md",
+        append_step_log(5, "Latent Q embedding reconstruction complete", [
+            "outputs/models/reconstructed_q_embeddings.pkl",
         ])
-        logger.info("STEP 6 COMPLETE (%.1f s)", time.time() - t0)
-    else:
-        logger.info("Skipping STEP 6 (--skip-eval set).")
+        logger.info("STEP 5 COMPLETE (%.1f s)", time.time() - t0)
 
-    # -----------------------------------------------------------------------
-    # STEP 7: System validation report
-    # -----------------------------------------------------------------------
-    banner("STEP 7 — Generating system validation report")
-    _write_validation_report(
-        report, reconstruction, cfg,
-        eval_result=eval_result if not args.skip_eval else None,
-        embedder_id=getattr(pipeline, "embedder_id", cfg.embedding.model_name),
-    )
-    append_step_log(7, "System validation report generated", [
-        "outputs/reports/system_validation.txt",
-    ])
+        # -----------------------------------------------------------------------
+        # STEP 6: Evaluation
+        # -----------------------------------------------------------------------
+        eval_result = None
+        if not args.skip_eval:
+            t0 = time.time()
+            banner("STEP 6 — Robustness evaluation (permutation tests)")
+            eval_result = evaluate_and_save(
+                report=report,
+                corpus=corpus,
+                calibration=calibration,
+                pipeline=pipeline,
+                config=cfg.evaluation,
+            )
+            logger.info(
+                "Permutation test p-value: %.4f (z=%.3f)",
+                eval_result.permutation_mean_q.p_value,
+                eval_result.permutation_mean_q.z_score,
+            )
+            append_step_log(6, "Robustness evaluation complete", [
+                "outputs/reports/evaluation_summary.md",
+            ])
+            logger.info("STEP 6 COMPLETE (%.1f s)", time.time() - t0)
+        else:
+            logger.info("Skipping STEP 6 (--skip-eval set).")
+
+        # -----------------------------------------------------------------------
+        # STEP 7: System validation report
+        # -----------------------------------------------------------------------
+        banner("STEP 7 — Generating system validation report")
+        _write_validation_report(
+            report, reconstruction, cfg,
+            eval_result=eval_result if not args.skip_eval else None,
+            embedder_id=getattr(pipeline, "embedder_id", cfg.embedding.model_name),
+        )
+        append_step_log(7, "System validation report generated", [
+            "outputs/reports/system_validation.txt",
+        ])
 
     banner("✅  PIPELINE COMPLETE")
     logger.info(
@@ -329,9 +359,9 @@ def _write_validation_report(report, reconstruction, cfg: STCMConfig,
 
     # Full pericope table
     lines.append("")
-    lines.append("All 36 pericopes (ranked by Q-score):")
+    lines.append(f"All {len(report.scores)} pericopes (ranked by Q-score):")
     lines.append("-" * 50)
-    for i, s in enumerate(report.top_k(36), 1):
+    for i, s in enumerate(report.top_k(len(report.scores)), 1):
         lines.append(
             f"  {i:2d}. {s.label:<40} Q={s.q_score:.4f}  "
             f"cos={s.matt_luke_cos:.3f}  resid={s.residual_sim:.3f}"

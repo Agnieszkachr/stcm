@@ -1,0 +1,6 @@
+signature,mean,sd,ci_lower,ci_upper
+A: Matt–Luke cosine (raw),0.9571,0.0231,0.9500,0.9637
+A: Matt–Luke cosine (centred),0.5681,0.1735,0.5207,0.6148
+B: residual correlation vs pericope-specific Mark,0.3542,0.1359,0.3174,0.3924
+Matt–Mark cosine (raw),0.9689,0.0176,0.9638,0.9735
+Luke–Mark cosine (raw),0.9660,0.0157,0.9615,0.9707

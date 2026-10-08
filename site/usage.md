@@ -11,20 +11,19 @@ python run_pipeline.py
 ```
 
 This will:
-1. Load the SBLGNT texts
-2. Load the embedding model (or fallback if offline)
-3. Calibrate on the Triple Tradition
-4. Score the Double Tradition (Q material)
-5. Reconstruct latent Q embeddings
-6. Run 1000 permutations for robustness evaluation
-7. Save all output to `outputs/`
+1. Load the SBLGNT texts and check the alignment tables (no verse in two units; no verse in both sets)
+2. Load the embedding model lazily (only on a cache miss)
+3. Calibrate on the Triple Tradition (46 pericopes)
+4. Run the advanced analysis on the Double Tradition (51 pericopes): centred-cosine statistics, four permutation nulls, floors, covariates, directionality with controls
+5. Draw Figures 1–6
+6. Save all output to `outputs/`
 
-## Speeding up Execution
+## Legacy steps
 
-The permutation tests in the evaluation step take the longest. To skip them during development or quick checks:
+The retired composite Q-score, the latent-Q reconstruction and the old evaluation suite are not part of the article. They run only on request:
 
 ```bash
-python run_pipeline.py --skip-eval
+python run_pipeline.py --legacy
 ```
 
 ## Resuming from Cache
@@ -57,6 +56,8 @@ STCM_LOG_LEVEL=DEBUG python run_pipeline.py
 ## Understanding Outputs
 
 Look in the `outputs/` directory for your results:
-- `reports/q_score_distribution.csv` — Contains the raw scores for every analyzed double-tradition pericope.
-- `reports/evaluation_summary.md` — Contains the p-values and z-scores showing statistical significance.
-- `figures/q_score_histogram.png` — A visualization of how Q material aligns with the Triple Tradition baseline.
+- `reports/advanced_analysis.md` — Every statistic in the article: calibration table, anisotropy table, permutation nulls, genre floor, directionality with controls, covariates, bootstrap.
+- `reports/centred_cosine_ranking.csv` — The per-pericope ranking with verse references, stratum, form, lengths and word overlap.
+- `reports/key_stats.json` — The handful of numbers the figure script needs.
+- `figures/evaluation/fig1–fig6` — The article figure set.
+- `reports/evaluation_summary.md`, `reports/q_score_distribution.csv`, `reports/system_validation.txt` — legacy outputs (`--legacy` only).

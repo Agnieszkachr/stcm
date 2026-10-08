@@ -16,8 +16,8 @@ graph TD
     C --> E[Signature B: Residual dependence]
     D --> F[Double-Tradition Scoring: centred cosine]
     E --> F
-    F --> G[Latent Q Reconstruction]
-    F --> H[Permutation Testing]
+    F --> H[Permutation nulls: random, thematic, length-matched]
+    F --> G[Covariates & directionality controls]
     G --> I[Results & Reports]
     H --> I
 ```

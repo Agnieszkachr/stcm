@@ -514,6 +514,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#does-passage-length-or-literary-form-drive-the-ranking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does passage length or literary form drive the ranking?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-were-the-pericopes-delimited" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How were the pericopes delimited?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#can-i-run-this-on-john-or-the-non-canonical-gospels" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -647,6 +669,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#does-passage-length-or-literary-form-drive-the-ranking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Does passage length or literary form drive the ranking?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-were-the-pericopes-delimited" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How were the pericopes delimited?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#can-i-run-this-on-john-or-the-non-canonical-gospels" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -680,19 +724,23 @@
 <h3 id="why-use-koine-greek-bert">Why use Koine-Greek-BERT?</h3>
 <p>BERT models represent context-aware semantics, not just exact word overlap. Traditional stylometry often counts word frequencies, which fails to capture synonyms, morphological variations, or semantic themes. Koine-Greek-BERT has been pre-trained to understand the structure of Ancient Greek, allowing STCM to recognise when Matthew and Luke are saying the same thing in slightly different ways. An internal validation on known NT paraphrases confirms that the model produces sensible similarity judgements for the specific register and vocabulary of synoptic Greek.</p>
 <h3 id="doesnt-the-statistic-just-measure-word-overlap">Doesn't the statistic just measure word overlap?</h3>
-<p>No. The Pearson correlation between the centred cosines and traditional word-level Jaccard coefficients is substantial (<em>r</em> = 0.770) but meaningfully below 1.0. Approximately 41% of the variance is not explained by word overlap, indicating that the embedding analysis captures compositional, syntactic, and semantic structure that word counting cannot access.</p>
+<p>No. The Pearson correlation between the centred cosines and traditional word-level Jaccard coefficients is substantial (<em>r</em> = 0.797) but meaningfully below 1.0. Approximately 37% of the variance is not explained by word overlap, indicating that the embedding analysis captures compositional, syntactic, and semantic structure that word counting cannot access.</p>
 <h3 id="what-about-the-circularity-problem-arent-similar-topics-naturally-similar">What about the circularity problem — aren't similar topics naturally similar?</h3>
-<p>This was addressed with the <strong>thematic-null permutation test</strong>. Instead of pairing Matt–Luke pericopes randomly, this test pairs each Matthean pericope with a <em>thematically similar</em> Lukan pericope (wisdom with wisdom, apocalyptic with apocalyptic, etc.). The correctly paired pericopes still significantly exceed this thematic baseline (empirical <em>p</em> &lt; 0.001, 1,000 permutations), demonstrating that the signal reflects genuine textual correspondence beyond mere topical similarity.</p>
+<p>This was addressed with the <strong>thematic-null permutation test</strong>. Instead of pairing Matt–Luke pericopes randomly, this test pairs each Matthean pericope with a <em>thematically similar</em> Lukan pericope (wisdom with wisdom, apocalyptic with apocalyptic, etc.). The correctly paired pericopes still significantly exceed this thematic baseline (empirical <em>p</em> &lt; 0.001, 1,000 permutations), demonstrating that the signal reflects genuine textual correspondence beyond mere topical similarity. A second kind of circularity is length: true parallels are of similar length, random pairs are not, and unrelated passages of different lengths are less similar than unrelated passages of equal length. Two further nulls therefore pair each Matthean pericope with a Lukan one of comparable length (optionally also of the same theme); the signal survives both (<em>p</em> &lt; 0.001).</p>
 <h3 id="are-the-results-sensitive-to-tuning">Are the results sensitive to tuning?</h3>
-<p>There is nothing to tune. The mean-centred cosine has no weights or free parameters, and it carries both the significance testing and the ranking. What <em>could</em> have been an arbitrary choice is the centring vector itself, so the two-tradition comparison is repeated under six definitions of it — all 219 vectors, double-tradition only, triple-tradition only, Mark only, a balanced mean of the two traditions, and Matthew and Luke only. The ordering is invariant across all six. An earlier version of this project used a weighted composite index; it has been retired from all inference and ranking and survives only as a legacy output.</p>
+<p>There is nothing to tune. The mean-centred cosine has no weights or free parameters, and it carries both the significance testing and the ranking. What <em>could</em> have been an arbitrary choice is the centring vector itself, so the two-tradition comparison is repeated under six definitions of it — all 240 vectors, double-tradition only, triple-tradition only, Mark only, a balanced mean of the two traditions, and Matthew and Luke only. The ordering is invariant across all six. An earlier version of this project used a weighted composite index; it has been retired from all inference and ranking and survives only as a legacy output.</p>
 <h3 id="what-if-i-dont-have-internet-access-to-download-the-model">What if I don't have internet access to download the model?</h3>
 <p>STCM includes an offline fallback, but it must be enabled explicitly. If <code>ABeZet/Koine-Greek-BERT</code> cannot be loaded via the <code>transformers</code> library, the pipeline stops with an error unless <code>STCM_ALLOW_FALLBACK=1</code> is set, in which case a deterministic character-trigram hashing embedder (256-dimensional) is used. The fallback is sufficient to demonstrate that the pipeline runs end-to-end, but its results are not comparable to the published outputs; the embedder actually used is recorded in <code>system_validation.txt</code>.</p>
 <h3 id="what-is-the-farrer-hypothesis-and-does-stcm-disprove-it">What is the Farrer Hypothesis and does STCM disprove it?</h3>
-<p>The Farrer Hypothesis argues that Luke used Matthew as a source, meaning there is no "Q". STCM does not directly falsify this model. However, a <strong>Goulder redaction test</strong> compares pericopes that Goulder (1989) identifies as demonstrating Lukan redaction of Matthew against the rest. These pericopes show no statistically significant difference in centred-cosine distribution (Welch's <em>t</em> = −1.177, <em>p</em> = 0.261), but the test is severely underpowered (<em>n</em> = 10 vs. <em>n</em> = 26) and the medium effect size (Cohen's <em>d</em> = −0.523) indicates a potentially meaningful difference that the current sample cannot confirm or rule out. The result is therefore genuinely <strong>inconclusive</strong> — it neither supports nor refutes either hypothesis. Future extensions of STCM could develop explicit directional-dependence metrics and employ larger datasets to distinguish Q-mediated from Matthew-mediated transmission.</p>
+<p>The Farrer Hypothesis argues that Luke used Matthew as a source, meaning there is no "Q". STCM does not directly falsify this model. However, a <strong>Goulder redaction test</strong> compares pericopes that Goulder (1989) identifies as demonstrating Lukan redaction of Matthew against the rest. These pericopes show no statistically significant difference in centred-cosine distribution (Welch's <em>t</em> = −1.498, <em>p</em> = 0.164), but the test is underpowered (<em>n</em> = 10 vs. <em>n</em> = 41) and the medium-to-large effect size (Cohen's <em>d</em> = −0.767) indicates a potentially meaningful difference that the current sample cannot confirm or rule out. The result is therefore genuinely <strong>inconclusive</strong> — it neither supports nor refutes either hypothesis. A direct directionality test (which evangelist's embeddings predict the other's better, by leave-one-out ridge regression) was also built and controlled: it finds a small asymmetry in the double tradition, but the asymmetry depends on the ridge penalty, vanishes among pairs of equal length, and — decisively — the same statistic does not recover the known direction of copying where Matthew and Luke copy Mark. A method that fails its positive control is not allowed to answer the question, so STCM draws no directional inference.</p>
 <h3 id="what-about-the-possibility-that-q-was-in-aramaic">What about the possibility that Q was in Aramaic?</h3>
 <p>Casey (2002) argues that Q may have been composed in Aramaic and translated independently into Greek. If so, the Greek-language embeddings would capture two independent translation events rather than the original source. This would <em>attenuate</em> the signal (making significant results more noteworthy, not less) and could explain why some pericopes score lower than expected despite being considered core Q material. It is also worth noting that a Koine Greek BERT model may be sensitive to the distinctive syntax of "translation Greek" — Semitisms and Aramaisms that arise when Greek renders Semitic source constructions. If Matthew and Luke translated an Aramaic Q independently, the resulting variance in Greek syntax would naturally lower cosine similarity, which is consistent with the spectrum of centred cosines observed across the double tradition.</p>
+<h3 id="does-passage-length-or-literary-form-drive-the-ranking">Does passage length or literary form drive the ranking?</h3>
+<p>Length does not: the correlation between centred cosine and length in characters is essentially zero (<em>r</em> = 0.06), and the shortest and longest sayings occupy both ends of the ranking. Literary form does co-vary with the statistic (Kruskal–Wallis <em>p</em> = 0.029): discourses agree most closely, parables least. This is reported as a covariate of the ranking; it may reflect the evangelists' freer handling of parables, or the model's handling of narrative-shaped sayings, and the corpus cannot separate the two. It is not a short-saying artefact, since the shortest form (the proverbial saying) is not the highest-scoring.</p>
+<h3 id="how-were-the-pericopes-delimited">How were the pericopes delimited?</h3>
+<p>By the Aland synopsis and the IQP inventory, under three rules enforced by the loader: each pair is trimmed to the verses that are actually parallel (non-contiguous ranges such as Luke 3:7–9 + 16–17 are supported), no verse belongs to two units of the same set, and no verse of Matthew or Luke belongs to both the calibration and the test set. Mark–Q overlaps are excluded from the calibration set. The table has 51 double-tradition and 46 triple-tradition units; the article shows, with <em>John's Preaching</em>, how much a wrong boundary can move a single pericope.</p>
 <h3 id="can-i-run-this-on-john-or-the-non-canonical-gospels">Can I run this on John or the non-canonical gospels?</h3>
-<p>Yes, the pipeline can be adapted to any Greek text, but you will need to map the pericopes in <code>data_loader.py</code>. Currently, it uses a hardcoded table based on the Aland Synopsis for the synoptic gospels.</p>
+<p>Yes, the pipeline can be adapted to any Greek text, but you will need to map the pericopes in <code>data_loader.py</code> (and add their metadata in <code>stcm/metadata.py</code>). Currently, it uses a hardcoded table based on the Aland Synopsis and the IQP inventory for the synoptic gospels.</p>
 
 
 

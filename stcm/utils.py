@@ -34,12 +34,32 @@ def normalise_greek(text: str) -> str:
     Normalise a Greek string for embedding:
     1. NFC normalisation (canonical composition).
     2. Strip soft-hyphens and zero-width characters.
-    3. Collapse multiple whitespace.
+    3. Strip the SBLGNT critical-apparatus sigla (U+2E00-U+2E0F: \u2E00 \u2E01 \u2E02 \u2E03
+       \u2E04 \u2E05 \u2026) and the double square brackets \u27E6 \u27E7 used for Mark 16:9-20 and
+       similar passages.  These are editorial marks, not text; left in,
+       each becomes an [UNK] token in the model input (about 3,700 of them
+       across the three gospels) and pollutes the mean-pooled vector.
+    4. Collapse multiple whitespace.
     """
     text = unicodedata.normalize("NFC", text)
     text = re.sub(r"[\u00AD\u200B\u200C\u200D\uFEFF]", "", text)
+    text = re.sub(r"[\u2E00-\u2E0F\u27E6\u27E7]", "", text)
     text = re.sub(r"\s+", " ", text).strip()
     return text
+
+
+_PUNCT_RE = re.compile(r"[^\w\s]", re.UNICODE)
+
+
+def word_tokens(text: str) -> List[str]:
+    """
+    Word tokens for lexical comparison: normalised, accent-stripped,
+    lower-cased, punctuation removed.  Used by the word-overlap baseline so
+    that '\u03BA\u03C5\u03C1\u03AF\u03BF\u03B9\u03C2,' and '\u03BA\u03C5\u03C1\u03AF\u03BF\u03B9\u03C2' count as the same word.
+    """
+    text = strip_accents(normalise_greek(text)).lower()
+    text = _PUNCT_RE.sub(" ", text)
+    return text.split()
 
 
 def strip_accents(text: str) -> str:
