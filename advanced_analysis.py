@@ -618,6 +618,18 @@ def main():
     out.append(f"- Mean per-pericope bootstrap SD ({N_SENT_BOOT} resamples): {np.mean(stds):.4f}")
     out.append("")
 
+    # Mismatched-pair centred cosines (for Figure 1) and TT matched values.
+    with open(_REPO / "outputs" / "reports" / "pair_values_centred.csv", "w", newline="",
+              encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(["set", "kind", "value"])
+        for v in S_cen[off]:
+            w.writerow(["double", "mismatched", f"{v:.4f}"])
+        for v in np.diag(St_cen):
+            w.writerow(["triple", "matched", f"{v:.4f}"])
+        for v in St_cen[offt]:
+            w.writerow(["triple", "mismatched", f"{v:.4f}"])
+
     # Key statistics for the figure script and for documentation checks.
     import json
     key = {
@@ -626,6 +638,9 @@ def main():
         "centred_random_null_sd": float(cen["random"].std()),
         "centred_matched_mean": float(ccos_vals.mean()),
         "centred_dt_floor": c["dt_floor"],
+        "centred_tt_matched": c["tt_matched"], "centred_tt_floor": c["tt_floor"],
+        "form_kw_p": float(p_f), "strata_mw_p": float(p_u),
+        "length_pearson_r": float(r_p), "length_pearson_p": float(p_p),
         "residual_genre_floor": res_floor,
         "residual_genre_floor_sd": res_floor_sd,
         "residual_matched_mean": res_matched,
