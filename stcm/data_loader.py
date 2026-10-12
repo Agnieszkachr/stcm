@@ -21,7 +21,7 @@ where the parallel verses are non-contiguous in one gospel (e.g. Luke
 only the material that is actually parallel.  None means that gospel lacks
 the pericope.
 
-Alignment principles (version 2, October 2026)
+Alignment principles (version 3, October 2026)
 ----------------------------------------------
 * No pericope appears in both the calibration and the test set.
 * No verse appears in two different units of the same set.
@@ -32,7 +32,7 @@ from __future__ import annotations
 
 import logging
 import pathlib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 from stcm.config import default_config
@@ -62,9 +62,15 @@ TripleEntry = Tuple[str, Optional[Ref], Optional[Ref], Optional[Ref]]
 #   Q verses embedded in Markan contexts (Matt 13:16-17; 17:20; 24:26-28;
 #   Luke 22:28-30) are cut out of the calibration units so that no verse
 #   belongs to both sets.
+#   Version 3 (October 2026): "Call of the first disciples" removed, because
+#   Luke 5:1-11 is a different episode (the miraculous catch) sharing only
+#   5:10b-11 with Mark 1:16-20; "Rejection at Nazareth" restricted on the
+#   Lukan side to the verses with a Markan parallel (Luke 4:16, 22, 24),
+#   since 4:17-21, 23, 25-30 are Lukan composition.  Rule: a unit enters the
+#   calibration set only if each gospel's text is the Markan episode itself,
+#   trimmed to the verses that have a parallel in Aland's synopsis.
 TRIPLE_TRADITION: List[TripleEntry] = [
     ("Baptism of Jesus",           (3,13,17),  (1,9,11),   (3,21,22)),
-    ("Call of first disciples",    (4,18,22),  (1,16,20),  (5,1,11)),
     ("Healing of Peter's mother",  (8,14,15),  (1,29,31),  (4,38,39)),
     ("Healing of a leper",         (8,1,4),    (1,40,45),  (5,12,16)),
     ("Healing of the paralytic",   (9,1,8),    (2,1,12),   (5,17,26)),
@@ -79,7 +85,7 @@ TRIPLE_TRADITION: List[TripleEntry] = [
     ("Stilling of storm",          (8,23,27),  (4,35,41),  (8,22,25)),
     ("Gerasene demoniac",          (8,28,34),  (5,1,20),   (8,26,39)),
     ("Jairus daughter",            (9,18,26),  (5,21,43),  (8,40,56)),
-    ("Rejection at Nazareth",      (13,54,58), (6,1,6),    (4,16,30)),
+    ("Rejection at Nazareth",      (13,54,58), (6,1,6),    [(4,16,16), (4,22,22), (4,24,24)]),
     ("Herod's opinion of Jesus",   (14,1,2),   (6,14,16),  (9,7,9)),
     ("Feeding five thousand",      (14,13,21), (6,30,44),  (9,10,17)),
     ("Confession of Peter",        (16,13,20), (8,27,30),  (9,18,21)),
@@ -205,12 +211,29 @@ def n_verses(ref: Optional[Ref]) -> int:
 
 @dataclass
 class Pericope:
-    """A single aligned text unit across gospels."""
+    """
+    A single aligned text unit across gospels.
+
+    ``matthew`` / ``mark`` / ``luke`` hold the unit's text with its ranges
+    concatenated (None when the gospel lacks the pericope); ``*_parts`` hold
+    the same text as a list of one string per contiguous verse range, so
+    that composite units (verses gathered from different chapters) can be
+    encoded range by range rather than as one artificial sequence.
+    """
     label: str
     tradition: str  # "triple" or "double"
     matthew: Optional[str]  # Greek text or None
     mark: Optional[str]     # Greek text or None
     luke: Optional[str]     # Greek text or None
+    matthew_parts: List[str] = field(default_factory=list)
+    mark_parts: List[str] = field(default_factory=list)
+    luke_parts: List[str] = field(default_factory=list)
+
+    def parts(self, gospel: str) -> List[str]:
+        return getattr(self, f"{gospel}_parts")
+
+    def is_composite(self, gospel: str) -> bool:
+        return len(self.parts(gospel)) > 1
 
     def available_gospels(self) -> Dict[str, str]:
         """Return dict of {gospel_name: text} for non-None gospels."""
@@ -264,19 +287,28 @@ class SBLGNTLoader:
             books[name] = load_sblgnt(p)
         return books
 
-    def _extract(
+    def _extract_parts(
         self,
         verses: List[Dict],
         ref: Optional[Ref],
-    ) -> Optional[str]:
+    ) -> List[str]:
+        """One string per contiguous verse range (empty list if ref is None)."""
         if ref is None:
-            return None
+            return []
         parts = []
         for ch, vs, ve in ranges(ref):
             text = verses_to_pericope(verses, ch, vs, ve)
             if not text.strip():
                 raise ValueError(f"Empty verse range {ch}:{vs}-{ve}")
-            parts.append(text)
+            parts.append(text.strip())
+        return parts
+
+    def _extract(
+        self,
+        verses: List[Dict],
+        ref: Optional[Ref],
+    ) -> Optional[str]:
+        parts = self._extract_parts(verses, ref)
         text = " ".join(parts)
         return text if text.strip() else None
 
@@ -326,6 +358,9 @@ class SBLGNTLoader:
                         matthew=matt_txt,
                         mark=mark_txt,
                         luke=luke_txt,
+                        matthew_parts=self._extract_parts(matt_v, m_ref),
+                        mark_parts=self._extract_parts(mark_v, mk_ref),
+                        luke_parts=self._extract_parts(luke_v, lk_ref),
                     )
                 )
             else:
@@ -343,6 +378,8 @@ class SBLGNTLoader:
                         matthew=matt_txt,
                         mark=None,
                         luke=luke_txt,
+                        matthew_parts=self._extract_parts(matt_v, m_ref),
+                        luke_parts=self._extract_parts(luke_v, lk_ref),
                     )
                 )
             else:

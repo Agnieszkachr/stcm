@@ -56,8 +56,22 @@ class EmbeddingConfig:
             "EMBEDDING_MODEL", "ABeZet/Koine-Greek-BERT"
         )
     )
-    # Layer to extract CLS token / mean pool from (-1 = last hidden state)
-    layer_index: int = -1
+    # Git revision of the model files on the Hub, pinned so that tokenizer
+    # or weight updates can never silently change the input ids or vectors.
+    # ABeZet/Koine-Greek-BERT v1.0.1 (tokenizer correction of 29 Sept 2026,
+    # weights unchanged) = b81172ecb9baf65734c88ab65e2eb2491f12f3de.
+    model_revision: Optional[str] = field(
+        default_factory=lambda: _env("MODEL_REVISION",
+                                     "b81172ecb9baf65734c88ab65e2eb2491f12f3de") or None
+    )
+    # Which hidden states are mean-pooled: "last" (last hidden layer, the
+    # primary configuration) or "last4" (mean of the last four layers, a
+    # robustness configuration).
+    layers: str = field(default_factory=lambda: _env("LAYERS", "last"))
+    # Strip diacritics before tokenisation.  Not needed for Koine-Greek-BERT
+    # (its normaliser strips them itself); used for models whose vocabulary
+    # does not accept polytonic input (Ancient-Greek-BERT robustness run).
+    strip_accents: bool = field(default_factory=lambda: _env("STRIP_ACCENTS", "0") == "1")
     # Pooling strategy: "mean" | "cls"
     pooling: str = "mean"
     # Batch size for batch_embed()

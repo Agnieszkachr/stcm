@@ -143,8 +143,8 @@ class QScorer:
         if not pericope.matthew or not pericope.luke:
             raise ValueError(f"Pericope '{pericope.label}' missing Matthew or Luke text.")
 
-        e_m = self._pipe.embed_text(pericope.matthew)
-        e_l = self._pipe.embed_text(pericope.luke)
+        e_m = self._pipe.embed_parts(pericope.matthew_parts)
+        e_l = self._pipe.embed_parts(pericope.luke_parts)
 
         # Raw similarity
         cos = cosine_similarity(e_m, e_l)

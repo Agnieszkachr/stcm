@@ -7,11 +7,19 @@ Primary model : ABeZet/Koine-Greek-BERT (HuggingFace)
 Fallback       : character n-gram hash embedder (offline, deterministic,
                  opt-in via STCM_ALLOW_FALLBACK=1)
 
-Each pericope is encoded as ONE sequence (whole-text contextual encoding)
-and represented by the attention-masked mean of the last hidden states,
-L2-normalised.  Texts longer than the model window (512 tokens) are split
-at sentence boundaries and the chunk vectors are averaged with token-count
-weights; nothing is ever truncated.
+Each contiguous verse range is encoded as ONE sequence (whole-text
+contextual encoding) and represented by the attention-masked mean of the
+hidden states (last layer by default), L2-normalised.  Texts longer than
+the model window (512 tokens) are split at sentence boundaries and the
+chunk vectors are averaged with token-count weights; nothing is ever
+truncated.  Composite units (verses gathered from different places in a
+gospel) are encoded range by range and combined the same way, so that no
+context is created across a splice that the evangelist never wrote
+(``embed_parts``).
+
+Cache entries (``data/processed/emb_<key>.pkl``) store the vector together
+with the number of subword tokens, so that token-weighted combination of
+cached parts needs no tokenizer.
 
 The embedder is loaded lazily, on the first cache miss: a fully cached
 corpus can be analysed without the model weights (or torch/transformers)
@@ -28,12 +36,12 @@ from typing import List, Optional, Tuple
 import numpy as np
 
 from stcm.config import EmbeddingConfig, default_config
-from stcm.utils import normalise_greek, text_hash
+from stcm.utils import normalise_greek, strip_accents, text_hash
 
 log = logging.getLogger(__name__)
 
 # Bump whenever the text normalisation or the encoding scheme changes.
-ENCODING_VERSION = "v2"
+ENCODING_VERSION = "v3"   # v3: range-wise composites, token counts cached, pinned revision
 
 
 # ---------------------------------------------------------------------------
@@ -61,7 +69,7 @@ class _NgramHashEmbedder:
         norm = np.linalg.norm(vec)
         if norm > 0:
             vec /= norm
-        return vec
+        return vec, max(1, len(text.split()))
 
 
 # ---------------------------------------------------------------------------
@@ -79,12 +87,15 @@ class _TransformerEmbedder:
         log.info("Loading tokenizer: %s", config.model_name)
         self._tokenizer = AutoTokenizer.from_pretrained(
             config.model_name,
+            revision=config.model_revision,
             cache_dir=config.cache_dir,
         )
-        log.info("Loading model: %s", config.model_name)
+        log.info("Loading model: %s (revision %s)", config.model_name, config.model_revision)
         self._model = AutoModel.from_pretrained(
             config.model_name,
+            revision=config.model_revision,
             cache_dir=config.cache_dir,
+            output_hidden_states=(config.layers != "last"),
         )
         self._model.eval()
         self._model.to(device)
@@ -156,19 +167,29 @@ class _TransformerEmbedder:
         enc = {k: v.to(self._device) for k, v in enc.items()}
         with torch.no_grad():
             out = self._model(**enc)
-        # Mean pool over token dimension, weighted by attention mask
-        hidden = out.last_hidden_state  # (1, T, H)
+        # Mean pool over the token dimension (special tokens included, as
+        # in the attention mask), from the last layer or the mean of the
+        # last four layers.
+        if self._config.layers == "last4":
+            hidden = torch.stack(out.hidden_states[-4:], dim=0).mean(dim=0)  # (1, T, H)
+        elif self._config.layers == "last":
+            hidden = out.last_hidden_state  # (1, T, H)
+        else:
+            raise ValueError(f"Unknown layers setting: {self._config.layers}")
         mask = enc["attention_mask"].unsqueeze(-1).float()  # (1, T, 1)
         vec = (hidden * mask).sum(dim=1) / mask.sum(dim=1)  # (1, H)
         return vec.squeeze(0).cpu().numpy().astype(np.float32), n_tok
 
-    def embed(self, text: str) -> np.ndarray:
+    def embed(self, text: str) -> Tuple[np.ndarray, int]:
         """
         Embed a text: one forward pass if it fits the window, otherwise the
         token-count-weighted mean of the chunk vectors (equivalent to mean
-        pooling over all tokens of the text), L2-normalised.
+        pooling over all tokens of the text), L2-normalised.  Returns the
+        vector and the total number of tokens encoded.
         """
         text = normalise_greek(text)
+        if self._config.strip_accents:
+            text = strip_accents(text)
         chunks = self._chunks(text)
         if len(chunks) > 1:
             log.info("Text of %d tokens split into %d chunks for encoding.",
@@ -184,7 +205,7 @@ class _TransformerEmbedder:
         norm = np.linalg.norm(vec)
         if norm > 0:
             vec /= norm
-        return vec
+        return vec, int(sum(weights))
 
 
 # ---------------------------------------------------------------------------
@@ -272,7 +293,7 @@ class EmbeddingPipeline:
         """Identifier of the embedder actually in use (for reports and cache keys)."""
         if isinstance(self._embedder, _NgramHashEmbedder):
             return "ngram-fallback-256"
-        return self._cfg.model_name
+        return f"{self._cfg.model_name}@{self._cfg.model_revision} ({self._cfg.layers})"
 
     @property
     def dim(self) -> int:
@@ -286,26 +307,37 @@ class EmbeddingPipeline:
     def _cache_path(self, key: str) -> pathlib.Path:
         return self._cache_dir / f"emb_{key}.pkl"
 
-    def _load_cache(self, key: str) -> Optional[np.ndarray]:
+    def _load_cache(self, key: str) -> Optional[Tuple[np.ndarray, int]]:
         if key in self._cache:
             return self._cache[key]
         p = self._cache_path(key)
         if p.exists():
             with open(p, "rb") as fh:
-                vec = pickle.load(fh)
-            self._cache[key] = vec
-            return vec
+                entry = pickle.load(fh)
+            if not (isinstance(entry, tuple) and len(entry) == 2):
+                raise ValueError(f"Cache entry {p} is not a v3 (vector, n_tokens) entry.")
+            self._cache[key] = entry
+            return entry
         return None
 
-    def _save_cache(self, key: str, vec: np.ndarray) -> None:
-        self._cache[key] = vec
+    def _save_cache(self, key: str, entry: Tuple[np.ndarray, int]) -> None:
+        self._cache[key] = entry
         p = self._cache_path(key)
         # Atomic write (tmp + rename) so an interrupted run can never
         # leave a truncated cache entry behind.
         tmp = p.with_suffix(".tmp")
         with open(tmp, "wb") as fh:
-            pickle.dump(vec, fh, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(entry, fh, protocol=pickle.HIGHEST_PROTOCOL)
         tmp.replace(p)
+
+    def _key(self, text: str) -> str:
+        # The key includes the model identity, its pinned revision, the
+        # layer setting, the accent handling and the encoding-scheme
+        # version, so that vectors produced under any other configuration
+        # can never be silently reused.
+        cfg = self._cfg
+        return text_hash(f"{cfg.model_name}@{cfg.model_revision}::{cfg.layers}::"
+                         f"strip={int(cfg.strip_accents)}::{ENCODING_VERSION}::{normalise_greek(text)}")
 
     # ------------------------------------------------------------------
     # Public API
@@ -323,33 +355,53 @@ class EmbeddingPipeline:
         -------
         np.ndarray, shape (D,), float32, L2-normalised
         """
-        # The cache key includes the model identity so that switching
-        # models (e.g. Ancient-Greek-BERT -> Koine-Greek-BERT) can never
-        # silently reuse vectors produced by a different model.
-        # The key includes the model identity and the encoding-scheme
-        # version (v2 = sigla stripped, no truncation, chunked encoding of
-        # long texts), so that vectors produced by an earlier scheme can
-        # never be silently reused.
-        key = text_hash(f"{self._cfg.model_name}::{ENCODING_VERSION}::{normalise_greek(text)}")
+        return self.embed_text_with_count(text)[0]
+
+    def embed_text_with_count(self, text: str) -> Tuple[np.ndarray, int]:
+        """Embed a string and return (vector, number of subword tokens encoded)."""
+        key = self._key(text)
         cached = self._load_cache(key)
         if cached is not None:
             return cached
-        vec = self._ensure_embedder().embed(text)
-        self._save_cache(key, vec)
-        return vec
+        entry = self._ensure_embedder().embed(text)
+        self._save_cache(key, entry)
+        return entry
 
-    def embed_pericope(self, sentences: List[str]) -> np.ndarray:
+    def token_count(self, text: str) -> int:
+        """Number of subword tokens the pipeline encoded for this text (cached)."""
+        return self.embed_text_with_count(text)[1]
+
+    def embed_parts(self, parts: List[str]) -> np.ndarray:
         """
-        Embed a list of sentences (a pericope) by mean-pooling individual embeddings.
+        Embed a unit given as a list of contiguous verse ranges: each range
+        is encoded on its own and the vectors are averaged with token-count
+        weights (the same combination used for chunks of an over-long
+        text), then L2-normalised.  A single-range unit is identical to
+        ``embed_text``.
 
         Parameters
         ----------
-        sentences : list of Greek strings
+        parts : list of Greek strings, one per contiguous range
 
         Returns
         -------
         np.ndarray, shape (D,), float32, L2-normalised
         """
+        parts = [p for p in parts if p.strip()]
+        if not parts:
+            raise ValueError("Cannot embed an empty unit.")
+        if len(parts) == 1:
+            return self.embed_text(parts[0])
+        vecs, weights = zip(*(self.embed_text_with_count(p) for p in parts))
+        vec = np.average(np.array(vecs, dtype=np.float64), axis=0,
+                         weights=np.array(weights, dtype=np.float64)).astype(np.float32)
+        norm = np.linalg.norm(vec)
+        if norm > 0:
+            vec /= norm
+        return vec
+
+    def embed_pericope(self, sentences: List[str]) -> np.ndarray:
+        """Embed a list of sentences by mean-pooling their individual embeddings (legacy)."""
         vecs = [self.embed_text(s) for s in sentences if s.strip()]
         if not vecs:
             raise ValueError("Cannot embed an empty pericope.")

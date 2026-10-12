@@ -595,12 +595,16 @@
 <pre><code class="language-bash">python run_pipeline.py
 </code></pre>
 <p>This will:
-1. Load the SBLGNT texts and check the alignment tables (no verse in two units; no verse in both sets)
+1. Load the SBLGNT texts and check the alignment tables
 2. Load the embedding model lazily (only on a cache miss)
-3. Calibrate on the Triple Tradition (46 pericopes)
-4. Run the advanced analysis on the Double Tradition (51 pericopes): centred-cosine statistics, four permutation nulls, floors, covariates, directionality with controls
-5. Draw Figures 1–6
-6. Save all output to <code>outputs/</code></p>
+3. Calibrate on the Triple Tradition (45 pericopes)
+4. Run <code>advanced_analysis.py</code> (Tables 1–4: floors, excess with CIs, nulls, shared deviation from Mark, Mark–Q overlaps, composite sensitivity, directionality, covariates, bootstrap)
+5. Run <code>baselines.py</code> (lexical baselines), <code>form_control.py</code> (sayings vs narrative) and <code>robustness.py</code> (alternative encoders)
+6. Draw Figures 1–5
+7. Save all output to <code>outputs/</code></p>
+<p>To fill the embedding cache for all three encoder configurations first (the analyses then run without the model, except the sentence bootstrap):</p>
+<pre><code class="language-bash">python populate_cache.py
+</code></pre>
 <h2 id="legacy-steps">Legacy steps</h2>
 <p>The retired composite Q-score, the latent-Q reconstruction and the old evaluation suite are not part of the article. They run only on request:</p>
 <pre><code class="language-bash">python run_pipeline.py --legacy
@@ -619,15 +623,21 @@ STCM_EMBEDDING_MODEL=bert-base-multilingual-cased python run_pipeline.py
 $env:STCM_EMBEDDING_MODEL=&quot;bert-base-multilingual-cased&quot;
 python run_pipeline.py
 </code></pre>
+<p><strong>Use the mean of the last four layers, or another model revision:</strong></p>
+<pre><code class="language-bash">STCM_LAYERS=last4 python advanced_analysis.py
+STCM_MODEL_REVISION=&lt;git sha&gt; python advanced_analysis.py
+</code></pre>
 <p><strong>Increase log verbosity:</strong></p>
 <pre><code class="language-bash">STCM_LOG_LEVEL=DEBUG python run_pipeline.py
 </code></pre>
 <h2 id="understanding-outputs">Understanding Outputs</h2>
 <p>Look in the <code>outputs/</code> directory for your results:
-- <code>reports/advanced_analysis.md</code> — Every statistic in the article: calibration table, anisotropy table, permutation nulls, genre floor, directionality with controls, covariates, bootstrap.
-- <code>reports/centred_cosine_ranking.csv</code> — The per-pericope ranking with verse references, stratum, form, lengths and word overlap.
-- <code>reports/key_stats.json</code> — The handful of numbers the figure script needs.
-- <code>figures/evaluation/fig1–fig6</code> — The article figure set.
+- <code>reports/advanced_analysis.md</code> — Tables 1–4 and every embedding statistic in the article.
+- <code>reports/baselines.md</code>, <code>reports/form_control.md</code>, <code>reports/robustness.md</code> — Table 5, the form control and the encoder comparison (Appendix C).
+- <code>reports/centred_cosine_ranking.csv</code> — The per-pericope ranking (refs, stratum, form, theme, raw/centred cosine, excess, lengths, word overlap, Markan parallel, text-critical note).
+- <code>reports/triple_tradition_table.csv</code>, <code>per_pericope_excess.csv</code>, <code>floor_table.csv</code>, <code>composite_sensitivity.csv</code>, <code>baseline_disagreements.csv</code> — appendix tables.
+- <code>reports/key_stats*.json</code> — machine-readable numbers (the figure script and the tests read these).
+- <code>figures/evaluation/fig1–fig5</code> — The article figure set.
 - <code>reports/evaluation_summary.md</code>, <code>reports/q_score_distribution.csv</code>, <code>reports/system_validation.txt</code> — legacy outputs (<code>--legacy</code> only).</p>
 
 

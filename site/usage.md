@@ -11,12 +11,19 @@ python run_pipeline.py
 ```
 
 This will:
-1. Load the SBLGNT texts and check the alignment tables (no verse in two units; no verse in both sets)
+1. Load the SBLGNT texts and check the alignment tables
 2. Load the embedding model lazily (only on a cache miss)
-3. Calibrate on the Triple Tradition (46 pericopes)
-4. Run the advanced analysis on the Double Tradition (51 pericopes): centred-cosine statistics, four permutation nulls, floors, covariates, directionality with controls
-5. Draw Figures 1–6
-6. Save all output to `outputs/`
+3. Calibrate on the Triple Tradition (45 pericopes)
+4. Run `advanced_analysis.py` (Tables 1–4: floors, excess with CIs, nulls, shared deviation from Mark, Mark–Q overlaps, composite sensitivity, directionality, covariates, bootstrap)
+5. Run `baselines.py` (lexical baselines), `form_control.py` (sayings vs narrative) and `robustness.py` (alternative encoders)
+6. Draw Figures 1–5
+7. Save all output to `outputs/`
+
+To fill the embedding cache for all three encoder configurations first (the analyses then run without the model, except the sentence bootstrap):
+
+```bash
+python populate_cache.py
+```
 
 ## Legacy steps
 
@@ -48,6 +55,12 @@ $env:STCM_EMBEDDING_MODEL="bert-base-multilingual-cased"
 python run_pipeline.py
 ```
 
+**Use the mean of the last four layers, or another model revision:**
+```bash
+STCM_LAYERS=last4 python advanced_analysis.py
+STCM_MODEL_REVISION=<git sha> python advanced_analysis.py
+```
+
 **Increase log verbosity:**
 ```bash
 STCM_LOG_LEVEL=DEBUG python run_pipeline.py
@@ -56,8 +69,10 @@ STCM_LOG_LEVEL=DEBUG python run_pipeline.py
 ## Understanding Outputs
 
 Look in the `outputs/` directory for your results:
-- `reports/advanced_analysis.md` — Every statistic in the article: calibration table, anisotropy table, permutation nulls, genre floor, directionality with controls, covariates, bootstrap.
-- `reports/centred_cosine_ranking.csv` — The per-pericope ranking with verse references, stratum, form, lengths and word overlap.
-- `reports/key_stats.json` — The handful of numbers the figure script needs.
-- `figures/evaluation/fig1–fig6` — The article figure set.
+- `reports/advanced_analysis.md` — Tables 1–4 and every embedding statistic in the article.
+- `reports/baselines.md`, `reports/form_control.md`, `reports/robustness.md` — Table 5, the form control and the encoder comparison (Appendix C).
+- `reports/centred_cosine_ranking.csv` — The per-pericope ranking (refs, stratum, form, theme, raw/centred cosine, excess, lengths, word overlap, Markan parallel, text-critical note).
+- `reports/triple_tradition_table.csv`, `per_pericope_excess.csv`, `floor_table.csv`, `composite_sensitivity.csv`, `baseline_disagreements.csv` — appendix tables.
+- `reports/key_stats*.json` — machine-readable numbers (the figure script and the tests read these).
+- `figures/evaluation/fig1–fig5` — The article figure set.
 - `reports/evaluation_summary.md`, `reports/q_score_distribution.csv`, `reports/system_validation.txt` — legacy outputs (`--legacy` only).

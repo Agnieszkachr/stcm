@@ -247,8 +247,8 @@ class ReconstructionEngine:
         latent_vecs: List[np.ndarray] = []
 
         for p in double:
-            e_m = self._pipe.embed_text(p.matthew)
-            e_l = self._pipe.embed_text(p.luke)
+            e_m = self._pipe.embed_parts(p.matthew_parts)
+            e_l = self._pipe.embed_parts(p.luke_parts)
             q_vec, iters, converged, delta, variance = self.reconstruct_latent_embedding(e_m, e_l)
             sim_m = cosine_similarity(q_vec, e_m)
             sim_l = cosine_similarity(q_vec, e_l)

@@ -565,8 +565,8 @@ class EvaluationEngine:
         for w_cos, w_res in weight_configs:
             scores: List[Tuple[str, float]] = []
             for p in double:
-                e_m = self._pipe.embed_text(p.matthew)
-                e_l = self._pipe.embed_text(p.luke)
+                e_m = self._pipe.embed_parts(p.matthew_parts)
+                e_l = self._pipe.embed_parts(p.luke_parts)
                 cos = cosine_similarity(e_m, e_l)
                 from stcm.utils import residual_vector
                 r_m = residual_vector(e_m, self._cal.centroid_mark)

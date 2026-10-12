@@ -143,6 +143,60 @@ GOULDER_REDACTION_LABELS: List[str] = [
 ]
 
 
+# Double-tradition units of which all or part has a Markan parallel (the
+# Mark-Q overlaps and the Markan doublets of Q sayings).  In these units
+# the Matthew-Luke agreement may be mediated by Mark rather than by the
+# shared non-Markan source, so the double-tradition statistics are reported
+# with and without them.  Value = the Markan parallel; "full" marks units
+# whose whole text has a Markan parallel, "partial" units where only some
+# verses do.  Reviewed against Aland (1985) and the IQP inventory, Oct 2026.
+MARK_Q_OVERLAP: Dict[str, Dict[str, str]] = {
+    "John's preaching":             {"mark": "1:7-8",        "extent": "partial"},
+    "Temptation narrative (full)":  {"mark": "1:12-13",      "extent": "full"},
+    "Judging and the speck":        {"mark": "4:24",         "extent": "partial"},
+    "Lamp on a stand":              {"mark": "4:21",         "extent": "full"},
+    "Mustard seed and leaven":      {"mark": "4:30-32",      "extent": "partial"},
+    "Sign of Jonah":                {"mark": "8:11-12",      "extent": "partial"},
+    "Woes against Pharisees":       {"mark": "12:38-39",     "extent": "partial"},
+    "Fear of God not men":          {"mark": "4:22",         "extent": "partial"},
+    "Blasphemy Holy Spirit":        {"mark": "3:28-29",      "extent": "full"},
+    "Mission discourse":            {"mark": "6:7-13",       "extent": "partial"},
+    "Whoever receives you":         {"mark": "9:37",         "extent": "full"},
+    "Conditions of discipleship":   {"mark": "8:34",         "extent": "partial"},
+    "Salt of the earth":            {"mark": "9:50",         "extent": "full"},
+    "Law, prophets and divorce":    {"mark": "10:11-12",     "extent": "partial"},
+    "Scandals, forgiveness, faith": {"mark": "9:42; 11:23",  "extent": "partial"},
+    "Day of the Son of Man":        {"mark": "13:21",        "extent": "partial"},
+}
+
+
+def is_mark_q_overlap(label: str) -> bool:
+    return label in MARK_Q_OVERLAP
+
+
+# Triple-tradition units whose Markan text consists predominantly of
+# sayings or discourse of Jesus (parables, their interpretation, the passion
+# predictions with their attached sayings, the eschatological discourse,
+# and pronouncements that make up most of the unit).  Used only by
+# form_control.py, to test whether the double tradition's larger excess is
+# an effect of the kind of material.  Annotation made October 2026.
+SAYINGS_TT = {
+    "Question about fasting", "Parable of the sower", "Purpose of parables",
+    "Explanation of sower", "First passion prediction", "Second passion prediction",
+    "True greatness", "Third passion prediction", "Parable of tenants",
+    "David's son question", "Eschatological discourse",
+}
+
+
+# Text-critical notes on units whose text is uncertain in the manuscript
+# tradition (reported in the article's appendix).
+TEXT_CRITICAL_NOTES: Dict[str, str] = {
+    "Reading the signs": ("Matt 16:2b-3 is absent from א B Γ f13 and others and is "
+                          "bracketed in NA28; SBLGNT prints it. The unit is retained "
+                          "and the uncertainty is noted."),
+}
+
+
 def check_coverage(labels: List[str]) -> None:
     """Raise if any double-tradition label lacks an annotation."""
     missing = [l for l in labels if l not in THEMATIC_TAGS or l not in FORM]

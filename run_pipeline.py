@@ -7,9 +7,12 @@ Steps executed:
   1. Load & validate SBLGNT corpus
   2. Embed all pericopes
   3. Calibrate on triple tradition (Mark centroid, Signatures A/B)
-  4. Advanced analysis: centred-cosine statistics, permutation nulls,
-     confounds, directionality (advanced_analysis.py)
-  5. Figures 1-6 (generate_evaluation_figures.py)
+  4. Advanced analysis: floors and excess with CIs, permutation nulls,
+     shared deviation from Mark, Mark-Q overlaps, composite sensitivity,
+     directionality, covariates (advanced_analysis.py); lexical baselines
+     (baselines.py); sayings-versus-narrative control (form_control.py);
+     alternative encoders (robustness.py, after populate_cache.py)
+  5. Figures 1-5 (generate_evaluation_figures.py)
 
 The legacy composite Q-score, reconstruction and evaluation_summary steps
 (retired from the article) run only with --legacy.
@@ -184,8 +187,21 @@ def main() -> None:
     banner("STEP 4 — Advanced analysis (centred cosine, nulls, confounds, directionality)")
     import advanced_analysis
     advanced_analysis.main()
+    import baselines
+    baselines.main()
+    import form_control
+    form_control.main()
+    import populate_cache
+    for name in ("last4", "agb"):
+        sys.argv = [sys.argv[0], "--config", name]
+        populate_cache.main()
+    import robustness
+    robustness.main()
     append_step_log(4, "Advanced analysis complete", [
         "outputs/reports/advanced_analysis.md",
+        "outputs/reports/baselines.md",
+        "outputs/reports/form_control.md",
+        "outputs/reports/robustness.md",
         "outputs/reports/centred_cosine_ranking.csv",
     ])
     logger.info("STEP 4 COMPLETE (%.1f s)", time.time() - t0)
@@ -194,7 +210,7 @@ def main() -> None:
     # STEP 5: Figures
     # -----------------------------------------------------------------------
     t0 = time.time()
-    banner("STEP 5 — Figures 1-6")
+    banner("STEP 5 — Figures 1-5")
     import generate_evaluation_figures
     generate_evaluation_figures.main()
     append_step_log(5, "Figures generated", ["outputs/figures/evaluation/"])

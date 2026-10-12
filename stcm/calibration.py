@@ -144,9 +144,9 @@ class CalibrationEngine:
         log.info("Computing independent signature on %d pericopes.", len(triple))
         mm_sims, lm_sims, ml_sims, labels = [], [], [], []
         for p in triple:
-            e_m = self._pipe.embed_text(p.matthew)
-            e_mk = self._pipe.embed_text(p.mark)
-            e_l = self._pipe.embed_text(p.luke)
+            e_m = self._pipe.embed_parts(p.matthew_parts)
+            e_mk = self._pipe.embed_parts(p.mark_parts)
+            e_l = self._pipe.embed_parts(p.luke_parts)
             mm_sims.append(cosine_similarity(e_m, e_mk))
             lm_sims.append(cosine_similarity(e_l, e_mk))
             ml_sims.append(cosine_similarity(e_m, e_l))
@@ -180,9 +180,9 @@ class CalibrationEngine:
         log.info("Computing dependence signature on %d pericopes.", len(triple))
         resid_sims, matt_residuals, luke_residuals = [], [], []
         for p in triple:
-            e_m = self._pipe.embed_text(p.matthew)
-            e_mk = self._pipe.embed_text(p.mark)
-            e_l = self._pipe.embed_text(p.luke)
+            e_m = self._pipe.embed_parts(p.matthew_parts)
+            e_mk = self._pipe.embed_parts(p.mark_parts)
+            e_l = self._pipe.embed_parts(p.luke_parts)
             r_matt = residual_vector(e_m, e_mk)
             r_luke = residual_vector(e_l, e_mk)
             sim = cosine_similarity(r_matt, r_luke)
@@ -208,9 +208,9 @@ class CalibrationEngine:
                   and p.matthew and p.mark and p.luke]
         matt_vecs, mark_vecs, luke_vecs = [], [], []
         for p in triple:
-            matt_vecs.append(self._pipe.embed_text(p.matthew))
-            mark_vecs.append(self._pipe.embed_text(p.mark))
-            luke_vecs.append(self._pipe.embed_text(p.luke))
+            matt_vecs.append(self._pipe.embed_parts(p.matthew_parts))
+            mark_vecs.append(self._pipe.embed_parts(p.mark_parts))
+            luke_vecs.append(self._pipe.embed_parts(p.luke_parts))
         c_m = np.mean(matt_vecs, axis=0).astype(np.float32)
         c_mk = np.mean(mark_vecs, axis=0).astype(np.float32)
         c_l = np.mean(luke_vecs, axis=0).astype(np.float32)
@@ -241,8 +241,8 @@ class CalibrationEngine:
             test = [triple[i] for i in test_idx]
             sims = []
             for p in test:
-                e_m = self._pipe.embed_text(p.matthew)
-                e_l = self._pipe.embed_text(p.luke)
+                e_m = self._pipe.embed_parts(p.matthew_parts)
+                e_l = self._pipe.embed_parts(p.luke_parts)
                 sims.append(cosine_similarity(e_m, e_l))
             fold_means.append(np.mean(sims))
             fold_stds.append(np.std(sims))
