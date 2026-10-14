@@ -5,14 +5,17 @@ Embed every text the analysis needs and store the vectors in
 ``data/processed`` (the pipeline's cache), so that ``advanced_analysis.py``
 and ``baselines.py`` can then run without the model.
 
-Three encoder configurations are populated:
+Four encoder configurations are populated:
 
 * primary   — Koine-Greek-BERT (pinned revision), last hidden layer;
 * last4     — the same model, mean of the last four hidden layers;
-* agb       — Ancient-Greek-BERT (the base model, which has not seen the
-              New Testament during pre-training), last layer, with
-              diacritics stripped before tokenisation because its
-              vocabulary does not accept polytonic input.
+* agb       — Ancient-Greek-BERT (the base model of Koine-Greek-BERT; its
+              pre-training corpus includes the PROIEL treebank, which
+              contains the Greek New Testament), last layer, diacritics
+              stripped before tokenisation;
+* greekbert — Greek BERT (nlpaueb, Modern Greek: Wikipedia, Europarl,
+              OSCAR), a model without biblical pre-training, last layer,
+              diacritics stripped as its model card prescribes.
 
 For every pericope and gospel two encodings are produced: the range-wise
 encoding used throughout (``embed_parts``) and, for composite units, the
@@ -21,7 +24,7 @@ table in the appendix compares against.
 
 Usage
 -----
-    python populate_cache.py                 # all three configurations
+    python populate_cache.py                 # all four configurations
     python populate_cache.py --config primary
 """
 from __future__ import annotations
@@ -43,6 +46,8 @@ KOINE = "ABeZet/Koine-Greek-BERT"
 KOINE_REV = "b81172ecb9baf65734c88ab65e2eb2491f12f3de"   # v1.0.1
 AGB = "pranaydeeps/Ancient-Greek-BERT"
 AGB_REV = "5e3e29ece1d63029baa226f11105b1e8277c4f07"
+GRB = "nlpaueb/bert-base-greek-uncased-v1"
+GRB_REV = "ec2b8f88dd215b5246f2f850413d5bff90d7540d"
 
 CONFIGS = {
     "primary": EmbeddingConfig(model_name=KOINE, model_revision=KOINE_REV, layers="last",
@@ -51,6 +56,8 @@ CONFIGS = {
                                strip_accents=False),
     "agb":     EmbeddingConfig(model_name=AGB, model_revision=AGB_REV, layers="last",
                                strip_accents=True),
+    "greekbert": EmbeddingConfig(model_name=GRB, model_revision=GRB_REV, layers="last",
+                                 strip_accents=True),
 }
 
 

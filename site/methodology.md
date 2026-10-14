@@ -13,7 +13,7 @@ Result: **45 triple-tradition** units (positive control) and **51 double-traditi
 
 ## 2. Representation
 
-- Model: `ABeZet/Koine-Greek-BERT`, pinned to revision `b81172e` (v1.0.1). Its normaliser lower-cases and strips diacritics, so inference is on unaccented text.
+- Model: `ABeZet/Koine-Greek-BERT`, pinned to revision `b81172e` (v1.0.1), run under transformers 4.57.3 (tokenisation independent of Python's hash seed). Its normaliser lower-cases and strips diacritics, so inference is on unaccented text. Of the 15,000 added vocabulary entries, 9,257 are reachable whole-word forms and 7,074 are new to the base vocabulary.
 - Each contiguous verse range is encoded as one sequence; the passage vector is the attention-masked mean of the last hidden layer, L2-normalised.
 - Composite units are encoded **range by range** and averaged with token-count weights, so the model never sees a splice the evangelist did not write. Texts over 512 tokens are chunked at sentence boundaries and combined the same way. Nothing is truncated.
 - Cache keys include model, revision, layer setting, accent handling and encoding version (`v3`).
@@ -40,7 +40,7 @@ Set means carry bootstrap CIs over pericopes; differences carry a bootstrap CI, 
 - **Mark–Q overlaps**: double-tradition statistics with and without the 16 overlap units.
 - **Kind of material** (`form_control.py`): 11 sayings-dominant triple-tradition units against the double tradition.
 - **Centring vector**: six alternatives (Table 4 of the article).
-- **Encoder** (`robustness.py`): Koine-Greek-BERT mean of last four layers; Ancient-Greek-BERT (not trained on the NT).
+- **Encoder** (`robustness.py`): Koine-Greek-BERT mean of last four layers; Ancient-Greek-BERT (its pre-training includes PROIEL, hence the Greek NT); Greek BERT (Modern Greek, no biblical pre-training). For each, the residual after word overlap is also tested.
 - **Composite encoding**: range-wise vs single-sequence (`composite_sensitivity.csv`).
 
 ## 6. Lexical baselines (`baselines.py`)

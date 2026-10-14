@@ -8,7 +8,7 @@
 📖 **[Documentation & Results](https://agnieszkachr.github.io/stcm/)**
 
 > [!IMPORTANT]
-> **VERSION 3 (October 2026).** This version answers a simulated peer review of the version-2 analysis. Changes: (i) the calibration set is 45 pericopes (*Call of the first disciples* removed — Luke 5:1–11 is a different episode; Luke's Nazareth sermon trimmed to the verses with a Markan parallel); (ii) composite units are encoded range by range rather than as one spliced sequence; (iii) the model is pinned to Koine-Greek-BERT v1.0.1 (revision `b81172e`); (iv) every between-set contrast now has a bootstrap CI and a test; (v) **one-step copying** (Luke–Mark, Matthew–Mark) is reported alongside two-step copying (Matthew–Luke in the triple tradition); (vi) **lexical baselines** (Jaccard, TF-IDF) are run through the same pipeline and the embedding's residual over word overlap is tested; (vii) a **sayings-versus-narrative control**, **Mark–Q-overlap flags**, the **shared deviation from Mark** (minor agreements) and **two alternative encoders** (last-four-layer mean; Ancient-Greek-BERT, not trained on the NT) are added. Version-2 numbers (46 triple-tradition pericopes, matched mean 0.7171) are superseded.
+> **VERSION 3 (October 2026).** This version answers a simulated peer review of the version-2 analysis. Changes: (i) the calibration set is 45 pericopes (*Call of the first disciples* removed — Luke 5:1–11 is a different episode; Luke's Nazareth sermon trimmed to the verses with a Markan parallel); (ii) composite units are encoded range by range rather than as one spliced sequence; (iii) the model is pinned to Koine-Greek-BERT v1.0.1 (revision `b81172e`); (iv) every between-set contrast now has a bootstrap CI and a test; (v) **one-step copying** (Luke–Mark, Matthew–Mark) is reported alongside two-step copying (Matthew–Luke in the triple tradition); (vi) **lexical baselines** (Jaccard, TF-IDF) are run through the same pipeline and the embedding's residual over word overlap is tested; (vii) a **sayings-versus-narrative control**, **Mark–Q-overlap flags**, the **shared deviation from Mark** (minor agreements) and **two alternative encoders** (last-four-layer mean; Ancient-Greek-BERT; Greek BERT, a Modern Greek model without biblical pre-training) are added. Version-2 numbers (46 triple-tradition pericopes, matched mean 0.7171) are superseded.
 
 ## What the project shows
 
@@ -27,7 +27,7 @@
 | Calibration (centred) | Matt–Luke 0.578 [0.531, 0.626]; Matt–Mark 0.679 [0.639, 0.716]; Luke–Mark 0.651 [0.608, 0.690] |
 | **Centred cosine, double tradition** | matched 0.708 (SD 0.175) vs floor 0.052; nulls: random 0.064, thematic 0.110, length 0.086, length+theme 0.132; all *p* < 0.001 |
 | **Excess over own floor (centred)** | DT 0.656 [0.609, 0.702]; TT Matt–Luke 0.525 [0.475, 0.574]; Luke–Mark 0.586 [0.540, 0.635]; Matt–Mark 0.609 [0.570, 0.650] |
-| DT − TT (two-step) | centred +0.131 [0.063, 0.200]; raw +0.060 [0.050, 0.071]; without Mark–Q overlaps +0.142; Ancient-Greek-BERT +0.098; last-4 layers +0.126 |
+| DT − TT (two-step) | centred +0.131 [0.063, 0.200]; raw +0.060 [0.050, 0.071]; without Mark–Q overlaps +0.142; Ancient-Greek-BERT +0.098; Greek BERT (no biblical pre-training) +0.127; last-4 layers +0.126; Jaccard +0.146 (no pre-training at all) |
 | DT − Luke–Mark (one-step) | centred +0.070 [0.004, 0.141]; raw +0.053 [0.042, 0.063] |
 | Sayings control | DT − TT sayings units (n = 11): centred +0.077 [−0.061, 0.230], raw +0.060 [0.043, 0.078] |
 | Lexical baselines | Jaccard excess DT 0.313 vs TT 0.167; Spearman with centred cosine 0.87; residual after Jaccard: matched +0.180 vs mismatched −0.004, *p* < 0.001 |
@@ -93,14 +93,14 @@ stcm/
 
 ## Reproducibility
 
-Deterministic given the SBLGNT files, the pinned model revisions (Koine-Greek-BERT `b81172ecb9baf65734c88ab65e2eb2491f12f3de`; Ancient-Greek-BERT `5e3e29ece1d63029baa226f11105b1e8277c4f07`), Python 3.11+ with `requirements.txt`, and seed 42. Cache keys include the model, revision, layer setting, accent handling and encoding version, so vectors from any other configuration are never reused.
+Deterministic given the SBLGNT files, the pinned model revisions (Koine-Greek-BERT `b81172ecb9baf65734c88ab65e2eb2491f12f3de` = v1.0.1, `tokenizer.json` SHA-256 `80c4ce56314d9a035d82645f3eaba11e094c12bb16ee452cabf645b10737d9e3`; Ancient-Greek-BERT `5e3e29ece1d63029baa226f11105b1e8277c4f07`; Greek BERT `ec2b8f88dd215b5246f2f850413d5bff90d7540d`), Python 3.11+ with `requirements.txt`, and seed 42 (resampling and permutations only). The published numbers were computed with transformers 4.57.3 and tokenizers 0.22.2; the v1.0.1 tokenizer gives hash-seed-independent input ids under transformers 4.x and 5.x alike, and two independent runs produced identical vectors. Cache keys include the model, revision, layer setting, accent handling and encoding version, so vectors from any other configuration are never reused.
 
 ## Limitations
 
 - Mutual similarity does not discriminate between Q and Luke's use of Matthew; the directionality test fails its control.
 - Part of the double-versus-triple contrast reflects sayings versus narrative; with 11 sayings units in the triple tradition the remainder cannot be settled.
 - All floors are internal to the synoptic corpus.
-- The model was pre-trained on the NT (MLM, no pairing supervision); the central contrast replicates with Ancient-Greek-BERT.
+- Koine-Greek-BERT and its base model Ancient-Greek-BERT (via PROIEL) were pre-trained on the NT. The double-vs-triple contrast is unaffected (word overlap reproduces it without pre-training); the embedding's increment over word overlap is reproduced by Greek BERT (no biblical pre-training: matched-minus-mismatched residual +0.163), but exposure to gospel text through web corpora cannot be excluded.
 - Pericope delimitation and composite encoding move individual ranks (Appendix C of the article), not the corpus-level contrasts.
 - Thematic, form and sayings annotations are the author's own.
 

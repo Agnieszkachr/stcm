@@ -16,6 +16,7 @@
 | MK | cen | 0.6791 | 0.0700 | 0.4079 | 0.6091 [0.5702, 0.6503] | 0.2712 |
 - DT minus TT excess (cen): +0.1312 [+0.0633, +0.2003], MWU p = 0.000147; NN excess +0.1476 [+0.0704, +0.2265]
 - DT minus LK excess (cen): +0.0704 [+0.0037, +0.1411], MWU p = 0.0292; NN excess +0.0654 [-0.0063, +0.1353]
+- Residual after Jaccard (r over all pairs = 0.501): matched +0.1800, mismatched -0.0036; random-null p = 0.000999, length-null p = 0.000999; DT minus TT on the residual +0.0846 [+0.0205, +0.1465]
 - Spearman rho of the double-tradition ranking with the primary configuration: 1.000
 - Top five: Serving two masters (0.979); Harvest plentiful (0.955); Lament over Jerusalem (0.944); Hidden from wise revealed (0.915); Return of unclean spirit (0.908)
 - Bottom five: Scandals, forgiveness, faith (0.461); Not peace but sword (0.438); Judging twelve tribes (0.435); Parable of Great Banquet (0.205); Narrow gate (0.142)
@@ -36,6 +37,7 @@
 | MK | cen | 0.6985 | 0.0947 | 0.4601 | 0.6039 [0.5591, 0.6457] | 0.2384 |
 - DT minus TT excess (cen): +0.1258 [+0.0575, +0.1956], MWU p = 0.000287; NN excess +0.1677 [+0.0910, +0.2502]
 - DT minus LK excess (cen): +0.0555 [-0.0098, +0.1280], MWU p = 0.0526; NN excess +0.0712 [-0.0036, +0.1443]
+- Residual after Jaccard (r over all pairs = 0.479): matched +0.1642, mismatched -0.0033; random-null p = 0.000999, length-null p = 0.000999; DT minus TT on the residual +0.1856 [+0.1109, +0.2570]
 - Spearman rho of the double-tradition ranking with the primary configuration: 0.950
 - Top five: Serving two masters (0.983); Harvest plentiful (0.963); Lament over Jerusalem (0.942); Return of unclean spirit (0.924); Thief in the night (0.906)
 - Bottom five: Not peace but sword (0.496); Treasure in heaven (0.441); Parable of Great Banquet (0.293); Scandals, forgiveness, faith (0.283); Narrow gate (0.197)
@@ -56,6 +58,28 @@
 | MK | cen | 0.6785 | 0.0795 | 0.3656 | 0.5990 [0.5637, 0.6371] | 0.3129 |
 - DT minus TT excess (cen): +0.0980 [+0.0364, +0.1641], MWU p = 0.00564; NN excess +0.1193 [+0.0553, +0.1893]
 - DT minus LK excess (cen): +0.0301 [-0.0252, +0.0932], MWU p = 0.359; NN excess +0.0359 [-0.0250, +0.1038]
+- Residual after Jaccard (r over all pairs = 0.499): matched +0.1918, mismatched -0.0038; random-null p = 0.000999, length-null p = 0.000999; DT minus TT on the residual +0.0883 [+0.0289, +0.1471]
 - Spearman rho of the double-tradition ranking with the primary configuration: 0.933
 - Top five: Serving two masters (0.977); Ask, seek, knock (0.919); Lament over Jerusalem (0.916); Return of unclean spirit (0.915); Thief in the night (0.899)
 - Bottom five: Parable of Great Banquet (0.470); Judging twelve tribes (0.445); Not peace but sword (0.380); Scandals, forgiveness, faith (0.358); Narrow gate (0.305)
+
+## greekbert: nlpaueb/bert-base-greek-uncased-v1@ec2b8f88dd215b5246f2f850413d5bff90d7540d (last)
+
+| Set | Space | Matched | Mean floor | NN floor | Excess [95% CI] | NN excess |
+|---|---|---|---|---|---|---|
+| DT | raw | 0.9267 | 0.8192 | 0.8899 | 0.1075 [0.0980, 0.1162] | 0.0368 |
+| TT | raw | 0.9462 | 0.8991 | 0.9422 | 0.0471 [0.0399, 0.0541] | 0.0040 |
+| LK | raw | 0.9580 | 0.8987 | 0.9386 | 0.0593 [0.0543, 0.0646] | 0.0193 |
+| MK | raw | 0.9559 | 0.9023 | 0.9401 | 0.0537 [0.0479, 0.0598] | 0.0158 |
+- DT minus TT excess (raw): +0.0604 [+0.0493, +0.0724], MWU p = 6.58e-13; NN excess +0.0327 [+0.0217, +0.0441]
+- DT minus LK excess (raw): +0.0482 [+0.0380, +0.0591], MWU p = 2.89e-11; NN excess +0.0174 [+0.0069, +0.0283]
+| DT | cen | 0.6232 | 0.0529 | 0.3793 | 0.5702 [0.5208, 0.6170] | 0.2439 |
+| TT | cen | 0.5234 | 0.0805 | 0.4262 | 0.4430 [0.3906, 0.4940] | 0.0972 |
+| LK | cen | 0.6248 | 0.0949 | 0.4267 | 0.5300 [0.4850, 0.5762] | 0.1981 |
+| MK | cen | 0.5966 | 0.0873 | 0.4106 | 0.5093 [0.4590, 0.5587] | 0.1859 |
+- DT minus TT excess (cen): +0.1273 [+0.0605, +0.2018], MWU p = 0.000836; NN excess +0.1467 [+0.0721, +0.2239]
+- DT minus LK excess (cen): +0.0403 [-0.0235, +0.1089], MWU p = 0.217; NN excess +0.0458 [-0.0266, +0.1196]
+- Residual after Jaccard (r over all pairs = 0.411): matched +0.1597, mismatched -0.0032; random-null p = 0.000999, length-null p = 0.000999; DT minus TT on the residual +0.1426 [+0.0712, +0.2087]
+- Spearman rho of the double-tradition ranking with the primary configuration: 0.836
+- Top five: Serving two masters (0.970); Anxieties about life (0.894); Harvest plentiful (0.877); Ask, seek, knock (0.856); Hidden from wise revealed (0.854)
+- Bottom five: Law, prophets and divorce (0.412); Blind guides (0.398); House on the rock (0.236); Narrow gate (0.164); Scandals, forgiveness, faith (0.122)
