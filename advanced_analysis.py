@@ -119,15 +119,22 @@ def main():
     all_vecs = np.vstack([M, L, TM, TK, TL])
     mu = all_vecs.mean(axis=0)
 
-    key = {"n_double": n, "n_triple": nt, "embedder": pipe.embedder_id}
-    out = ["# STCM Advanced Analysis (version 3)", "",
+    n_over_dt = sum(1 for p in double for g in ("matthew", "luke")
+                    for part in p.parts(g) if pipe.token_count(part) > pipe._cfg.max_length)
+    n_over_tt = sum(1 for p in triple for g in ("matthew", "mark", "luke")
+                    for part in p.parts(g) if pipe.token_count(part) > pipe._cfg.max_length)
+    key = {"n_double": n, "n_triple": nt, "embedder": pipe.embedder_id,
+           "n_over_512_double": n_over_dt, "n_over_512_triple": n_over_tt}
+    out = ["# STCM Advanced Analysis", "",
            f"(n_double = {n}, n_triple = {nt}, corpus vectors = {len(all_vecs)}, "
            f"permutations = {N_PERM}, bootstrap = {N_BOOT}, seed = {SEED}; "
            f"encoder = {pipe.embedder_id})", "",
            "Lengths are in characters of the normalised Greek text. "
            f"Double tradition: Matthew median {np.median(len_m):.0f}, Luke median {np.median(len_l):.0f}; "
            f"triple tradition: Matthew median {np.median(tlen_m):.0f}, Mark median {np.median(tlen_k):.0f}, "
-           f"Luke median {np.median(tlen_l):.0f}.", ""]
+           f"Luke median {np.median(tlen_l):.0f}. "
+           f"Texts exceeding the {pipe._cfg.max_length}-token window (split at sentence boundaries): "
+           f"{n_over_tt} in the triple tradition, {n_over_dt} in the double tradition.", ""]
 
     # ------------------------------------------------------------------
     # Pair matrices
@@ -388,6 +395,28 @@ def main():
               ["label", "set", "composite_side", "centred_rangewise", "centred_single", "difference"], comp_rows)
     key["composite_max_abs_diff"] = float(max(abs(float(r[5])) for r in comp_rows)) if comp_rows else 0.0
     out.append("")
+    # Corpus-level contrasts with single-sequence encoding of all composite units (Table C1 caption).
+    # Explicit seeds 1 (DT - TT) and 2 (DT - Luke-Mark) with 2,000 bootstrap draws.
+    M_ss = np.array([pipe.embed_text(p.matthew) for p in double], float)
+    L_ss = np.array([pipe.embed_text(p.luke) for p in double], float)
+    TM_ss = np.array([pipe.embed_text(p.matthew) for p in triple], float)
+    TK_ss = np.array([pipe.embed_text(p.mark) for p in triple], float)
+    TL_ss = np.array([pipe.embed_text(p.luke) for p in triple], float)
+    mu_ss = np.vstack([M_ss, L_ss, TM_ss, TK_ss, TL_ss]).mean(axis=0)
+    ss_contrasts = {}
+    out.append("Corpus-level contrasts under single-sequence encoding of all composites:")
+    for tag, c_ss in (("cen", mu_ss), ("raw", None)):
+        e_dt_s, _ = per_pericope_excess(cos_matrix(M_ss, L_ss, c_ss))
+        e_tt_s, _ = per_pericope_excess(cos_matrix(TM_ss, TL_ss, c_ss))
+        e_lk_s, _ = per_pericope_excess(cos_matrix(TL_ss, TK_ss, c_ss))
+        r_tt_s = compare_excess(e_dt_s, e_tt_s, 1)
+        r_lk_s = compare_excess(e_dt_s, e_lk_s, 2)
+        ss_contrasts[f"{tag}_dt_minus_tt"] = r_tt_s
+        ss_contrasts[f"{tag}_dt_minus_lk"] = r_lk_s
+        out.append(f"- DT minus TT ({tag}): {r_tt_s['diff']:+.4f} [{r_tt_s['ci_lo']:+.4f}, {r_tt_s['ci_hi']:+.4f}]; "
+                   f"DT minus LK ({tag}): {r_lk_s['diff']:+.4f} [{r_lk_s['ci_lo']:+.4f}, {r_lk_s['ci_hi']:+.4f}]")
+    key["composite_single_seq_contrasts"] = ss_contrasts
+    out.append("")
 
     # ------------------------------------------------------------------
     # 7. Directionality
@@ -403,6 +432,9 @@ def main():
     jk = np.array([delta_r2(np.delete(Mc, i, 0), np.delete(Lc, i, 0), alpha) for i in range(n)])
     jk_se = float(np.sqrt((n - 1) / n * np.sum((jk - jk.mean()) ** 2)))
     ci_lo, ci_hi = d_obs - 1.96 * jk_se, d_obs + 1.96 * jk_se
+    # Note: the selected-penalty test (SEED + 13) and the penalty-grid sweep
+    # (SEED + 17) use independent 1,000-permutation sign-flip draws, so their
+    # Monte Carlo p-values at alpha = 1.0 differ slightly (0.005 vs 0.003).
     _, p_two = signflip_p(Mc, Lc, alpha, SEED + 13)
     grid_rows = [(a,) + signflip_p(Mc, Lc, a, SEED + 17) for a in ALPHA_GRID]
     bal = np.abs(np.log(len_m / len_l)) < 0.25

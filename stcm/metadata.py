@@ -149,7 +149,7 @@ GOULDER_REDACTION_LABELS: List[str] = [
 # shared non-Markan source, so the double-tradition statistics are reported
 # with and without them.  Value = the Markan parallel; "full" marks units
 # whose whole text has a Markan parallel, "partial" units where only some
-# verses do.  Reviewed against Aland (1985) and the IQP inventory, Oct 2026.
+# verses do.  Compiled from Aland (1985) and the IQP inventory.
 MARK_Q_OVERLAP: Dict[str, Dict[str, str]] = {
     "John's preaching":             {"mark": "1:7-8",        "extent": "partial"},
     "Temptation narrative (full)":  {"mark": "1:12-13",      "extent": "full"},

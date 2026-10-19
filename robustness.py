@@ -116,7 +116,8 @@ def main():
                              length_p=perm_pvalue(nul["observed"], nul["length"]))
         k["resid_dt_minus_tt"] = rr
         out.append(f"- Residual after Jaccard (r over all pairs = {k['resid_dt_r_all']:.3f}): matched {fR['matched']:+.4f}, "
-                   f"mismatched {fR['floor']:+.4f}; random-null p = {k['resid_dt']['random_p']:.3g}, "
+                   f"mismatched {fR['floor']:+.4f}, matched - mismatched {fR['excess']:+.4f}; "
+                   f"random-null p = {k['resid_dt']['random_p']:.3g}, "
                    f"length-null p = {k['resid_dt']['length_p']:.3g}; DT minus TT on the residual "
                    f"{rr['diff']:+.4f} [{rr['ci_lo']:+.4f}, {rr['ci_hi']:+.4f}]")
         cen = np.diag(cos_matrix(M, L, mu))

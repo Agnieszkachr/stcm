@@ -16,7 +16,7 @@ Result: **45 triple-tradition** units (positive control) and **51 double-traditi
 - Model: `ABeZet/Koine-Greek-BERT`, pinned to revision `b81172e` (v1.0.1), run under transformers 4.57.3 (tokenisation independent of Python's hash seed). Its normaliser lower-cases and strips diacritics, so inference is on unaccented text. Of the 15,000 added vocabulary entries, 9,257 are reachable whole-word forms and 7,074 are new to the base vocabulary.
 - Each contiguous verse range is encoded as one sequence; the passage vector is the attention-masked mean of the last hidden layer, L2-normalised.
 - Composite units are encoded **range by range** and averaged with token-count weights, so the model never sees a splice the evangelist did not write. Texts over 512 tokens are chunked at sentence boundaries and combined the same way. Nothing is truncated.
-- Cache keys include model, revision, layer setting, accent handling and encoding version (`v3`).
+- Cache keys include model, revision, layer setting, accent handling and encoding scheme.
 
 ## 3. Primary statistic
 
@@ -59,6 +59,3 @@ Length (characters), five form classes, Kloppenborg strata (pericope-level appro
 
 Kernel ridge with intercept in both directions, exact leave-one-out *R*² via the hat-matrix identity, penalty chosen by LOO error, jackknife CI, sign-flip permutation test, a penalty sweep, a length-balanced subset, and the **known-direction control** (Mark → Matthew, Mark → Luke). The statistic fails that control, so no directional inference is drawn.
 
-## Legacy
-
-The composite Q-score (0.8 × cosine + 0.2 × residual) and the latent-Q reconstruction are retired and run only with `run_pipeline.py --legacy`.

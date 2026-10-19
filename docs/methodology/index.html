@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -418,17 +418,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#legacy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Legacy
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -670,17 +659,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#legacy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Legacy
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -713,7 +691,7 @@
 <li>Model: <code>ABeZet/Koine-Greek-BERT</code>, pinned to revision <code>b81172e</code> (v1.0.1), run under transformers 4.57.3 (tokenisation independent of Python's hash seed). Its normaliser lower-cases and strips diacritics, so inference is on unaccented text. Of the 15,000 added vocabulary entries, 9,257 are reachable whole-word forms and 7,074 are new to the base vocabulary.</li>
 <li>Each contiguous verse range is encoded as one sequence; the passage vector is the attention-masked mean of the last hidden layer, L2-normalised.</li>
 <li>Composite units are encoded <strong>range by range</strong> and averaged with token-count weights, so the model never sees a splice the evangelist did not write. Texts over 512 tokens are chunked at sentence boundaries and combined the same way. Nothing is truncated.</li>
-<li>Cache keys include model, revision, layer setting, accent handling and encoding version (<code>v3</code>).</li>
+<li>Cache keys include model, revision, layer setting, accent handling and encoding scheme.</li>
 </ul>
 <h2 id="3-primary-statistic">3. Primary statistic</h2>
 <p>The <strong>mean-centred cosine</strong> cos(<em>x</em> − <em>μ</em>, <em>y</em> − <em>μ</em>), with <em>μ</em> the mean of all 237 pericope vectors. Centring corrects the anisotropy of contextual embeddings (unrelated pairs fall from ≈ 0.84 to ≈ 0.05). The raw cosine is reported in parallel.</p>
@@ -759,8 +737,6 @@
 <p>Length (characters), five form classes, Kloppenborg strata (pericope-level approximation), the Goulder set, word overlap, and a sentence-level bootstrap (200 resamples; pericopes with fewer than two sentences in either version are excluded).</p>
 <h2 id="9-directionality">9. Directionality</h2>
 <p>Kernel ridge with intercept in both directions, exact leave-one-out <em>R</em>² via the hat-matrix identity, penalty chosen by LOO error, jackknife CI, sign-flip permutation test, a penalty sweep, a length-balanced subset, and the <strong>known-direction control</strong> (Mark → Matthew, Mark → Luke). The statistic fails that control, so no directional inference is drawn.</p>
-<h2 id="legacy">Legacy</h2>
-<p>The composite Q-score (0.8 × cosine + 0.2 × residual) and the latent-Q reconstruction are retired and run only with <code>run_pipeline.py --legacy</code>.</p>
 
 
 
@@ -813,7 +789,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

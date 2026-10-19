@@ -21,8 +21,8 @@ where the parallel verses are non-contiguous in one gospel (e.g. Luke
 only the material that is actually parallel.  None means that gospel lacks
 the pericope.
 
-Alignment principles (version 3, October 2026)
-----------------------------------------------
+Alignment principles
+--------------------
 * No pericope appears in both the calibration and the test set.
 * No verse appears in two different units of the same set.
 * Each Matthew-Luke pair is trimmed to the verses that are parallel; purely
@@ -62,10 +62,10 @@ TripleEntry = Tuple[str, Optional[Ref], Optional[Ref], Optional[Ref]]
 #   Q verses embedded in Markan contexts (Matt 13:16-17; 17:20; 24:26-28;
 #   Luke 22:28-30) are cut out of the calibration units so that no verse
 #   belongs to both sets.
-#   Version 3 (October 2026): "Call of the first disciples" removed, because
+#   "Call of the first disciples" (Mark 1:16-20) is also excluded because
 #   Luke 5:1-11 is a different episode (the miraculous catch) sharing only
-#   5:10b-11 with Mark 1:16-20; "Rejection at Nazareth" restricted on the
-#   Lukan side to the verses with a Markan parallel (Luke 4:16, 22, 24),
+#   5:10b-11 with Mark; in "Rejection at Nazareth" the Lukan side is
+#   restricted to the verses with a Markan parallel (Luke 4:16, 22, 24),
 #   since 4:17-21, 23, 25-30 are Lukan composition.  Rule: a unit enters the
 #   calibration set only if each gospel's text is the Markan episode itself,
 #   trimmed to the verses that have a parallel in Aland's synopsis.

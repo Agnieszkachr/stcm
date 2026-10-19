@@ -74,3 +74,19 @@ def test_key_stats_match_corpus(corpus):
     assert key["n_double"] == len(corpus.double_tradition)
     assert key["n_triple"] == len(corpus.triple_tradition)
     assert key["mark_q_overlap"]["n_overlap"] == len(MARK_Q_OVERLAP)
+    assert key["n_over_512_double"] == 0
+    assert key["n_over_512_triple"] == 9
+    assert "composite_single_seq_contrasts" in key
+    c1 = key["composite_single_seq_contrasts"]
+    assert set(c1.keys()) == {
+        "cen_dt_minus_tt",
+        "raw_dt_minus_tt",
+        "cen_dt_minus_lk",
+        "raw_dt_minus_lk",
+    }
+    assert round(c1["cen_dt_minus_tt"]["diff"], 3) == 0.140
+    assert round(c1["raw_dt_minus_tt"]["diff"], 3) == 0.061
+    assert round(c1["cen_dt_minus_lk"]["diff"], 3) == 0.078
+    assert round(c1["raw_dt_minus_lk"]["diff"], 3) == 0.054
+
+

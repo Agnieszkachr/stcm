@@ -1,6 +1,7 @@
 # Results
 
-All figures on this page are from the **version-3 run** (October 2026): 51 double-tradition and 45 triple-tradition pericopes, range-wise encoding of composite units, the model pinned to Koine-Greek-BERT v1.0.1. Earlier figures (version 2: 46 triple-tradition pericopes, matched mean 0.7171; version 1: 36/49 pericopes) are superseded. Every number is in `outputs/reports/` and `key_stats*.json`.
+All statistics and figures are computed on the 51 double-tradition and 45 triple-tradition pericopes with range-wise encoding of composite units and the model pinned to Koine-Greek-BERT v1.0.1 (`b81172e`). Every number is recorded in `outputs/reports/` and `key_stats*.json`.
+
 
 ## 1. Positive and negative controls
 

@@ -19,15 +19,15 @@ This will:
 6. Draw Figures 1–5
 7. Save all output to `outputs/`
 
-To fill the embedding cache for all three encoder configurations first (the analyses then run without the model, except the sentence bootstrap):
+To fill the embedding cache for all four encoder configurations first (the analyses then run without the model, except the sentence bootstrap):
 
 ```bash
 python populate_cache.py
 ```
 
-## Legacy steps
+## Optional modules
 
-The retired composite Q-score, the latent-Q reconstruction and the old evaluation suite are not part of the article. They run only on request:
+The auxiliary composite Q-score and latent-Q reconstruction modules are not part of the article. They run only on request:
 
 ```bash
 python run_pipeline.py --legacy
@@ -75,4 +75,4 @@ Look in the `outputs/` directory for your results:
 - `reports/triple_tradition_table.csv`, `per_pericope_excess.csv`, `floor_table.csv`, `composite_sensitivity.csv`, `baseline_disagreements.csv` — appendix tables.
 - `reports/key_stats*.json` — machine-readable numbers (the figure script and the tests read these).
 - `figures/evaluation/fig1–fig5` — The article figure set.
-- `reports/evaluation_summary.md`, `reports/q_score_distribution.csv`, `reports/system_validation.txt` — legacy outputs (`--legacy` only).
+- `reports/evaluation_summary.md`, `reports/q_score_distribution.csv`, `reports/system_validation.txt`, `figures/q_score_histogram.png` — optional outputs (not tracked in the repository; generated only with `--legacy`).

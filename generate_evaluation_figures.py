@@ -1,7 +1,7 @@
 """
 generate_evaluation_figures.py
 ==============================
-Publication figure set for the STCM article (version 3), computed on the
+Publication figure set for the STCM article, computed on the
 mean-centred cosine similarity (the primary statistic; see
 advanced_analysis.py) and the lexical baseline (baselines.py).
 

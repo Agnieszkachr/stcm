@@ -12,7 +12,7 @@ Performs:
    analysis captures information beyond simple verbal-agreement percentages.
 4. Sentence-level bootstrap robustness — perturbs input by resampling
    sentences within each pericope to measure Q-score stability under
-   meaningful variation (replaces the uninformative seed-stability test).
+   meaningful variation.
 5. Goulder redaction test — compares Q-score distributions of pericopes
    identified by Goulder (1989) as exhibiting Lukan redaction of Matthew
    against the remainder.
@@ -208,17 +208,17 @@ class EvaluationEngine:
         observed = stat_fn(report.q_scores)
         null_stats: List[float] = []
 
-        matt_texts = [p.matthew for p in double]
-        luke_texts = [p.luke for p in double]
+        matt_parts = [p.parts("matthew") for p in double]
+        luke_parts = [p.parts("luke") for p in double]
 
         log.info("Running %d permutations …", self._cfg.n_permutations)
         for i in range(self._cfg.n_permutations):
-            perm_idx = rng.permutation(len(luke_texts))
+            perm_idx = rng.permutation(len(luke_parts))
             perm_qs: List[float] = []
-            for j, m_txt in enumerate(matt_texts):
-                l_txt = luke_texts[perm_idx[j]]
-                e_m = self._pipe.embed_text(m_txt)
-                e_l = self._pipe.embed_text(l_txt)
+            for j, m_pts in enumerate(matt_parts):
+                l_pts = luke_parts[perm_idx[j]]
+                e_m = self._pipe.embed_parts(m_pts)
+                e_l = self._pipe.embed_parts(l_pts)
                 cos = cosine_similarity(e_m, e_l)
                 dev_a = cos - self._cal.sig_a.mean
                 r_m = residual_vector(e_m, self._cal.centroid_mark)
@@ -270,8 +270,8 @@ class EvaluationEngine:
         rng = np.random.default_rng(seed)
 
         observed = float(np.mean([s.matt_luke_cos for s in report.scores]))
-        matt_texts = [p.matthew for p in double]
-        luke_texts = [p.luke for p in double]
+        matt_parts = [p.parts("matthew") for p in double]
+        luke_parts = [p.parts("luke") for p in double]
 
         groups: Dict[str, List[int]] = {}
         if thematic:
@@ -286,20 +286,20 @@ class EvaluationEngine:
         for i in range(self._cfg.n_permutations):
             perm_cos: List[float] = []
             if thematic:
-                for j, m_txt in enumerate(matt_texts):
+                for j, m_pts in enumerate(matt_parts):
                     tag = THEMATIC_TAGS.get(double[j].label, "other")
                     candidates = [k for k in groups[tag] if k != j]
                     if not candidates:
                         candidates = [k for k in range(len(double)) if k != j]
                     pick = rng.choice(candidates)
-                    e_m = self._pipe.embed_text(m_txt)
-                    e_l = self._pipe.embed_text(luke_texts[pick])
+                    e_m = self._pipe.embed_parts(m_pts)
+                    e_l = self._pipe.embed_parts(luke_parts[pick])
                     perm_cos.append(cosine_similarity(e_m, e_l))
             else:
-                perm_idx = rng.permutation(len(luke_texts))
-                for j, m_txt in enumerate(matt_texts):
-                    e_m = self._pipe.embed_text(m_txt)
-                    e_l = self._pipe.embed_text(luke_texts[perm_idx[j]])
+                perm_idx = rng.permutation(len(luke_parts))
+                for j, m_pts in enumerate(matt_parts):
+                    e_m = self._pipe.embed_parts(m_pts)
+                    e_l = self._pipe.embed_parts(luke_parts[perm_idx[j]])
                     perm_cos.append(cosine_similarity(e_m, e_l))
             null_stats.append(float(np.mean(perm_cos)))
             if (i + 1) % 100 == 0:
@@ -350,14 +350,14 @@ class EvaluationEngine:
         observed = float(np.mean(report.q_scores))
         null_stats: List[float] = []
 
-        matt_texts = [p.matthew for p in double]
-        luke_texts = [p.luke for p in double]
+        matt_parts = [p.parts("matthew") for p in double]
+        luke_parts = [p.parts("luke") for p in double]
 
         n_perms = self._cfg.n_permutations
         log.info("Running %d thematic-null permutations …", n_perms)
         for i in range(n_perms):
             perm_qs: List[float] = []
-            for j, m_txt in enumerate(matt_texts):
+            for j, m_pts in enumerate(matt_parts):
                 # Find thematic group for this pericope
                 tag = THEMATIC_TAGS.get(double[j].label, "other")
                 group_indices = groups[tag]
@@ -367,9 +367,9 @@ class EvaluationEngine:
                     # Singleton group — fall back to any other pericope
                     candidates = [k for k in range(len(double)) if k != j]
                 pick = rng.choice(candidates)
-                l_txt = luke_texts[pick]
-                e_m = self._pipe.embed_text(m_txt)
-                e_l = self._pipe.embed_text(l_txt)
+                l_pts = luke_parts[pick]
+                e_m = self._pipe.embed_parts(m_pts)
+                e_l = self._pipe.embed_parts(l_pts)
                 cos = cosine_similarity(e_m, e_l)
                 dev_a = cos - self._cal.sig_a.mean
                 r_m = residual_vector(e_m, self._cal.centroid_mark)
@@ -868,17 +868,16 @@ excluding the potentially genre-confounded residual component.
 # STCM Evaluation Summary
 
 > [!WARNING]
-> **LEGACY REPORT — NOT THE STATISTICS REPORTED IN THE ARTICLE.**
-> Every figure below is computed on the **retired composite Q-score**
-> (0.8 x cosine + 0.2 x max(0, residual)), which no longer carries any
-> inference or ranking in this project. The word-overlap correlation,
+> **AUXILIARY REPORT — NOT THE STATISTICS REPORTED IN THE ARTICLE.**
+> Every figure below is computed on the **composite Q-score**
+> (0.8 x cosine + 0.2 x max(0, residual)), which is not used for
+> inference or ranking in the article. The word-overlap correlation,
 > sentence-level bootstrap and Goulder test therefore differ from the
-> published values, because there they are computed on the mean-centred
+> published values, which are computed on the mean-centred
 > cosine. Do not compare these numbers with the article.
 >
-> The authoritative report is `outputs/reports/advanced_analysis.md`,
-> produced by `advanced_analysis.py`. This file is retained only for
-> backward compatibility with earlier versions of the pipeline.
+> The primary report is `outputs/reports/advanced_analysis.md`,
+> produced by `advanced_analysis.py`.
 
 ## 1. Permutation Test: Mean Q-Score (Random Null)
 

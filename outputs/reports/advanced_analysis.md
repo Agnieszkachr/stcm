@@ -1,8 +1,8 @@
-# STCM Advanced Analysis (version 3)
+# STCM Advanced Analysis
 
 (n_double = 51, n_triple = 45, corpus vectors = 237, permutations = 1000, bootstrap = 1000, seed = 42; encoder = ABeZet/Koine-Greek-BERT@b81172ecb9baf65734c88ab65e2eb2491f12f3de (last))
 
-Lengths are in characters of the normalised Greek text. Double tradition: Matthew median 395, Luke median 335; triple tradition: Matthew median 727, Mark median 764, Luke median 685.
+Lengths are in characters of the normalised Greek text. Double tradition: Matthew median 395, Luke median 335; triple tradition: Matthew median 727, Mark median 764, Luke median 685. Texts exceeding the 512-token window (split at sentence boundaries): 9 in the triple tradition, 0 in the double tradition.
 
 ## 1. Calibration signatures (triple tradition)
 
@@ -154,6 +154,10 @@ Units with a Markan parallel to all or part of their text (n = 16): John's preac
 | Day of the Son of Man | double | luke | 0.6132 | 0.5820 | -0.0312 |
 | Rejection at Nazareth | triple | luke | 0.2583 | 0.2943 | +0.0360 |
 | Eschatological discourse | triple | matthew | 0.8695 | 0.8741 | +0.0046 |
+
+Corpus-level contrasts under single-sequence encoding of all composites:
+- DT minus TT (cen): +0.1404 [+0.0697, +0.2075]; DT minus LK (cen): +0.0783 [+0.0070, +0.1386]
+- DT minus TT (raw): +0.0613 [+0.0513, +0.0719]; DT minus LK (raw): +0.0543 [+0.0437, +0.0640]
 
 ## 7. Directionality analysis
 

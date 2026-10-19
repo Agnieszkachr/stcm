@@ -11,7 +11,7 @@
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/stcm-research/stcm.git
+git clone https://github.com/Agnieszkachr/stcm.git
 cd stcm
 ```
 

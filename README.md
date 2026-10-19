@@ -7,8 +7,7 @@
 
 📖 **[Documentation & Results](https://agnieszkachr.github.io/stcm/)**
 
-> [!IMPORTANT]
-> **VERSION 3 (October 2026).** This version answers a simulated peer review of the version-2 analysis. Changes: (i) the calibration set is 45 pericopes (*Call of the first disciples* removed — Luke 5:1–11 is a different episode; Luke's Nazareth sermon trimmed to the verses with a Markan parallel); (ii) composite units are encoded range by range rather than as one spliced sequence; (iii) the model is pinned to Koine-Greek-BERT v1.0.1 (revision `b81172e`); (iv) every between-set contrast now has a bootstrap CI and a test; (v) **one-step copying** (Luke–Mark, Matthew–Mark) is reported alongside two-step copying (Matthew–Luke in the triple tradition); (vi) **lexical baselines** (Jaccard, TF-IDF) are run through the same pipeline and the embedding's residual over word overlap is tested; (vii) a **sayings-versus-narrative control**, **Mark–Q-overlap flags**, the **shared deviation from Mark** (minor agreements) and **two alternative encoders** (last-four-layer mean; Ancient-Greek-BERT; Greek BERT, a Modern Greek model without biblical pre-training) are added. Version-2 numbers (46 triple-tradition pericopes, matched mean 0.7171) are superseded.
+The pipeline calibrates a domain-adapted Koine Greek transformer (`ABeZet/Koine-Greek-BERT`, revision `b81172e`) on 45 triple-tradition pericopes — comparing both **two-step copying** (Matthew–Luke) and **one-step copying** (Luke–Mark, Matthew–Mark) as well as the **shared deviation from Mark** (minor agreements) — and evaluates 51 double-tradition pericopes with range-wise encoding of composite units, bootstrap confidence intervals, four permutation nulls, **lexical baselines** (multiset Jaccard and character n-gram TF-IDF), a **sayings-versus-narrative control**, **Mark–Q-overlap flags**, and **three alternative encoder configurations** (last-four-layer mean; Ancient-Greek-BERT; Greek BERT, a Modern Greek model without biblical pre-training).
 
 ## What the project shows
 
@@ -45,11 +44,12 @@
 ```bash
 uv venv && uv pip install -r requirements.txt     # or: pip install -r requirements.txt
 python download_sblgnt.py                         # SBLGNT source texts
-python populate_cache.py                          # embed everything (3 encoder configurations)
+python populate_cache.py                          # embed everything (4 encoder configurations)
 python advanced_analysis.py                       # Tables 1–4 and all embedding statistics
 python baselines.py                               # Table 5: lexical baselines
 python form_control.py                            # sayings-versus-narrative control
 python robustness.py                              # Appendix C2: alternative encoders
+python tools/make_article_tables.py               # Appendix Tables A1, B1, C1–C3 (markdown)
 python generate_evaluation_figures.py             # Figures 1–5
 python -m pytest tests                            # integrity checks
 # or all of it:
@@ -71,6 +71,8 @@ outputs/reports/
 └── key_stats.json, key_stats_baselines.json, key_stats_form_control.json, key_stats_robustness.json
 ```
 
+*(Auxiliary outputs `evaluation_summary.md`, `q_score_distribution.csv`, `system_validation.txt`, and `outputs/figures/q_score_histogram.png` belong to the optional composite-index module; they are not tracked in the repository and are generated only when running `python run_pipeline.py --legacy`.)*
+
 ## Architecture
 
 ```
@@ -80,11 +82,12 @@ stcm/
 │   ├── utils.py           # Greek normalisation, SBLGNT parsing
 │   ├── data_loader.py     # alignment tables (multi-range refs, four enforced rules, per-range parts)
 │   ├── metadata.py        # themes, forms, strata, Goulder set, Mark–Q overlaps, sayings units, text-critical notes
-│   ├── embeddings.py      # encoder: range-wise and chunked encoding, versioned cache (v3)
+│   ├── embeddings.py      # encoder: range-wise and chunked encoding, disk cache
 │   ├── analysis_core.py   # floors, excess, CIs, nulls, LOO ridge
 │   ├── calibration.py     # triple-tradition calibration object
-│   └── scoring.py, reconstruction.py, evaluation.py   # legacy (--legacy only)
+│   └── scoring.py, reconstruction.py, evaluation.py   # optional modules (--legacy)
 ├── populate_cache.py, advanced_analysis.py, baselines.py, form_control.py, robustness.py
+├── tools/make_article_tables.py
 ├── generate_evaluation_figures.py
 ├── tests/test_integrity.py
 ├── site/ (MkDocs source) · docs/ (built site)

@@ -61,13 +61,15 @@ CONFIGS = {
 }
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--config", choices=list(CONFIGS), default=None)
-    args = ap.parse_args()
+def main(config: str | None = None) -> None:
+    if config is None:
+        ap = argparse.ArgumentParser()
+        ap.add_argument("--config", choices=list(CONFIGS), default=None)
+        args = ap.parse_args()
+        config = args.config
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
     corpus = SBLGNTLoader().load()
-    names = [args.config] if args.config else list(CONFIGS)
+    names = [config] if config else list(CONFIGS)
     for name in names:
         pipe = EmbeddingPipeline(config=CONFIGS[name])
         t0 = time.time()

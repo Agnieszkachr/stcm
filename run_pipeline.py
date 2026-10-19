@@ -14,8 +14,8 @@ Steps executed:
      alternative encoders (robustness.py, after populate_cache.py)
   5. Figures 1-5 (generate_evaluation_figures.py)
 
-The legacy composite Q-score, reconstruction and evaluation_summary steps
-(retired from the article) run only with --legacy.
+The optional composite Q-score, reconstruction and evaluation_summary steps
+(not used in the article) run only with --legacy.
 
 Usage
 -----
@@ -100,7 +100,7 @@ def main() -> None:
     parser.add_argument("--resume", action="store_true",
                         help="Skip already-completed steps (detect from STEP_LOG.md)")
     parser.add_argument("--legacy", action="store_true",
-                        help="Also run the retired composite Q-score, reconstruction "
+                        help="Also run the optional composite Q-score, reconstruction "
                              "and evaluation_summary steps (not used in the article)")
     args = parser.parse_args()
 
@@ -192,9 +192,8 @@ def main() -> None:
     import form_control
     form_control.main()
     import populate_cache
-    for name in ("last4", "agb"):
-        sys.argv = [sys.argv[0], "--config", name]
-        populate_cache.main()
+    for name in ("last4", "agb", "greekbert"):
+        populate_cache.main(name)
     import robustness
     robustness.main()
     append_step_log(4, "Advanced analysis complete", [
@@ -314,8 +313,8 @@ def _write_validation_report(report, reconstruction, cfg: STCMConfig,
     lines = [
         "STCM System Validation Report",
         "=" * 50,
-        '*** LEGACY REPORT - NOT THE STATISTICS REPORTED IN THE ARTICLE ***',
-        'The Q-score figures below use the retired composite index',
+        '*** AUXILIARY REPORT - NOT THE STATISTICS REPORTED IN THE ARTICLE ***',
+        'The Q-score figures below use the optional composite index',
         '(0.8 x cosine + 0.2 x max(0, residual)) and are NOT comparable with',
         'the published results, which rest on the mean-centred cosine.',
         'Authoritative report: outputs/reports/advanced_analysis.md',

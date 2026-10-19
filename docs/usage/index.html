@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -385,10 +385,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#legacy-steps" class="md-nav__link">
+  <a href="#optional-modules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Legacy steps
+        Optional modules
       
     </span>
   </a>
@@ -528,10 +528,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#legacy-steps" class="md-nav__link">
+  <a href="#optional-modules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Legacy steps
+        Optional modules
       
     </span>
   </a>
@@ -602,11 +602,11 @@
 5. Run <code>baselines.py</code> (lexical baselines), <code>form_control.py</code> (sayings vs narrative) and <code>robustness.py</code> (alternative encoders)
 6. Draw Figures 1–5
 7. Save all output to <code>outputs/</code></p>
-<p>To fill the embedding cache for all three encoder configurations first (the analyses then run without the model, except the sentence bootstrap):</p>
+<p>To fill the embedding cache for all four encoder configurations first (the analyses then run without the model, except the sentence bootstrap):</p>
 <pre><code class="language-bash">python populate_cache.py
 </code></pre>
-<h2 id="legacy-steps">Legacy steps</h2>
-<p>The retired composite Q-score, the latent-Q reconstruction and the old evaluation suite are not part of the article. They run only on request:</p>
+<h2 id="optional-modules">Optional modules</h2>
+<p>The auxiliary composite Q-score and latent-Q reconstruction modules are not part of the article. They run only on request:</p>
 <pre><code class="language-bash">python run_pipeline.py --legacy
 </code></pre>
 <h2 id="resuming-from-cache">Resuming from Cache</h2>
@@ -638,7 +638,7 @@ STCM_MODEL_REVISION=&lt;git sha&gt; python advanced_analysis.py
 - <code>reports/triple_tradition_table.csv</code>, <code>per_pericope_excess.csv</code>, <code>floor_table.csv</code>, <code>composite_sensitivity.csv</code>, <code>baseline_disagreements.csv</code> — appendix tables.
 - <code>reports/key_stats*.json</code> — machine-readable numbers (the figure script and the tests read these).
 - <code>figures/evaluation/fig1–fig5</code> — The article figure set.
-- <code>reports/evaluation_summary.md</code>, <code>reports/q_score_distribution.csv</code>, <code>reports/system_validation.txt</code> — legacy outputs (<code>--legacy</code> only).</p>
+- <code>reports/evaluation_summary.md</code>, <code>reports/q_score_distribution.csv</code>, <code>reports/system_validation.txt</code>, <code>figures/q_score_histogram.png</code> — optional outputs (not tracked in the repository; generated only with <code>--legacy</code>).</p>
 
 
 
@@ -691,7 +691,7 @@ STCM_MODEL_REVISION=&lt;git sha&gt; python advanced_analysis.py
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

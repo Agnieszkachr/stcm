@@ -40,8 +40,8 @@ from stcm.utils import normalise_greek, strip_accents, text_hash
 
 log = logging.getLogger(__name__)
 
-# Bump whenever the text normalisation or the encoding scheme changes.
-ENCODING_VERSION = "v3"   # v3: range-wise composites, token counts cached, pinned revision
+# Cache-key salt for text normalisation and range-wise encoding.
+ENCODING_VERSION = "v3"
 
 
 # ---------------------------------------------------------------------------
@@ -315,7 +315,7 @@ class EmbeddingPipeline:
             with open(p, "rb") as fh:
                 entry = pickle.load(fh)
             if not (isinstance(entry, tuple) and len(entry) == 2):
-                raise ValueError(f"Cache entry {p} is not a v3 (vector, n_tokens) entry.")
+                raise ValueError(f"Cache entry {p} is not a (vector, n_tokens) tuple.")
             self._cache[key] = entry
             return entry
         return None

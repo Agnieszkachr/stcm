@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -746,11 +746,11 @@
 <h3 id="why-use-koine-greek-bert">Why use Koine-Greek-BERT?</h3>
 <p>Contextual models represent each word in the light of its passage, so they can in principle recognise when Matthew and Luke say the same thing in different words. Whether they actually do is tested rather than assumed: the model must pass the triple-tradition positive control, and its increment over plain word overlap is measured directly (see the next question). Koine-Greek-BERT is domain-adapted on Koine (LXX, NT, Apostolic Fathers, historians); the gospels were in its pre-training corpus (and, through the PROIEL treebank, in that of its base model Ancient-Greek-BERT). The contrast between the traditions does not depend on this, because plain word overlap reproduces it without any pre-training. The embedding's increment over word overlap is reproduced by Greek BERT, a Modern Greek model without biblical pre-training, though exposure to quoted gospel text in its web corpora cannot be excluded.</p>
 <h3 id="doesnt-the-statistic-just-measure-word-overlap">Doesn't the statistic just measure word overlap?</h3>
-<p>Largely, yes — and the project now says so. Word overlap (multiset Jaccard) reproduces most of the ranking (Spearman ρ = 0.87) and the same ordering of the traditions. What the embedding adds is measured in <code>baselines.py</code>: after removing the linear effect of word overlap, the residual still separates true parallels from mismatched pairs (<em>p</em> &lt; 0.001 against all nulls), and the passages the embedding rates higher than their word overlap predicts are paraphrases (<em>Conditions of Discipleship</em>, <em>One Taken, One Left</em>, the <em>Golden Rule</em>, the <em>Lord's Prayer</em>). The increment is modest but real.</p>
+<p>Largely, yes. Word overlap (multiset Jaccard) reproduces most of the ranking (Spearman ρ = 0.87) and the same ordering of the traditions. What the embedding adds is measured in <code>baselines.py</code>: after removing the linear effect of word overlap, the residual still separates true parallels from mismatched pairs (<em>p</em> &lt; 0.001 against all nulls), and the passages the embedding rates higher than their word overlap predicts are paraphrases (<em>Conditions of Discipleship</em>, <em>One Taken, One Left</em>, the <em>Golden Rule</em>, the <em>Lord's Prayer</em>). The increment is modest but real.</p>
 <h3 id="what-about-the-circularity-problem-arent-similar-topics-naturally-similar">What about the circularity problem — aren't similar topics naturally similar?</h3>
-<p>This was addressed with the <strong>thematic-null permutation test</strong>. Instead of pairing Matt–Luke pericopes randomly, this test pairs each Matthean pericope with a <em>thematically similar</em> Lukan pericope (wisdom with wisdom, apocalyptic with apocalyptic, etc.). The correctly paired pericopes still significantly exceed this thematic baseline (empirical <em>p</em> &lt; 0.001, 1,000 permutations), showing that the signal reflects genuine textual correspondence beyond mere topical similarity. A second kind of circularity is length: true parallels are of similar length, random pairs are not, and unrelated passages of different lengths are less similar than unrelated passages of equal length. Two further nulls therefore pair each Matthean pericope with a Lukan one of comparable length (optionally also of the same theme); the signal survives both (<em>p</em> &lt; 0.001).</p>
+<p>This is tested with the <strong>thematic-null permutation test</strong>. Instead of pairing Matt–Luke pericopes randomly, this test pairs each Matthean pericope with a <em>thematically similar</em> Lukan pericope (wisdom with wisdom, apocalyptic with apocalyptic, etc.). The correctly paired pericopes still significantly exceed this thematic baseline (empirical <em>p</em> &lt; 0.001, 1,000 permutations), showing that the signal reflects genuine textual correspondence beyond mere topical similarity. A second kind of circularity is length: true parallels are of similar length, random pairs are not, and unrelated passages of different lengths are less similar than unrelated passages of equal length. Two further nulls therefore pair each Matthean pericope with a Lukan one of comparable length (optionally also of the same theme); the signal survives both (<em>p</em> &lt; 0.001).</p>
 <h3 id="are-the-results-sensitive-to-tuning">Are the results sensitive to tuning?</h3>
-<p>The mean-centred cosine has no weights or free parameters. The analytical choices that remain are tested: the centring vector (six definitions — the double-versus-triple ordering holds in all six; the double-versus-Luke–Mark ordering does not), the layer (last vs mean of last four), the encoder (Koine-Greek-BERT vs Ancient-Greek-BERT) and the encoding of composite units (range-wise vs single sequence; individual pericopes move by up to 0.14, corpus-level contrasts do not change sign). An earlier weighted composite index is retired and survives only as a legacy output.</p>
+<p>The mean-centred cosine has no weights or free parameters. The analytical choices that remain are tested: the centring vector (six definitions — the double-versus-triple ordering holds in all six; the double-versus-Luke–Mark ordering does not), the layer (last vs mean of last four), the encoder (Koine-Greek-BERT vs Ancient-Greek-BERT vs Greek BERT, a Modern Greek model without biblical pre-training) and the encoding of composite units (range-wise vs single sequence; individual pericopes move by up to 0.14, corpus-level contrasts do not change sign).</p>
 <h3 id="what-if-i-dont-have-internet-access-to-download-the-model">What if I don't have internet access to download the model?</h3>
 <p>STCM includes an offline fallback, but it must be enabled explicitly. If <code>ABeZet/Koine-Greek-BERT</code> cannot be loaded via the <code>transformers</code> library, the pipeline stops with an error unless <code>STCM_ALLOW_FALLBACK=1</code> is set, in which case a deterministic character-trigram hashing embedder (256-dimensional) is used. The fallback is sufficient to demonstrate that the pipeline runs end-to-end, but its results are not comparable to the published outputs; the embedder actually used is recorded in <code>system_validation.txt</code>.</p>
 <h3 id="what-is-the-farrer-hypothesis-and-does-stcm-disprove-it">What is the Farrer Hypothesis and does STCM disprove it?</h3>
@@ -817,7 +817,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
