@@ -1,13 +1,13 @@
 # Usage
 
-The entire STCM process is driven by `run_pipeline.py`. It is designed to be resumable and modular.
+The entire STCM process is driven by `run_pipeline.py`. It is designed to be resumable and modular. Commands below use `uv run` (see [Installation](installation.md)); with a pip-installed environment, use `python` instead.
 
 ## Standard Run
 
 To execute the entire pipeline from start to finish:
 
 ```bash
-python run_pipeline.py
+uv run run_pipeline.py
 ```
 
 This will:
@@ -22,7 +22,7 @@ This will:
 To fill the embedding cache for all four encoder configurations first (the analyses then run without the model, except the sentence bootstrap):
 
 ```bash
-python populate_cache.py
+uv run populate_cache.py
 ```
 
 ## Optional modules
@@ -30,7 +30,7 @@ python populate_cache.py
 The auxiliary composite Q-score and latent-Q reconstruction modules are not part of the article. They run only on request:
 
 ```bash
-python run_pipeline.py --legacy
+uv run run_pipeline.py --legacy
 ```
 
 ## Resuming from Cache
@@ -38,7 +38,7 @@ python run_pipeline.py --legacy
 If a previous run was interrupted or you only want to re-run the final evaluation steps, use the `--resume` flag. It reads `logs/STEP_LOG.md` to determine the last completed step and picks up from there.
 
 ```bash
-python run_pipeline.py --resume
+uv run run_pipeline.py --resume
 ```
 
 ## Overriding Configuration
@@ -48,22 +48,22 @@ STCM uses environment variables for configuration. You can change the behavior w
 **Change the embedding model:**
 ```bash
 # Linux / macOS
-STCM_EMBEDDING_MODEL=bert-base-multilingual-cased python run_pipeline.py
+STCM_EMBEDDING_MODEL=bert-base-multilingual-cased uv run run_pipeline.py
 
 # Windows PowerShell
 $env:STCM_EMBEDDING_MODEL="bert-base-multilingual-cased"
-python run_pipeline.py
+uv run run_pipeline.py
 ```
 
 **Use the mean of the last four layers, or another model revision:**
 ```bash
-STCM_LAYERS=last4 python advanced_analysis.py
-STCM_MODEL_REVISION=<git sha> python advanced_analysis.py
+STCM_LAYERS=last4 uv run advanced_analysis.py
+STCM_MODEL_REVISION=<git sha> uv run advanced_analysis.py
 ```
 
 **Increase log verbosity:**
 ```bash
-STCM_LOG_LEVEL=DEBUG python run_pipeline.py
+STCM_LOG_LEVEL=DEBUG uv run run_pipeline.py
 ```
 
 ## Understanding Outputs

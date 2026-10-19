@@ -42,19 +42,21 @@ The pipeline calibrates a domain-adapted Koine Greek transformer (`ABeZet/Koine-
 ## Quickstart
 
 ```bash
-uv venv && uv pip install -r requirements.txt     # or: pip install -r requirements.txt
-python download_sblgnt.py                         # SBLGNT source texts
-python populate_cache.py                          # embed everything (4 encoder configurations)
-python advanced_analysis.py                       # Tables 1–4 and all embedding statistics
-python baselines.py                               # Table 5: lexical baselines
-python form_control.py                            # sayings-versus-narrative control
-python robustness.py                              # Appendix C2: alternative encoders
-python tools/make_article_tables.py               # Appendix Tables A1, B1, C1–C3 (markdown)
-python generate_evaluation_figures.py             # Figures 1–5
-python -m pytest tests                            # integrity checks
+uv sync --locked                                  # creates .venv from uv.lock (transformers 4.57.3)
+uv run download_sblgnt.py                         # SBLGNT source texts
+uv run populate_cache.py                          # embed everything (4 encoder configurations)
+uv run advanced_analysis.py                       # Tables 1–4 and all embedding statistics
+uv run baselines.py                               # Table 5: lexical baselines
+uv run form_control.py                            # sayings-versus-narrative control
+uv run robustness.py                              # Appendix C2: alternative encoders
+uv run tools/make_article_tables.py               # Appendix Tables A1, B1, C1–C3 (markdown)
+uv run generate_evaluation_figures.py             # Figures 1–5
+uv run pytest tests                               # integrity checks
 # or all of it:
-python run_pipeline.py
+uv run run_pipeline.py
 ```
+
+Without uv: create and activate a virtual environment, run `pip install -r requirements.txt`, and replace `uv run` with `python` in the commands above.
 
 ### Output files
 

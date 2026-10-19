@@ -589,10 +589,10 @@
 
 
 <h1 id="usage">Usage</h1>
-<p>The entire STCM process is driven by <code>run_pipeline.py</code>. It is designed to be resumable and modular.</p>
+<p>The entire STCM process is driven by <code>run_pipeline.py</code>. It is designed to be resumable and modular. Commands below use <code>uv run</code> (see <a href="../installation/">Installation</a>); with a pip-installed environment, use <code>python</code> instead.</p>
 <h2 id="standard-run">Standard Run</h2>
 <p>To execute the entire pipeline from start to finish:</p>
-<pre><code class="language-bash">python run_pipeline.py
+<pre><code class="language-bash">uv run run_pipeline.py
 </code></pre>
 <p>This will:
 1. Load the SBLGNT texts and check the alignment tables
@@ -603,32 +603,32 @@
 6. Draw Figures 1–5
 7. Save all output to <code>outputs/</code></p>
 <p>To fill the embedding cache for all four encoder configurations first (the analyses then run without the model, except the sentence bootstrap):</p>
-<pre><code class="language-bash">python populate_cache.py
+<pre><code class="language-bash">uv run populate_cache.py
 </code></pre>
 <h2 id="optional-modules">Optional modules</h2>
 <p>The auxiliary composite Q-score and latent-Q reconstruction modules are not part of the article. They run only on request:</p>
-<pre><code class="language-bash">python run_pipeline.py --legacy
+<pre><code class="language-bash">uv run run_pipeline.py --legacy
 </code></pre>
 <h2 id="resuming-from-cache">Resuming from Cache</h2>
 <p>If a previous run was interrupted or you only want to re-run the final evaluation steps, use the <code>--resume</code> flag. It reads <code>logs/STEP_LOG.md</code> to determine the last completed step and picks up from there.</p>
-<pre><code class="language-bash">python run_pipeline.py --resume
+<pre><code class="language-bash">uv run run_pipeline.py --resume
 </code></pre>
 <h2 id="overriding-configuration">Overriding Configuration</h2>
 <p>STCM uses environment variables for configuration. You can change the behavior without editing code:</p>
 <p><strong>Change the embedding model:</strong></p>
 <pre><code class="language-bash"># Linux / macOS
-STCM_EMBEDDING_MODEL=bert-base-multilingual-cased python run_pipeline.py
+STCM_EMBEDDING_MODEL=bert-base-multilingual-cased uv run run_pipeline.py
 
 # Windows PowerShell
 $env:STCM_EMBEDDING_MODEL=&quot;bert-base-multilingual-cased&quot;
-python run_pipeline.py
+uv run run_pipeline.py
 </code></pre>
 <p><strong>Use the mean of the last four layers, or another model revision:</strong></p>
-<pre><code class="language-bash">STCM_LAYERS=last4 python advanced_analysis.py
-STCM_MODEL_REVISION=&lt;git sha&gt; python advanced_analysis.py
+<pre><code class="language-bash">STCM_LAYERS=last4 uv run advanced_analysis.py
+STCM_MODEL_REVISION=&lt;git sha&gt; uv run advanced_analysis.py
 </code></pre>
 <p><strong>Increase log verbosity:</strong></p>
-<pre><code class="language-bash">STCM_LOG_LEVEL=DEBUG python run_pipeline.py
+<pre><code class="language-bash">STCM_LOG_LEVEL=DEBUG uv run run_pipeline.py
 </code></pre>
 <h2 id="understanding-outputs">Understanding Outputs</h2>
 <p>Look in the <code>outputs/</code> directory for your results:

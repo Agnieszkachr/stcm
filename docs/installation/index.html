@@ -381,10 +381,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-create-a-virtual-environment-and-install-dependencies" class="md-nav__link">
+  <a href="#2-create-the-environment-and-install-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Create a virtual environment and install dependencies
+        2. Create the environment and install dependencies
       
     </span>
   </a>
@@ -557,10 +557,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-create-a-virtual-environment-and-install-dependencies" class="md-nav__link">
+  <a href="#2-create-the-environment-and-install-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. Create a virtual environment and install dependencies
+        2. Create the environment and install dependencies
       
     </span>
   </a>
@@ -612,11 +612,11 @@
 <pre><code class="language-bash">git clone https://github.com/Agnieszkachr/stcm.git
 cd stcm
 </code></pre>
-<h3 id="2-create-a-virtual-environment-and-install-dependencies">2. Create a virtual environment and install dependencies</h3>
+<h3 id="2-create-the-environment-and-install-dependencies">2. Create the environment and install dependencies</h3>
 <p><strong>With uv (recommended):</strong></p>
-<pre><code class="language-bash">uv venv
-uv pip install -r requirements.txt
+<pre><code class="language-bash">uv sync --locked
 </code></pre>
+<p>This creates <code>.venv</code> with the exact versions recorded in <code>uv.lock</code> (including transformers 4.57.3, used for the published numbers) and the test dependencies. Run every script through <code>uv run</code>, e.g. <code>uv run advanced_analysis.py</code>; no manual activation is needed.</p>
 <p><strong>Or with pip:</strong></p>
 <pre><code class="language-bash">python -m venv .venv
 # Windows:
@@ -625,9 +625,10 @@ uv pip install -r requirements.txt
 source .venv/bin/activate
 pip install -r requirements.txt
 </code></pre>
+<p>With pip, run the scripts with <code>python</code> instead of <code>uv run</code>.</p>
 <h3 id="3-download-the-sblgnt-text">3. Download the SBLGNT text</h3>
 <p>The SBL Greek New Testament text is required. It will be downloaded from the Logos Bible Software GitHub repository.</p>
-<pre><code class="language-bash">python download_sblgnt.py
+<pre><code class="language-bash">uv run download_sblgnt.py
 </code></pre>
 <p>This places <code>matthew.txt</code>, <code>mark.txt</code>, and <code>luke.txt</code> in <code>data/raw/</code>.</p>
 <p>You are now ready to run the STCM pipeline.</p>
