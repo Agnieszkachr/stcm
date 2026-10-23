@@ -7,7 +7,7 @@
 
 📖 **[Documentation & Results](https://agnieszkachr.github.io/stcm/)**
 
-The pipeline calibrates a domain-adapted Koine Greek transformer (`ABeZet/Koine-Greek-BERT`, revision `b81172e`) on 45 triple-tradition pericopes — comparing both **two-step copying** (Matthew–Luke) and **one-step copying** (Luke–Mark, Matthew–Mark) as well as the **shared deviation from Mark** (minor agreements) — and evaluates 51 double-tradition pericopes with range-wise encoding of composite units, bootstrap confidence intervals, four permutation nulls, **lexical baselines** (multiset Jaccard and character n-gram TF-IDF), a **sayings-versus-narrative control**, **Mark–Q-overlap flags**, and **three alternative encoder configurations** (last-four-layer mean; Ancient-Greek-BERT; Greek BERT, a Modern Greek model without biblical pre-training).
+The pipeline calibrates a domain-adapted Koine Greek transformer (`ABeZet/Koine-Greek-BERT`, revision `b81172e`) on 45 triple-tradition pericopes — comparing both **two-step copying** (Matthew–Luke) and **one-step copying** (Luke–Mark, Matthew–Mark) as well as the **shared deviation from Mark** (minor agreements) — and evaluates 51 double-tradition pericopes with range-wise encoding of composite units, bootstrap confidence intervals, four permutation nulls, **lexical baselines** (multiset Jaccard on word forms and on MorphGNT lemmas, and character n-gram TF-IDF), a **sayings-versus-narrative control**, **Mark–Q-overlap flags**, and **three alternative encoder configurations** (last-four-layer mean; Ancient-Greek-BERT; Greek BERT, a Modern Greek model without biblical pre-training).
 
 ## What the project shows
 
@@ -30,6 +30,7 @@ The pipeline calibrates a domain-adapted Koine Greek transformer (`ABeZet/Koine-
 | DT − Luke–Mark (one-step) | centred +0.070 [0.004, 0.141]; raw +0.053 [0.042, 0.063] |
 | Sayings control | DT − TT sayings units (n = 11): centred +0.077 [−0.061, 0.230], raw +0.060 [0.043, 0.078] |
 | Lexical baselines | Jaccard excess DT 0.313 vs TT 0.167; Spearman with centred cosine 0.87; residual after Jaccard: matched +0.180 vs mismatched −0.004, *p* < 0.001 |
+| Lemma baseline (MorphGNT) | lemma Jaccard excess DT 0.359 vs TT 0.210; residual after lemma Jaccard: matched +0.262 vs mismatched −0.005, length-and-theme null 0.035, *p* < 0.001; after forms + lemmas + character TF-IDF: +0.107, *p* = 0.008 |
 | Shared deviation from Mark | residual correlation 0.364 vs floor 0.058 (*p* < 0.001) |
 | Covariates | length *r* = 0.002; form KW *p* = 0.093; strata *p* = 0.97; Goulder *p* = 0.17 (*d* = −0.75) |
 | Sentence bootstrap | median per-pericope SD 0.117 (47 pericopes) |
@@ -44,12 +45,14 @@ The pipeline calibrates a domain-adapted Koine Greek transformer (`ABeZet/Koine-
 ```bash
 uv sync --locked                                  # creates .venv from uv.lock (transformers 4.57.3)
 uv run download_sblgnt.py                         # SBLGNT source texts
+uv run download_morphgnt.py                       # MorphGNT lemmas (pinned commit, checksums verified)
 uv run populate_cache.py                          # embed everything (4 encoder configurations)
 uv run advanced_analysis.py                       # Tables 1–4 and all embedding statistics
-uv run baselines.py                               # Table 5: lexical baselines
+uv run baselines.py                               # Table 5: lexical baselines (word forms, TF-IDF)
+uv run baselines_lemma.py                         # Table 5: lemma baseline; Section 4.3 lemma residuals
 uv run form_control.py                            # sayings-versus-narrative control
 uv run robustness.py                              # Appendix C2: alternative encoders
-uv run tools/make_article_tables.py               # Appendix Tables A1, B1, C1–C3 (markdown)
+uv run tools/make_article_tables.py               # Table 5 and Appendix Tables A1, B1, C1–C3 (markdown)
 uv run generate_evaluation_figures.py             # Figures 1–5
 uv run pytest tests                               # integrity checks
 # or all of it:
@@ -71,6 +74,12 @@ outputs/reports/
 ├── floor_table.csv, per_pericope_excess.csv, composite_sensitivity.csv, baseline_disagreements.csv
 ├── calibration_table.csv, pair_values_centred.csv
 └── key_stats.json, key_stats_baselines.json, key_stats_form_control.json, key_stats_robustness.json
+
+outputs/lemma/
+├── READING_RULE.md               # reading rule for the lemma test, recorded before it was run
+├── baselines_lemma.md            # lemma baselines, residual tests, separate versus common fits, paraphrase cases
+├── lemma_floor_table.csv, lemma_disagreements.csv
+└── key_stats_lemma.json
 ```
 
 *(Auxiliary outputs `evaluation_summary.md`, `q_score_distribution.csv`, `system_validation.txt`, and `outputs/figures/q_score_histogram.png` belong to the optional composite-index module; they are not tracked in the repository and are generated only when running `python run_pipeline.py --legacy`.)*
@@ -86,19 +95,48 @@ stcm/
 │   ├── metadata.py        # themes, forms, strata, Goulder set, Mark–Q overlaps, sayings units, text-critical notes
 │   ├── embeddings.py      # encoder: range-wise and chunked encoding, disk cache
 │   ├── analysis_core.py   # floors, excess, CIs, nulls, LOO ridge
+│   ├── morphgnt.py        # MorphGNT lemmas per unit (pinned commit)
 │   ├── calibration.py     # triple-tradition calibration object
 │   └── scoring.py, reconstruction.py, evaluation.py   # optional modules (--legacy)
-├── populate_cache.py, advanced_analysis.py, baselines.py, form_control.py, robustness.py
+├── populate_cache.py, advanced_analysis.py, baselines.py, baselines_lemma.py, form_control.py, robustness.py
 ├── tools/make_article_tables.py
 ├── generate_evaluation_figures.py
-├── tests/test_integrity.py
+├── tests/test_integrity.py, tests/test_morphgnt.py
 ├── site/ (MkDocs source) · docs/ (built site)
-└── run_pipeline.py, download_sblgnt.py
+└── run_pipeline.py, download_sblgnt.py, download_morphgnt.py
 ```
 
 ## Reproducibility
 
 Deterministic given the SBLGNT files, the pinned model revisions (Koine-Greek-BERT `b81172ecb9baf65734c88ab65e2eb2491f12f3de` = v1.0.1, `tokenizer.json` SHA-256 `80c4ce56314d9a035d82645f3eaba11e094c12bb16ee452cabf645b10737d9e3`; Ancient-Greek-BERT `5e3e29ece1d63029baa226f11105b1e8277c4f07`; Greek BERT `ec2b8f88dd215b5246f2f850413d5bff90d7540d`), Python 3.11+ with `requirements.txt`, and seed 42 (resampling and permutations only). The published numbers were computed with transformers 4.57.3 and tokenizers 0.22.2; the v1.0.1 tokenizer gives hash-seed-independent input ids under transformers 4.x and 5.x alike, and two independent runs produced identical vectors. Cache keys include the model, revision, layer setting, accent handling and encoding version, so vectors from any other configuration are never reused.
+
+## Models and their lineage
+
+The three encoders are not independent: they are stages of one lineage and share the same 35,000-entry base vocabulary (identical `vocab.txt`).
+
+| Stage | Model (Hugging Face) | Pinned revision | Training | Input normalisation in this pipeline |
+|---|---|---|---|---|
+| 1 | Greek BERT, `nlpaueb/bert-base-greek-uncased-v1` (Koutsikakis et al. 2020) | `ec2b8f88dd215b5246f2f850413d5bff90d7540d` | Modern Greek (Wikipedia, Europarl, OSCAR); no biblical pre-training | diacritics stripped before tokenisation (`strip_accents=True`), lower-cased by the uncased tokenizer, as the model card prescribes; identical to the card's preprocessing on all 256 texts |
+| 2 | Ancient-Greek-BERT, `pranaydeeps/Ancient-Greek-BERT` (Singh, Rutten and Lefever 2021) | `5e3e29ece1d63029baa226f11105b1e8277c4f07` | initialised from Greek BERT; further trained on Ancient and Medieval Greek, including the PROIEL treebank and with it the Greek New Testament | diacritics stripped before tokenisation (`strip_accents=True`), lower-cased by the uncased tokenizer |
+| 3 | Koine-Greek-BERT, `ABeZet/Koine-Greek-BERT` (primary; "Koine-DAPT" in the article) | `b81172ecb9baf65734c88ab65e2eb2491f12f3de` (= v1.0.1 except README) | domain-adaptive pre-training of Ancient-Greek-BERT on the Septuagint, the New Testament, the Apostolic Fathers and Hellenistic historians; 15,000 added vocabulary entries | none in the pipeline (`strip_accents=False`): the model's own normaliser lower-cases and strips diacritics |
+
+Only Greek BERT lacks biblical pre-training, so agreement across the three is a check on the configuration, not an independent replication. Configurations are defined in `populate_cache.py` (`CONFIGS`).
+
+## Lemma baseline and its reading rule
+
+The lemma baseline asks whether the embedding's residual over word overlap survives once inflection is discounted. Lemmas come from MorphGNT (see Data sources), over the same verse ranges as the pericope table, composite units taken as the union of their ranges, and are normalised exactly as word forms are (NFC, accents stripped, lower case). MorphGNT's words align one to one with the SBLGNT word tokens in all 2,890 verses of the three gospels once the elision mark (U+02BC in SBLGNT) is ignored; `tests/test_morphgnt.py` checks this for every unit.
+
+The reading rule was fixed and saved in `outputs/lemma/READING_RULE.md` on **23 October 2026, 15:29 UTC**, before `baselines_lemma.py` was first run: if the residual of the centred cosine after a fit on lemma Jaccard separates matched from mismatched Matthew–Luke pairs beyond the length-and-theme-matched null (*p* < 0.05), the claim of an increment stands, qualified as beyond lemma overlap; otherwise it is reformulated as largely a matter of inflection and vocabulary. The test passed (+0.262 against a null of 0.035, *p* < 0.001). Secondary results are reported regardless of outcome, including one that is unfavourable: on the lemma residual the double tradition's advantage over the triple tradition is +0.048 [−0.001, 0.095], and on the word-form residual it is positive only when each tradition is fitted on its own pairs (separate fits +0.085; common fit −0.089), so that contrast is credited to word overlap.
+
+To reproduce Table 5 and the lemma results:
+
+```bash
+uv run download_sblgnt.py && uv run download_morphgnt.py
+uv run populate_cache.py           # or reuse an existing embedding cache
+uv run baselines.py && uv run baselines_lemma.py
+uv run tools/make_article_tables.py
+uv run pytest tests
+```
 
 ## Limitations
 
@@ -109,9 +147,11 @@ Deterministic given the SBLGNT files, the pinned model revisions (Koine-Greek-BE
 - Pericope delimitation and composite encoding move individual ranks (Appendix C of the article), not the corpus-level contrasts.
 - Thematic, form and sayings annotations are the author's own.
 
-## Data source
+## Data sources
 
 Greek text: [SBLGNT](https://github.com/LogosBible/SBLGNT), under the [SBLGNT EULA](https://www.sblgnt.com/license/).
+
+Lemmas: [MorphGNT SBLGNT](https://github.com/morphgnt/sblgnt), commit `aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d` (21 January 2024). Tauber, J. K., ed. (2017) *MorphGNT: SBLGNT Edition*, version 6.12 [data set], [doi:10.5281/zenodo.376200](https://doi.org/10.5281/zenodo.376200). The morphological parsing and lemmatisation are licensed [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/); the underlying text is subject to the SBLGNT EULA. The files are not redistributed here: `download_morphgnt.py` fetches them from the pinned commit and verifies their SHA-256 checksums. Lemmas with an optional final letter, such as οὕτω(ς), are kept as their first part, and accent stripping merges a few lemmas (for example εἰς and εἷς), as it does for word forms.
 
 ## Citation
 

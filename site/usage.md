@@ -15,7 +15,7 @@ This will:
 2. Load the embedding model lazily (only on a cache miss)
 3. Calibrate on the Triple Tradition (45 pericopes)
 4. Run `advanced_analysis.py` (Tables 1–4: floors, excess with CIs, nulls, shared deviation from Mark, Mark–Q overlaps, composite sensitivity, directionality, covariates, bootstrap)
-5. Run `baselines.py` (lexical baselines), `form_control.py` (sayings vs narrative) and `robustness.py` (alternative encoders)
+5. Run `baselines.py` and `baselines_lemma.py` (lexical baselines; the latter needs `download_morphgnt.py`), `form_control.py` (sayings vs narrative) and `robustness.py` (alternative encoders)
 6. Draw Figures 1–5
 7. Save all output to `outputs/`
 
@@ -73,6 +73,7 @@ Look in the `outputs/` directory for your results:
 - `reports/baselines.md`, `reports/form_control.md`, `reports/robustness.md` — Table 5, the form control and the encoder comparison (Appendix C).
 - `reports/centred_cosine_ranking.csv` — The per-pericope ranking (refs, stratum, form, theme, raw/centred cosine, excess, lengths, word overlap, Markan parallel, text-critical note).
 - `reports/triple_tradition_table.csv`, `per_pericope_excess.csv`, `floor_table.csv`, `composite_sensitivity.csv`, `baseline_disagreements.csv` — appendix tables.
+- `lemma/baselines_lemma.md`, `lemma/key_stats_lemma.json`, `lemma/READING_RULE.md` — the lemma baseline, its residual tests and the reading rule recorded before it was run.
 - `reports/key_stats*.json` — machine-readable numbers (the figure script and the tests read these).
 - `figures/evaluation/fig1–fig5` — The article figure set.
 - `reports/evaluation_summary.md`, `reports/q_score_distribution.csv`, `reports/system_validation.txt`, `figures/q_score_histogram.png` — optional outputs (not tracked in the repository; generated only with `--legacy`).

@@ -599,7 +599,7 @@
 2. Load the embedding model lazily (only on a cache miss)
 3. Calibrate on the Triple Tradition (45 pericopes)
 4. Run <code>advanced_analysis.py</code> (Tables 1–4: floors, excess with CIs, nulls, shared deviation from Mark, Mark–Q overlaps, composite sensitivity, directionality, covariates, bootstrap)
-5. Run <code>baselines.py</code> (lexical baselines), <code>form_control.py</code> (sayings vs narrative) and <code>robustness.py</code> (alternative encoders)
+5. Run <code>baselines.py</code> and <code>baselines_lemma.py</code> (lexical baselines; the latter needs <code>download_morphgnt.py</code>), <code>form_control.py</code> (sayings vs narrative) and <code>robustness.py</code> (alternative encoders)
 6. Draw Figures 1–5
 7. Save all output to <code>outputs/</code></p>
 <p>To fill the embedding cache for all four encoder configurations first (the analyses then run without the model, except the sentence bootstrap):</p>
@@ -636,6 +636,7 @@ STCM_MODEL_REVISION=&lt;git sha&gt; uv run advanced_analysis.py
 - <code>reports/baselines.md</code>, <code>reports/form_control.md</code>, <code>reports/robustness.md</code> — Table 5, the form control and the encoder comparison (Appendix C).
 - <code>reports/centred_cosine_ranking.csv</code> — The per-pericope ranking (refs, stratum, form, theme, raw/centred cosine, excess, lengths, word overlap, Markan parallel, text-critical note).
 - <code>reports/triple_tradition_table.csv</code>, <code>per_pericope_excess.csv</code>, <code>floor_table.csv</code>, <code>composite_sensitivity.csv</code>, <code>baseline_disagreements.csv</code> — appendix tables.
+- <code>lemma/baselines_lemma.md</code>, <code>lemma/key_stats_lemma.json</code>, <code>lemma/READING_RULE.md</code> — the lemma baseline, its residual tests and the reading rule recorded before it was run.
 - <code>reports/key_stats*.json</code> — machine-readable numbers (the figure script and the tests read these).
 - <code>figures/evaluation/fig1–fig5</code> — The article figure set.
 - <code>reports/evaluation_summary.md</code>, <code>reports/q_score_distribution.csv</code>, <code>reports/system_validation.txt</code>, <code>figures/q_score_histogram.png</code> — optional outputs (not tracked in the repository; generated only with <code>--legacy</code>).</p>

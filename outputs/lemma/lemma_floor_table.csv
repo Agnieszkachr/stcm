@@ -1,0 +1,9 @@
+measure,set,matched,mean_floor,nn_floor,excess,excess_ci_lo,excess_ci_hi,excess_nn,excess_nn_ci_lo,excess_nn_ci_hi
+Jaccard (lemmas),"Double tradition, Matt-Luke",0.4981,0.1389,0.2423,0.3592,0.3173,0.4053,0.2558,0.2133,0.3043
+Jaccard (lemmas),"Triple tradition, Matt-Luke",0.4113,0.2011,0.3084,0.2102,0.1846,0.2363,0.1030,0.0752,0.1277
+Jaccard (lemmas),"Triple tradition, Matt-Mark",0.4943,0.2037,0.3092,0.2906,0.2557,0.3246,0.1851,0.1532,0.2171
+Jaccard (lemmas),"Triple tradition, Luke-Mark",0.4630,0.1999,0.3049,0.2631,0.2315,0.2965,0.1581,0.1273,0.1909
+TF-IDF (lemmas),"Double tradition, Matt-Luke",0.6064,0.0882,0.1986,0.5183,0.4637,0.5704,0.4078,0.3512,0.4631
+TF-IDF (lemmas),"Triple tradition, Matt-Luke",0.4936,0.1351,0.2412,0.3585,0.3220,0.3943,0.2524,0.2121,0.2901
+TF-IDF (lemmas),"Triple tradition, Matt-Mark",0.6289,0.1379,0.2531,0.4909,0.4559,0.5309,0.3758,0.3363,0.4178
+TF-IDF (lemmas),"Triple tradition, Luke-Mark",0.5427,0.1333,0.2383,0.4094,0.3707,0.4493,0.3044,0.2669,0.3419

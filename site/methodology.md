@@ -40,12 +40,12 @@ Set means carry bootstrap CIs over pericopes; differences carry a bootstrap CI, 
 - **Mark–Q overlaps**: double-tradition statistics with and without the 16 overlap units.
 - **Kind of material** (`form_control.py`): 11 sayings-dominant triple-tradition units against the double tradition.
 - **Centring vector**: six alternatives (Table 4 of the article).
-- **Encoder** (`robustness.py`): Koine-Greek-BERT mean of last four layers; Ancient-Greek-BERT (its pre-training includes PROIEL, hence the Greek NT); Greek BERT (Modern Greek, no biblical pre-training). For each, the residual after word overlap is also tested.
+- **Encoder** (`robustness.py`): Koine-Greek-BERT mean of last four layers; Ancient-Greek-BERT (its pre-training includes PROIEL, hence the Greek NT); Greek BERT (Modern Greek, no biblical pre-training). The three models form one lineage (Greek BERT → Ancient-Greek-BERT → Koine-Greek-BERT, with an identical base vocabulary), so agreement across them is a check on the configuration, not an independent replication; only Greek BERT lacks biblical pre-training. For each, the residual after word overlap is also tested, and `baselines_lemma.py` repeats the residual after lemma overlap.
 - **Composite encoding**: range-wise vs single-sequence (`composite_sensitivity.csv`).
 
-## 6. Lexical baselines (`baselines.py`)
+## 6. Lexical baselines (`baselines.py`, `baselines_lemma.py`)
 
-Multiset Jaccard on accent-stripped word forms and character 3–5-gram TF-IDF cosine are run through the identical floor/excess/null pipeline. The centred-cosine pair matrix is regressed on the Jaccard matrix over all Matthew–Luke pairs and the residual is tested for matched-vs-mismatched separation; the pericopes on which the measures disagree most are listed in `baseline_disagreements.csv`.
+Multiset Jaccard on accent-stripped word forms, the same coefficient on MorphGNT lemmas (normalised in the same way), and character 3–5-gram TF-IDF cosine are run through the identical floor/excess/null pipeline. The centred-cosine pair matrix is regressed on the Jaccard matrix over all Matthew–Luke pairs and the residual is tested for matched-vs-mismatched separation; the pericopes on which the measures disagree most are listed in `baseline_disagreements.csv` and, for lemmas, `outputs/lemma/lemma_disagreements.csv`. The rule for reading the lemma test was recorded in `outputs/lemma/READING_RULE.md` (23 October 2026, 15:29 UTC) before the test was run. The double-minus-triple contrast on the residual is reported under separate fits per tradition and under a common fit, since the two differ in sign.
 
 ## 7. Shared deviation from Mark
 

@@ -17,7 +17,7 @@ graph TD
     D --> F[Double tradition: excess over own floor]
     E --> F
     F --> H[Permutation nulls, CIs, Mark-Q overlaps, sayings control]
-    F --> J[Lexical baselines: Jaccard, TF-IDF]
+    F --> J[Lexical baselines: Jaccard on forms and lemmas, TF-IDF]
     F --> G[Covariates & directionality controls]
     J --> I
     G --> I[Results & Reports]

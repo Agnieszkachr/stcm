@@ -11,6 +11,7 @@ build/
 
 # Data (large files — download fresh)
 data/raw/*.txt
+data/raw/morphgnt/*.txt
 
 # Cached embeddings
 data/processed/emb_*.pkl
