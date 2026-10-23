@@ -105,9 +105,13 @@ FORM: Dict[str, str] = {
 
 # Kloppenborg (1987) strata.  Formative stratum: the sapiential speeches
 # Q 6:20b-49; 9:57-62 + 10:2-11, 16; 11:2-4, 9-13; 12:2-7, 11-12; 12:22b-31,
-# 33-34; 13:24; 14:26-27, 34-35; 17:33.  Q3 = temptation.  U = sayings he
-# left without a stratum (16:13, 16-18; 15:4-7; 17:1-6).  Everything else
-# belongs to the main redaction (Q2).
+# 33-34; 13:24; 14:26-27, 34-35; 17:33 (pp. 171-245; summary 238, 243-44).
+# Q3 = temptation (pp. 246-62).  U = sayings he leaves without a stratum:
+# 15:4-7; 16:13; 17:1-6 (p. 100), 16:17-18 (p. 92; the unit 16:16-18 is
+# assigned by its dominant component), and the two growth parables 13:18-21,
+# which he leaves "on their own" (p. 92) and does not treat with the
+# sapiential speeches (p. 223 n. 214).  Everything else belongs to the main
+# redaction (Q2; pp. 102-70, summary 166).
 STRATUM: Dict[str, str] = {
     "Beatitudes": "Q1", "Love of enemies": "Q1", "Golden rule": "Q1",
     "Judging and the speck": "Q1", "Blind guides": "Q1",
@@ -118,7 +122,7 @@ STRATUM: Dict[str, str] = {
     "Fear of God not men": "Q1", "Anxieties about life": "Q1",
     "Treasure in heaven": "Q1", "Narrow gate": "Q1",
     "Conditions of discipleship": "Q1", "Salt of the earth": "Q1",
-    "Mustard seed and leaven": "Q1",
+    "Mustard seed and leaven": "U",
     "Temptation narrative (full)": "Q3",
     "Serving two masters": "U", "Lost sheep": "U",
     "Law, prophets and divorce": "U", "Scandals, forgiveness, faith": "U",

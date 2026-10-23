@@ -204,7 +204,7 @@ Bottom five:
 - Form liturgical : mean = 0.8537, median = 0.8537, n = 1
 - Form Kruskal-Wallis (n >= 3 groups): H = 6.414, p = 0.093
 - Pairwise Mann-Whitney, Holm-adjusted p: discourse vs narrative: 0.942; discourse vs proverbial: 0.369; discourse vs parable: 0.140; narrative vs proverbial: 0.942; narrative vs parable: 0.686; proverbial vs parable: 0.942
-- Strata counts: {'Q1': 20, 'Q2': 26, 'Q3': 1, 'U': 4}; Q1 mean = 0.7138 (n = 20), Q2 mean = 0.7125 (n = 26); Mann-Whitney U = 262.0, p = 0.973
+- Strata counts: {'Q1': 19, 'Q2': 26, 'Q3': 1, 'U': 5}; Q1 mean = 0.7142 (n = 19), Q2 mean = 0.7125 (n = 26); Mann-Whitney U = 249.0, p = 0.973
 - Goulder set: mean = 0.6067 (n = 10) vs 0.7329 (n = 41); Welch t = -1.488, p = 0.1666, Cohen's d = -0.745
 - Word overlap (multiset Jaccard): Pearson r = 0.781 (p = 1.37e-11), Spearman rho = 0.870; unexplained variance ~ 39%
 

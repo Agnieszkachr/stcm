@@ -26,7 +26,7 @@ rank,label,matt_ref,luke_ref,stratum,form,theme,matt_luke_cos,centred_cos,residu
 25,Many come from east west,8:11–12,13:28–29,Q2,proverbial,apocalyptic,0.9511,0.7252,0.7699,0.6848,0.3490,249,268,0.3846,,
 26,Conditions of discipleship,10:37–38,14:26–27,Q1,proverbial,discipleship,0.9160,0.7137,0.7280,0.6797,0.1842,194,281,0.1538,8:34,
 27,Beatitudes,5:3–12,6:20–23,Q1,discourse,wisdom,0.9520,0.7088,0.7705,0.6408,0.1192,722,513,0.2649,,
-28,Mustard seed and leaven,13:31–33,13:18–21,Q1,parable,parable,0.9623,0.7054,0.7538,0.6732,0.3974,458,383,0.3431,4:30-32,
+28,Mustard seed and leaven,13:31–33,13:18–21,U,parable,parable,0.9623,0.7054,0.7538,0.6732,0.3974,458,383,0.3431,4:30-32,
 29,Days of Noah,24:37–39,17:26–27,Q2,discourse,apocalyptic,0.9356,0.6870,0.7229,0.6599,0.3436,330,220,0.3881,,
 30,"One taken, one left",24:40–41,17:34–35,Q2,proverbial,apocalyptic,0.9026,0.6860,0.7096,0.6550,0.3946,126,181,0.1591,,
 31,Settling with opponent,5:25–26,12:57–59,Q2,proverbial,wisdom,0.9397,0.6814,0.7288,0.6352,0.3585,229,316,0.3289,,

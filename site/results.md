@@ -40,7 +40,7 @@ What is specific: after regressing the centred cosine on Jaccard over all 2,601 
 
 - Length: Pearson *r* = 0.002 (*p* = 0.99).
 - Form: discourse 0.785 > narrative 0.743 > proverbial 0.683 > parable 0.575, but Kruskal–Wallis *p* = 0.093 and no pairwise difference survives correction — a pattern, not a finding.
-- Kloppenborg strata: Q¹ 0.714 vs Q² 0.713 (*p* = 0.97).
+- Kloppenborg strata: Q¹ 0.714 (*n* = 19) vs Q² 0.713 (*n* = 26) (*p* = 0.97); the two growth parables (Q 13:18–21), which Kloppenborg (1987) leaves unassigned, are counted as unassigned.
 - Goulder set: 0.607 vs 0.733 (*p* = 0.17, *d* = −0.75) — underpowered, inconclusive.
 - Sentence-level bootstrap: median per-pericope SD 0.117 (mean 0.133, 47 pericopes with ≥ 2 sentences in each version).
 

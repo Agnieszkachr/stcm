@@ -975,15 +975,15 @@
     "proverbial vs parable": 0.942292412815216
   },
   "strata_counts": {
-    "Q1": 20,
+    "Q1": 19,
     "Q2": 26,
     "Q3": 1,
-    "U": 4
+    "U": 5
   },
-  "strata_q1_mean": 0.7137735818449182,
+  "strata_q1_mean": 0.7142117471855209,
   "strata_q2_mean": 0.7125141944045666,
-  "strata_mw_u": 262.0,
-  "strata_mw_p": 0.9734850150795613,
+  "strata_mw_u": 249.0,
+  "strata_mw_p": 0.9725024780508996,
   "goulder_mean": 0.6066863755076227,
   "goulder_other_mean": 0.7329177696580561,
   "goulder_n": 10,
