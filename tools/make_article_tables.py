@@ -1,8 +1,9 @@
 """
 make_article_tables.py
 ======================
-Assemble the markdown tables for Appendices A, B, and C (Tables A1, B1,
-and C1-C3) directly from the CSV and JSON files in ``outputs/reports/``.
+Assemble the markdown tables for Table 5 and Appendices A, B, and C
+(Tables A1, B1, and C1-C3) directly from the CSV and JSON files in
+``outputs/reports/`` and ``outputs/lemma/``.
 
 Usage
 -----
@@ -21,6 +22,7 @@ sys.path.insert(0, str(_REPO))
 from stcm.metadata import SAYINGS_TT  # noqa: E402
 
 REPORTS = _REPO / "outputs" / "reports"
+LEMMA = _REPO / "outputs" / "lemma"
 
 _STRATUM_MAP = {"Q1": "Q¹", "Q2": "Q²", "Q3": "Q³", "U": "U"}
 
@@ -30,6 +32,45 @@ _ENCODERS = (
     ("agb", "Ancient-Greek-BERT, last layer"),
     ("greekbert", "Greek BERT (Modern Greek; no biblical pre-training), last layer"),
 )
+
+
+def _ci(x, lo_hi, sign=False):
+    f = "{:+.3f}" if sign else "{:.3f}"
+    return f"{f.format(x)} [{lo_hi[0]:.3f}, {lo_hi[1]:.3f}]"
+
+
+def make_table_5(reports_dir: pathlib.Path = REPORTS, lemma_dir: pathlib.Path = LEMMA) -> str:
+    base = json.loads((reports_dir / "key_stats_baselines.json").read_text(encoding="utf-8"))
+    lem = json.loads((lemma_dir / "key_stats_lemma.json").read_text(encoding="utf-8"))
+    ks = json.loads((reports_dir / "key_stats.json").read_text(encoding="utf-8"))
+    lines = [
+        "| Measure | DT Matt–Luke | TT Matt–Luke | Luke–Mark | Matt–Mark | DT − TT [95% CI] | DT − Luke–Mark [95% CI] |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for src, key, label in ((base, "Jaccard", "Jaccard (word forms)"),
+                            (lem, "Jaccard (lemmas)", "Jaccard (lemmas)"),
+                            (base, "TF-IDF char 3-5", "TF-IDF (character 3–5-grams)")):
+        cells = [_ci(src[f"{key}_{s}"]["excess"], src[f"{key}_{s}"]["excess_ci"]) for s in ("dt", "tt", "lk", "mk")]
+        for c in ("tt", "lk"):
+            d = src[f"{key}_dt_minus_{c}"]
+            cells.append(_ci(d["diff"], (d["ci_lo"], d["ci_hi"]), sign=True))
+        lines.append(f"| {label} | " + " | ".join(cells) + " |")
+    # The centred row is quoted from Table 1, which is rounded from the four-decimal
+    # floor_table.csv (half up); it is taken from there so that the two tables agree.
+    from decimal import Decimal, ROUND_HALF_UP
+    q = lambda v: str(Decimal(v).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP))
+    ft = {(r["set"], r["space"]): r for r in csv.DictReader((reports_dir / "floor_table.csv").open(encoding="utf-8"))}
+    names = {"dt": "Double tradition, Matt-Luke", "tt": "Triple tradition, Matt-Luke",
+             "lk": "Triple tradition, Luke-Mark", "mk": "Triple tradition, Matt-Mark"}
+    cells = []
+    for s_ in ("dt", "tt", "lk", "mk"):
+        r = ft[(names[s_], "cen")]
+        cells.append(f"{q(r['excess'])} [{q(r['excess_ci_lo'])}, {q(r['excess_ci_hi'])}]")
+    for c in ("tt", "lk"):
+        d = ks[f"cen_dt_minus_{c}_mean"]
+        cells.append(_ci(d["diff"], (d["ci_lo"], d["ci_hi"]), sign=True))
+    lines.append("| Centred cosine (for comparison) | " + " | ".join(cells) + " |")
+    return "\n".join(lines)
 
 
 def make_table_a1(reports_dir: pathlib.Path = REPORTS) -> str:
@@ -131,6 +172,7 @@ def make_table_c3(reports_dir: pathlib.Path = REPORTS) -> str:
 
 def make_all_tables(reports_dir: pathlib.Path = REPORTS) -> dict[str, str]:
     return {
+        "5": make_table_5(reports_dir),
         "A1": make_table_a1(reports_dir),
         "B1": make_table_b1(reports_dir),
         "C1": make_table_c1(reports_dir),

@@ -48,4 +48,12 @@ uv run download_sblgnt.py
 
 This places `matthew.txt`, `mark.txt`, and `luke.txt` in `data/raw/`.
 
+The lemma baseline also needs MorphGNT (morphology CC BY-SA 3.0; text under the SBLGNT EULA), fetched from a pinned commit with checksums verified:
+
+```bash
+uv run download_morphgnt.py
+```
+
+This places the three MorphGNT files in `data/raw/morphgnt/`.
+
 You are now ready to run the STCM pipeline.

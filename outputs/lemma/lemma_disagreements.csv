@@ -1,0 +1,52 @@
+label,form,centred_cos,rank_centred,jaccard_forms,jaccard_lemmas,rank_jaccard_lemmas,residual_centred_given_lemma_jaccard
+Parable of Great Banquet,parable,0.2047,50,0.1377,0.3083,46,-0.3565
+Narrow gate,proverbial,0.1416,51,0.1231,0.2167,51,-0.3486
+"Scandals, forgiveness, faith",proverbial,0.4605,47,0.2412,0.3974,34,-0.1696
+Jesus on John,discourse,0.6710,33,0.5470,0.6606,11,-0.1630
+John's preaching,discourse,0.7673,20,0.6815,0.7838,4,-0.1621
+Judging twelve tribes,proverbial,0.4347,49,0.2857,0.3500,42,-0.1588
+Lost sheep,parable,0.5040,46,0.1938,0.3874,37,-0.1184
+Treasure in heaven,proverbial,0.5120,45,0.2319,0.3934,35,-0.1151
+Serving two masters,proverbial,0.9787,1,0.9643,0.9643,1,-0.0906
+Not peace but sword,proverbial,0.4381,48,0.1379,0.2532,49,-0.0804
+House on the rock,parable,0.5347,44,0.1788,0.3692,40,-0.0736
+"Law, prophets and divorce",proverbial,0.6102,41,0.2772,0.4333,29,-0.0478
+Centurion's servant,narrative,0.6238,39,0.3319,0.4306,30,-0.0320
+Would-be followers,narrative,0.8523,13,0.5870,0.7176,8,-0.0259
+Many come from east west,proverbial,0.7252,25,0.3846,0.5517,19,-0.0245
+Blasphemy Holy Spirit,proverbial,0.6556,35,0.2273,0.4595,25,-0.0226
+Temptation narrative (full),narrative,0.7623,21,0.4715,0.5926,14,-0.0191
+Lamp on a stand,proverbial,0.6356,38,0.2903,0.4286,31,-0.0187
+Anxieties about life,discourse,0.8559,11,0.5646,0.7120,10,-0.0179
+Days of Noah,discourse,0.6870,29,0.3881,0.4762,22,-0.0042
+Harvest plentiful,proverbial,0.9547,2,0.7000,0.8214,2,-0.0039
+Settling with opponent,proverbial,0.6814,31,0.3289,0.4638,24,-0.0002
+Return of unclean spirit,discourse,0.9083,5,0.7286,0.7536,5,+0.0022
+Love of enemies,discourse,0.6521,36,0.3077,0.4167,33,+0.0070
+Thief in the night,proverbial,0.9012,6,0.6977,0.7381,7,+0.0071
+Lament over Jerusalem,discourse,0.9437,3,0.7302,0.7869,3,+0.0119
+John's question from prison,narrative,0.7322,24,0.4103,0.5138,20,+0.0119
+Hidden from wise revealed,proverbial,0.9146,4,0.6628,0.7439,6,+0.0161
+Mustard seed and leaven,parable,0.7054,28,0.3431,0.4731,23,+0.0166
+"Ask, seek, knock",discourse,0.9000,7,0.6374,0.7126,9,+0.0256
+Day of the Son of Man,discourse,0.6132,40,0.2532,0.3378,44,+0.0292
+Blind guides,proverbial,0.6102,42,0.2615,0.3226,45,+0.0379
+Faithful servant,parable,0.8187,16,0.5143,0.5868,16,+0.0418
+Sign of Jonah,discourse,0.8667,9,0.5612,0.6316,12,+0.0552
+Blessed eyes,proverbial,0.8242,15,0.4800,0.5745,17,+0.0569
+Beatitudes,discourse,0.7088,27,0.2649,0.4254,32,+0.0570
+Salt of the earth,proverbial,0.6706,34,0.2500,0.3750,39,+0.0578
+Fear of God not men,discourse,0.8157,17,0.4121,0.5525,18,+0.0655
+Judging and the speck,proverbial,0.8618,10,0.5161,0.6068,13,+0.0694
+"One taken, one left",proverbial,0.6860,30,0.1591,0.3784,38,+0.0706
+Mission discourse,discourse,0.7534,22,0.2984,0.4375,28,+0.0922
+Reading the signs,proverbial,0.5864,43,0.1067,0.2206,50,+0.0932
+Talents / Minas,parable,0.6797,32,0.2433,0.3389,43,+0.0948
+Tree and its fruit,proverbial,0.6481,37,0.1468,0.2887,47,+0.1021
+Lamp of the body,proverbial,0.8881,8,0.5652,0.5882,15,+0.1101
+Woes against Pharisees,discourse,0.8028,18,0.3236,0.4579,26,+0.1258
+Whoever receives you,proverbial,0.7516,23,0.3913,0.3913,36,+0.1262
+Woes on Galilean cities,discourse,0.8351,14,0.4490,0.4947,21,+0.1296
+Conditions of discipleship,proverbial,0.7137,26,0.1538,0.2857,48,+0.1700
+Golden rule,proverbial,0.7791,19,0.3077,0.3600,41,+0.1779
+Lord's Prayer,liturgical,0.8537,12,0.3462,0.4384,27,+0.1918

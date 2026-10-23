@@ -631,6 +631,10 @@ pip install -r requirements.txt
 <pre><code class="language-bash">uv run download_sblgnt.py
 </code></pre>
 <p>This places <code>matthew.txt</code>, <code>mark.txt</code>, and <code>luke.txt</code> in <code>data/raw/</code>.</p>
+<p>The lemma baseline also needs MorphGNT (morphology CC BY-SA 3.0; text under the SBLGNT EULA), fetched from a pinned commit with checksums verified:</p>
+<pre><code class="language-bash">uv run download_morphgnt.py
+</code></pre>
+<p>This places the three MorphGNT files in <code>data/raw/morphgnt/</code>.</p>
 <p>You are now ready to run the STCM pipeline.</p>
 
 

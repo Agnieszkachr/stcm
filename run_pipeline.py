@@ -10,7 +10,8 @@ Steps executed:
   4. Advanced analysis: floors and excess with CIs, permutation nulls,
      shared deviation from Mark, Mark-Q overlaps, composite sensitivity,
      directionality, covariates (advanced_analysis.py); lexical baselines
-     (baselines.py); sayings-versus-narrative control (form_control.py);
+     (baselines.py; lemma baselines, baselines_lemma.py, need
+     download_morphgnt.py first); sayings-versus-narrative control (form_control.py);
      alternative encoders (robustness.py, after populate_cache.py)
   5. Figures 1-5 (generate_evaluation_figures.py)
 
@@ -189,6 +190,8 @@ def main() -> None:
     advanced_analysis.main()
     import baselines
     baselines.main()
+    import baselines_lemma
+    baselines_lemma.main()
     import form_control
     form_control.main()
     import populate_cache
@@ -199,6 +202,7 @@ def main() -> None:
     append_step_log(4, "Advanced analysis complete", [
         "outputs/reports/advanced_analysis.md",
         "outputs/reports/baselines.md",
+        "outputs/lemma/baselines_lemma.md",
         "outputs/reports/form_control.md",
         "outputs/reports/robustness.md",
         "outputs/reports/centred_cosine_ranking.csv",

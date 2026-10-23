@@ -375,10 +375,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-lexical-baselines-baselinespy" class="md-nav__link">
+  <a href="#6-lexical-baselines-baselinespy-baselines_lemmapy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. Lexical baselines (baselines.py)
+        6. Lexical baselines (baselines.py, baselines_lemma.py)
       
     </span>
   </a>
@@ -616,10 +616,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-lexical-baselines-baselinespy" class="md-nav__link">
+  <a href="#6-lexical-baselines-baselinespy-baselines_lemmapy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. Lexical baselines (baselines.py)
+        6. Lexical baselines (baselines.py, baselines_lemma.py)
       
     </span>
   </a>
@@ -726,11 +726,11 @@
 <li><strong>Mark–Q overlaps</strong>: double-tradition statistics with and without the 16 overlap units.</li>
 <li><strong>Kind of material</strong> (<code>form_control.py</code>): 11 sayings-dominant triple-tradition units against the double tradition.</li>
 <li><strong>Centring vector</strong>: six alternatives (Table 4 of the article).</li>
-<li><strong>Encoder</strong> (<code>robustness.py</code>): Koine-Greek-BERT mean of last four layers; Ancient-Greek-BERT (its pre-training includes PROIEL, hence the Greek NT); Greek BERT (Modern Greek, no biblical pre-training). For each, the residual after word overlap is also tested.</li>
+<li><strong>Encoder</strong> (<code>robustness.py</code>): Koine-Greek-BERT mean of last four layers; Ancient-Greek-BERT (its pre-training includes PROIEL, hence the Greek NT); Greek BERT (Modern Greek, no biblical pre-training). The three models form one lineage (Greek BERT → Ancient-Greek-BERT → Koine-Greek-BERT, with an identical base vocabulary), so agreement across them is a check on the configuration, not an independent replication; only Greek BERT lacks biblical pre-training. For each, the residual after word overlap is also tested, and <code>baselines_lemma.py</code> repeats the residual after lemma overlap.</li>
 <li><strong>Composite encoding</strong>: range-wise vs single-sequence (<code>composite_sensitivity.csv</code>).</li>
 </ul>
-<h2 id="6-lexical-baselines-baselinespy">6. Lexical baselines (<code>baselines.py</code>)</h2>
-<p>Multiset Jaccard on accent-stripped word forms and character 3–5-gram TF-IDF cosine are run through the identical floor/excess/null pipeline. The centred-cosine pair matrix is regressed on the Jaccard matrix over all Matthew–Luke pairs and the residual is tested for matched-vs-mismatched separation; the pericopes on which the measures disagree most are listed in <code>baseline_disagreements.csv</code>.</p>
+<h2 id="6-lexical-baselines-baselinespy-baselines_lemmapy">6. Lexical baselines (<code>baselines.py</code>, <code>baselines_lemma.py</code>)</h2>
+<p>Multiset Jaccard on accent-stripped word forms, the same coefficient on MorphGNT lemmas (normalised in the same way), and character 3–5-gram TF-IDF cosine are run through the identical floor/excess/null pipeline. The centred-cosine pair matrix is regressed on the Jaccard matrix over all Matthew–Luke pairs and the residual is tested for matched-vs-mismatched separation; the pericopes on which the measures disagree most are listed in <code>baseline_disagreements.csv</code> and, for lemmas, <code>outputs/lemma/lemma_disagreements.csv</code>. The rule for reading the lemma test was recorded in <code>outputs/lemma/READING_RULE.md</code> (23 October 2026, 15:29 UTC) before the test was run. The double-minus-triple contrast on the residual is reported under separate fits per tradition and under a common fit, since the two differ in sign.</p>
 <h2 id="7-shared-deviation-from-mark">7. Shared deviation from Mark</h2>
 <p>For each triple-tradition pericope, the residual of Matthew's vector orthogonal to Mark's is correlated with Luke's; mismatched-pair floor and random/length-matched nulls as above. This is the geometric counterpart of the minor agreements.</p>
 <h2 id="8-covariates">8. Covariates</h2>
